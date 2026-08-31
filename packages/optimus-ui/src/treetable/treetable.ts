@@ -819,9 +819,9 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
 
     readonly tableViewChild = viewChild<Nullable<ElementRef>>('table');
 
-    readonly scrollableViewChild = viewChild<Nullable<ElementRef>>('scrollableView');
+    readonly scrollableViewChild = viewChild<Nullable<TTScrollableView>>('scrollableView');
 
-    readonly scrollableFrozenViewChild = viewChild<Nullable<ElementRef>>('scrollableFrozenView');
+    readonly scrollableFrozenViewChild = viewChild<Nullable<TTScrollableView>>('scrollableFrozenView');
 
     _value: TreeNode<any>[] | undefined = [];
 
@@ -1445,14 +1445,8 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
      * @group Method
      */
     public scrollToVirtualIndex(index: number) {
-        const scrollableViewChild = this.scrollableViewChild();
-        if (scrollableViewChild) {
-            (<any>scrollableViewChild).scrollToVirtualIndex(<number>index);
-        }
-
-        if (this.scrollableFrozenViewChild()) {
-            (<any>scrollableViewChild).scrollToVirtualIndex(index);
-        }
+        this.scrollableViewChild()?.scrollToVirtualIndex(index);
+        this.scrollableFrozenViewChild()?.scrollToVirtualIndex(index);
     }
     /**
      * Scrolls to given index.
@@ -1460,14 +1454,8 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
      * @group Method
      */
     public scrollTo(options: ScrollToOptions) {
-        const scrollableViewChild = this.scrollableViewChild();
-        if (scrollableViewChild) {
-            (<any>scrollableViewChild).scrollTo(options);
-        }
-
-        if (this.scrollableFrozenViewChild()) {
-            (<any>scrollableViewChild).scrollTo(options);
-        }
+        this.scrollableViewChild()?.scrollTo(options);
+        this.scrollableFrozenViewChild()?.scrollTo(options);
     }
 
     isEmpty() {
