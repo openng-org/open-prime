@@ -715,11 +715,6 @@ export interface TableTemplates {
         frozen?: boolean;
     }): TemplateRef<any>;
     /**
-     * Custom frozen header template.
-     * @param {*} context - columns.
-     */
-    frozenheader(): TemplateRef<{ $implicit: any[] }>;
-    /**
      * Custom frozen body template.
      * @param {Object} context - row data.
      */
@@ -745,16 +740,6 @@ export interface TableTemplates {
          */
         frozen?: boolean;
     }): TemplateRef<any>;
-    /**
-     * Custom frozen footer template.
-     * @param {*} context - columns.
-     */
-    frozenfooter(): TemplateRef<{ $implicit: any[] }>;
-    /**
-     * Custom frozen column group template.
-     * @param {*} context - columns.
-     */
-    frozencolgroup(): TemplateRef<{ $implicit: any[] }>;
     /**
      * Custom frozen expanded row template.
      * @param {Object} context - row data.

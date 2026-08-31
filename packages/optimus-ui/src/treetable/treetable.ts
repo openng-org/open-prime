@@ -2597,10 +2597,6 @@ export class TTScrollableView extends BaseComponent {
 
     readonly scrollBodyViewChild = viewChild<Nullable<ElementRef>>('scrollBody');
 
-    readonly scrollTableViewChild = viewChild<Nullable<ElementRef>>('scrollTable');
-
-    readonly scrollLoadingTableViewChild = viewChild<Nullable<ElementRef>>('loadingTable');
-
     readonly scrollFooterViewChild = viewChild<Nullable<ElementRef>>('scrollFooter');
 
     readonly scrollFooterBoxViewChild = viewChild<Nullable<ElementRef>>('scrollFooterBox');

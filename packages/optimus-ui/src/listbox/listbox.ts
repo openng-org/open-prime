@@ -712,8 +712,6 @@ export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
 
     readonly listViewChild = viewChild<Nullable<ElementRef>>('list');
 
-    readonly containerViewChild = viewChild<Nullable<ElementRef>>('container');
-
     readonly headerFacet = contentChild(Header);
 
     readonly footerFacet = contentChild(Footer);

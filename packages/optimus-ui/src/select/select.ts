@@ -884,24 +884,6 @@ export class Select extends BaseInput<SelectPassThrough> implements AfterViewIni
      */
     readonly filterIconTemplate = contentChild<Nullable<TemplateRef<void>>>('filtericon', { descendants: false });
 
-    /**
-     * Custom on icon template.
-     * @group Templates
-     */
-    readonly onIconTemplate = contentChild<Nullable<TemplateRef<void>>>('onicon', { descendants: false });
-
-    /**
-     * Custom off icon template.
-     * @group Templates
-     */
-    readonly offIconTemplate = contentChild<Nullable<TemplateRef<void>>>('officon', { descendants: false });
-
-    /**
-     * Custom cancel icon template.
-     * @group Templates
-     */
-    readonly cancelIconTemplate = contentChild<Nullable<TemplateRef<void>>>('cancelicon', { descendants: false });
-
     readonly templates = contentChildren(PrimeTemplate);
 
     _itemTemplate: TemplateRef<SelectItemTemplateContext> | undefined;

@@ -1176,11 +1176,6 @@ export class Tree extends BaseComponent<TreePassThrough> implements BlockableUI 
      */
     readonly filterTemplate = contentChild<TemplateRef<TreeFilterTemplateContext>>('filter', { descendants: false });
     /**
-     * Custom node template.
-     * @group Templates
-     */
-    readonly nodeTemplate = contentChild<TemplateRef<any>>('node', { descendants: false });
-    /**
      * Custom header template.
      * @group Templates
      */

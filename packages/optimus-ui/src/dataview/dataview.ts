@@ -385,17 +385,6 @@ export class DataView extends BaseComponent<DataViewPassThrough> implements Bloc
      * @group Templates
      */
     readonly loadingicon = contentChild<TemplateRef<void>>('loadingicon');
-    /**
-     * Template for list icon.
-     * @group Templates
-     */
-    readonly listicon = contentChild<TemplateRef<void>>('listicon');
-    /**
-     * Template for grid icon.
-     * @group Templates
-     */
-    readonly gridicon = contentChild<TemplateRef<void>>('gridicon');
-
     readonly header = contentChild(Header);
 
     readonly footer = contentChild(Footer);

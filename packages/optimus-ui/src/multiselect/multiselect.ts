@@ -27,7 +27,7 @@ import {
 import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MotionOptions } from '@openng/optimus-ui-motion';
 import { deepEquals, equals, findLastIndex, findSingle, focus, getFirstFocusableElement, getFocusableElements, getLastFocusableElement, isArray, isNotEmpty, isPrintableCharacter, resolveFieldData, uuid } from '@openng/optimus-ui-utils';
-import { FilterService, Footer, Header, OverlayOptions, OverlayService, PrimeTemplate, ScrollerOptions, SharedModule, TranslationKeys } from '@openng/optimus-ui/api';
+import { FilterService, Footer, OverlayOptions, OverlayService, PrimeTemplate, ScrollerOptions, SharedModule, TranslationKeys } from '@openng/optimus-ui/api';
 import { AutoFocus } from '@openng/optimus-ui/autofocus';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
 import { BaseEditableHolder } from '@openng/optimus-ui/baseeditableholder';
@@ -946,8 +946,6 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     readonly headerCheckboxViewChild = viewChild<Nullable<Checkbox>>('headerCheckbox');
 
     readonly footerFacet = contentChild(Footer);
-
-    readonly headerFacet = contentChild(Header);
 
     _componentStyle = inject(MultiSelectStyle);
 

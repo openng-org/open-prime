@@ -531,11 +531,6 @@ export class MegaMenu extends BaseComponent<MegaMenuPassThrough> {
      */
     readonly endTemplate = contentChild<TemplateRef<void>>('end', { descendants: false });
     /**
-     * Defines template option for menu icon.
-     * @group Templates
-     */
-    readonly menuIconTemplate = contentChild<TemplateRef<void>>('menuicon', { descendants: false });
-    /**
      * Defines template option for submenu icon.
      * @group Templates
      */

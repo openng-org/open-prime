@@ -691,8 +691,6 @@ export class Password extends BaseInput<PasswordPassThrough> {
      */
     @Output() onClear: EventEmitter<any> = new EventEmitter<any>();
 
-    readonly overlayViewChild = viewChild.required<Overlay>('overlay');
-
     readonly input = viewChild.required<ElementRef>('input');
 
     /**

@@ -527,13 +527,6 @@ export class Menu extends BaseComponent<MenuPassThrough> {
     _endTemplate: TemplateRef<void> | undefined;
 
     /**
-     * Defines template option for header.
-     * @group Templates
-     */
-    readonly headerTemplate = contentChild<TemplateRef<void>>('header', { descendants: false });
-    _headerTemplate: TemplateRef<void> | undefined;
-
-    /**
      * Custom item template.
      * @param {MenuItemTemplateContext} context - item context.
      * @see {@link MenuItemTemplateContext}

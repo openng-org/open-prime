@@ -208,8 +208,6 @@ export class ColorPicker extends BaseEditableHolder<ColorPickerPassThrough> impl
      */
     @Output() onHide: EventEmitter<any> = new EventEmitter<any>();
 
-    readonly inputViewChild = viewChild<Nullable<ElementRef>>('input');
-
     readonly overlayViewChild = viewChild.required<ElementRef<HTMLDivElement>>('overlay');
 
     $appendTo = computed(() => this.appendTo() || this.config.overlayAppendTo());

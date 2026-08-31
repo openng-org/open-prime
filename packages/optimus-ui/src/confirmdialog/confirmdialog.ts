@@ -23,7 +23,7 @@ import {
     contentChildren
 } from '@angular/core';
 import { findSingle, setAttribute, uuid } from '@openng/optimus-ui-utils';
-import { Confirmation, ConfirmationService, ConfirmEventType, Footer, PrimeTemplate, SharedModule, TranslationKeys } from '@openng/optimus-ui/api';
+import { Confirmation, ConfirmationService, ConfirmEventType, PrimeTemplate, SharedModule, TranslationKeys } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
 import { Bind } from '@openng/optimus-ui/bind';
 import { Button } from '@openng/optimus-ui/button';
@@ -358,8 +358,6 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> imple
      * @group Emits
      */
     @Output() onHide: EventEmitter<ConfirmEventType> = new EventEmitter<ConfirmEventType>();
-
-    readonly footer = contentChild(Footer);
 
     _componentStyle = inject(ConfirmDialogStyle);
 

@@ -349,8 +349,6 @@ export class SplitButton extends BaseComponent<SplitButtonPassThrough> {
      */
     @Output() onDropdownClick: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
 
-    readonly buttonViewChild = viewChild<ElementRef>('defaultbtn');
-
     readonly menu = viewChild<TieredMenu>('menu');
     /**
      * Custom content template.

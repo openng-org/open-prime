@@ -129,8 +129,6 @@ export class DynamicDialog extends BaseComponent<DialogPassThrough> {
 
     readonly insertionPoint = viewChild(DynamicDialogContent);
 
-    readonly dialog = viewChild(Dialog);
-
     childComponentType: Nullable<Type<any>>;
 
     inputValues: Record<string, any>;

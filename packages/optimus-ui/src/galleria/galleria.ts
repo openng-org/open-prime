@@ -632,8 +632,6 @@ export class GalleriaContent extends BaseComponent<GalleriaPassThrough> {
 
     @Output() activeItemChange: EventEmitter<number> = new EventEmitter();
 
-    readonly closeButton = viewChild<ElementRef>('closeButton');
-
     _componentStyle = inject(GalleriaStyle);
 
     $pcGalleria: Galleria | undefined = inject(GALLERIA_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;

@@ -307,8 +307,6 @@ export class Image extends BaseComponent<ImagePassThrough> {
      */
     @Output() onImageError: EventEmitter<Event> = new EventEmitter<Event>();
 
-    readonly mask = viewChild<ElementRef>('mask');
-
     readonly previewButton = viewChild<ElementRef>('previewButton');
 
     readonly closeButton = viewChild<ElementRef>('closeButton');

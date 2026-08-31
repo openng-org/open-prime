@@ -1775,7 +1775,6 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
             const listboxComponent = listboxElement.componentInstance;
 
             expect(listboxComponent).toBeTruthy();
-            expect(() => listboxComponent.containerViewChild).not.toThrow();
             expect(() => listboxComponent.filterViewChild).not.toThrow();
             expect(() => listboxComponent.scrollerViewChild).not.toThrow();
         });

@@ -1121,7 +1121,7 @@ describe('Tree', () => {
                 await fixture.whenStable();
 
                 // Template references should be accessible
-                expect(tree.nodeTemplate || tree.headerTemplate || tree.footerTemplate).toBeDefined();
+                expect(tree.headerTemplate || tree.footerTemplate).toBeDefined();
             });
 
             it('should handle both pTemplate and #template approaches', async () => {
@@ -1666,7 +1666,7 @@ describe('Tree', () => {
 
                 // After content init, template references should be available
                 expect(
-                    tree.nodeTemplate() || tree.headerTemplate() || tree.footerTemplate() || tree.emptyTemplate() || tree.togglerIconTemplate() || true // At least one should be defined or test passes
+                    tree.headerTemplate() || tree.footerTemplate() || tree.emptyTemplate() || tree.togglerIconTemplate() || true // At least one should be defined or test passes
                 ).toBeTruthy();
             });
 

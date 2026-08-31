@@ -613,12 +613,6 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
     readonly filterIconTemplate = contentChild<Nullable<TemplateRef<void>>>('filtericon', { descendants: false });
 
     /**
-     * Custom close icon template.
-     * @group Templates
-     */
-    readonly closeIconTemplate = contentChild<Nullable<TemplateRef<void>>>('closeicon', { descendants: false });
-
-    /**
      * Custom item toggler icon template.
      * @param {TreeSelectItemTogglerIconTemplateContext} context - toggler icon context.
      * @see {@link TreeSelectItemTogglerIconTemplateContext}

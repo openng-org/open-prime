@@ -1028,10 +1028,6 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
 
     readonly tableViewChild = viewChild<Nullable<ElementRef>>('table');
 
-    readonly tableHeaderViewChild = viewChild<Nullable<ElementRef>>('thead');
-
-    readonly tableFooterViewChild = viewChild<Nullable<ElementRef>>('tfoot');
-
     readonly scroller = viewChild<Nullable<Scroller>>('scroller');
 
     readonly _templates = contentChildren(PrimeTemplate);
@@ -1052,7 +1048,6 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     readonly _headerTemplate = contentChild<TemplateRef<any>>('header', { descendants: false });
     headerTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _headerGroupedTemplate = contentChild<TemplateRef<any>>('headergrouped', { descendants: false });
     headerGroupedTemplate: Nullable<TemplateRef<any>>;
 
     readonly _bodyTemplate = contentChild<TemplateRef<any>>('body', { descendants: false });
@@ -1088,17 +1083,8 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     readonly _frozenExpandedRowTemplate = contentChild<TemplateRef<any>>('frozenexpandedrow', { descendants: false });
     frozenExpandedRowTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _frozenHeaderTemplate = contentChild<TemplateRef<any>>('frozenheader', { descendants: false });
-    frozenHeaderTemplate: Nullable<TemplateRef<any>>;
-
     readonly _frozenBodyTemplate = contentChild<TemplateRef<any>>('frozenbody', { descendants: false });
     frozenBodyTemplate: Nullable<TemplateRef<any>>;
-
-    readonly _frozenFooterTemplate = contentChild<TemplateRef<any>>('frozenfooter', { descendants: false });
-    frozenFooterTemplate: Nullable<TemplateRef<any>>;
-
-    readonly _frozenColGroupTemplate = contentChild<TemplateRef<any>>('frozencolgroup', { descendants: false });
-    frozenColGroupTemplate: Nullable<TemplateRef<any>>;
 
     readonly _emptyMessageTemplate = contentChild<TemplateRef<any>>('emptymessage', { descendants: false });
     emptyMessageTemplate: Nullable<TemplateRef<any>>;
@@ -1308,20 +1294,8 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                     this.groupFooterTemplate = item.template;
                     break;
 
-                case 'frozenheader':
-                    this.frozenHeaderTemplate = item.template;
-                    break;
-
                 case 'frozenbody':
                     this.frozenBodyTemplate = item.template;
-                    break;
-
-                case 'frozenfooter':
-                    this.frozenFooterTemplate = item.template;
-                    break;
-
-                case 'frozencolgroup':
-                    this.frozenColGroupTemplate = item.template;
                     break;
 
                 case 'frozenexpandedrow':
@@ -5897,7 +5871,6 @@ export class ColumnFilter extends BaseComponent {
     readonly addRuleIconTemplate = contentChild<TemplateRef<any>>('addruleicon', { descendants: false });
     _addRuleIconTemplate: Nullable<TemplateRef<any>>;
 
-    readonly clearFilterIconTemplate = contentChild<TemplateRef<any>>('clearfiltericon', { descendants: false });
     _clearFilterIconTemplate: Nullable<TemplateRef<any>>;
 
     operatorOptions: any[] | undefined;

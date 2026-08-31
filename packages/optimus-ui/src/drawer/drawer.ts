@@ -15,7 +15,6 @@ import {
     Output,
     TemplateRef,
     ViewEncapsulation,
-    viewChild,
     contentChild,
     contentChildren
 } from '@angular/core';
@@ -267,10 +266,6 @@ export class Drawer extends BaseComponent<DrawerPassThrough> {
      * @group Emits
      */
     @Output() visibleChange: EventEmitter<boolean> = new EventEmitter<boolean>();
-
-    readonly containerViewChild = viewChild<ElementRef>('container');
-
-    readonly closeButtonViewChild = viewChild<ElementRef>('closeButton');
 
     initialized: boolean | undefined;
 
