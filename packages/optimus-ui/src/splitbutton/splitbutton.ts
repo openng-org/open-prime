@@ -349,7 +349,7 @@ export class SplitButton extends BaseComponent<SplitButtonPassThrough> {
      */
     @Output() onDropdownClick: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
 
-    readonly menu = viewChild<TieredMenu>('menu');
+    readonly menu = viewChild.required<TieredMenu>('menu');
     /**
      * Custom content template.
      * @group Templates
@@ -401,12 +401,12 @@ export class SplitButton extends BaseComponent<SplitButtonPassThrough> {
 
     onDefaultButtonClick(event: MouseEvent) {
         this.onClick?.emit(event);
-        this.menu()?.hide();
+        this.menu().hide();
     }
 
     onDropdownButtonClick(event?: MouseEvent) {
         this.onDropdownClick.emit(event);
-        this.menu()?.toggle({ currentTarget: this.el?.nativeElement, relativeAlign: this.$appendTo() == 'self' });
+        this.menu().toggle({ currentTarget: this.el?.nativeElement, relativeAlign: this.$appendTo() == 'self' });
     }
 
     onDropdownButtonKeydown(event: KeyboardEvent) {

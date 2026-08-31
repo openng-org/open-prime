@@ -86,7 +86,7 @@ export class Terminal extends BaseComponent<TerminalPassThrough> implements Afte
 
     @HostListener('click')
     onHostClick() {
-        this.focus(this.inputRef()?.nativeElement);
+        this.focus(this.inputRef().nativeElement);
     }
 
     constructor() {

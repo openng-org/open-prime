@@ -531,7 +531,7 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
 
     $appendTo = computed(() => this.appendTo() || this.config.overlayAppendTo());
 
-    readonly focusInput = viewChild<Nullable<ElementRef>>('focusInput');
+    readonly focusInput = viewChild.required<ElementRef>('focusInput');
 
     readonly filterViewChild = viewChild<Nullable<ElementRef>>('filter');
 
@@ -539,7 +539,7 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
 
     readonly panelEl = viewChild<Nullable<ElementRef>>('panel');
 
-    readonly overlayViewChild = viewChild<Nullable<Overlay>>('overlay');
+    readonly overlayViewChild = viewChild.required<Overlay>('overlay');
 
     readonly firstHiddenFocusableElementOnOverlay = viewChild<Nullable<ElementRef>>('firstHiddenFocusableEl');
 
@@ -765,7 +765,7 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
                 const newHeight = entries[0].contentRect.height;
                 if (newHeight !== lastHeight) {
                     lastHeight = newHeight;
-                    this.overlayViewChild()?.alignOverlay();
+                    this.overlayViewChild().alignOverlay();
                 }
             });
             virtualScrollResizeObserver.observe(panelElement);
@@ -796,14 +796,14 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
             return;
         }
         const section = event.target?.getAttribute?.('data-pc-section');
-        if (!this.overlayViewChild()?.el?.nativeElement?.contains(event.target) && section !== 'box' && section !== 'icon') {
+        if (!this.overlayViewChild().el?.nativeElement?.contains(event.target) && section !== 'box' && section !== 'icon') {
             if (this.overlayVisible) {
                 this.hide();
             } else {
                 this.show();
             }
 
-            this.focusInput()?.nativeElement.focus();
+            this.focusInput().nativeElement.focus();
         }
     }
 
@@ -832,7 +832,7 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
             case 'Escape':
                 if (this.overlayVisible) {
                     this.hide();
-                    this.focusInput()?.nativeElement.focus();
+                    this.focusInput().nativeElement.focus();
                     event.preventDefault();
                 }
                 break;
@@ -856,7 +856,7 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
             filteredValue: treeViewChild?.filteredNodes
         });
         setTimeout(() => {
-            this.overlayViewChild()?.alignOverlay();
+            this.overlayViewChild().alignOverlay();
         });
     }
 
@@ -874,14 +874,14 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
 
     onFirstHiddenFocus(event) {
         const focusInput = this.focusInput();
-        const focusableEl = event.relatedTarget === focusInput?.nativeElement ? getFirstFocusableElement(this.overlayViewChild()?.overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])') : focusInput?.nativeElement;
+        const focusableEl = event.relatedTarget === focusInput.nativeElement ? getFirstFocusableElement(this.overlayViewChild().overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])') : focusInput.nativeElement;
 
         focus(focusableEl);
     }
 
     onLastHiddenFocus(event) {
         const focusInput = this.focusInput();
-        const focusableEl = event.relatedTarget === focusInput?.nativeElement ? getLastFocusableElement(this.overlayViewChild()?.overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])') : focusInput?.nativeElement;
+        const focusableEl = event.relatedTarget === focusInput.nativeElement ? getLastFocusableElement(this.overlayViewChild().overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])') : focusInput.nativeElement;
 
         focus(focusableEl);
     }
@@ -925,7 +925,7 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
     }
 
     hasFocusableElements() {
-        return getFocusableElements(this.overlayViewChild()?.overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])').length > 0;
+        return getFocusableElements(this.overlayViewChild().overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])').length > 0;
     }
 
     resetFilter() {
@@ -980,7 +980,7 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
         this.onNodeExpand.emit(event);
         this.expandedNodes.push(event.node);
         setTimeout(() => {
-            this.overlayViewChild()?.alignOverlay();
+            this.overlayViewChild().alignOverlay();
         });
     }
 
@@ -988,7 +988,7 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
         this.onNodeCollapse.emit(event);
         this.expandedNodes.splice(this.expandedNodes.indexOf(event.node), 1);
         setTimeout(() => {
-            this.overlayViewChild()?.alignOverlay();
+            this.overlayViewChild().alignOverlay();
         });
     }
 
@@ -1064,7 +1064,7 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
 
         if (this.selectionMode === 'single') {
             this.hide();
-            this.focusInput()?.nativeElement.focus();
+            this.focusInput().nativeElement.focus();
         }
     }
 

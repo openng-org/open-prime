@@ -1660,7 +1660,7 @@ export class PickList extends BaseComponent {
     }
 
     getListElement(listType: number) {
-        return listType === this.SOURCE_LIST ? this.listViewSourceChild()?.el.nativeElement : this.listViewTargetChild()?.el.nativeElement;
+        return listType === this.SOURCE_LIST ? this.listViewSourceChild().el.nativeElement : this.listViewTargetChild().el.nativeElement;
     }
 
     getListItems(listType: number) {

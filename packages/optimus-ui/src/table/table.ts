@@ -1024,7 +1024,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
 
     readonly reorderIndicatorDownViewChild = viewChild<Nullable<ElementRef>>('reorderIndicatorDown');
 
-    readonly wrapperViewChild = viewChild<Nullable<ElementRef>>('wrapper');
+    readonly wrapperViewChild = viewChild.required<ElementRef>('wrapper');
 
     readonly tableViewChild = viewChild<Nullable<ElementRef>>('table');
 
@@ -2509,7 +2509,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
         const wrapperViewChild = this.wrapperViewChild();
         if (this.virtualScroll) {
             this.scroller()?.scrollTo(options);
-        } else if (wrapperViewChild && wrapperViewChild.nativeElement) {
+        } else {
             if (wrapperViewChild.nativeElement.scrollTo) {
                 wrapperViewChild.nativeElement.scrollTo(options);
             } else {
@@ -5014,7 +5014,7 @@ export class TableRadioButton extends BaseComponent {
 
     @Input() ariaLabel: string | undefined;
 
-    readonly inputViewChild = viewChild<Nullable<RadioButton>>('rb');
+    readonly inputViewChild = viewChild.required<RadioButton>('rb');
 
     checked: boolean | undefined;
 
@@ -5044,7 +5044,7 @@ export class TableRadioButton extends BaseComponent {
                 this.value
             );
 
-            this.inputViewChild()?.inputViewChild().nativeElement?.focus();
+            this.inputViewChild().inputViewChild().nativeElement?.focus();
         }
         DomHandler.clearSelection();
     }

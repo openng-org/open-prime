@@ -707,12 +707,6 @@ describe('Panel', () => {
             expect(customFooter).toBeTruthy();
         });
 
-        it('should handle missing contentWrapper in updateTabIndex', () => {
-            (panelInstance as any).contentWrapperViewChild = () => undefined as any;
-
-            expect(() => panelInstance.updateTabIndex()).not.toThrow();
-        });
-
         it('should update tab indices for focusable elements when collapsed', () => {
             const fixture = TestBed.createComponent(TestKeyboardNavigationComponent);
             fixture.detectChanges();

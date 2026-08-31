@@ -668,7 +668,7 @@ export class CascadeSelect extends BaseEditableHolder<CascadeSelectPassThrough> 
      */
     @Output() onBlur: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
 
-    readonly focusInputViewChild = viewChild<Nullable<ElementRef>>('focusInput');
+    readonly focusInputViewChild = viewChild.required<ElementRef>('focusInput');
 
     readonly panelViewChild = viewChild<Nullable<ElementRef>>('panel');
 
@@ -1228,7 +1228,7 @@ export class CascadeSelect extends BaseEditableHolder<CascadeSelectPassThrough> 
                 this.show();
             }
 
-            this.focusInputViewChild()?.nativeElement.focus();
+            this.focusInputViewChild().nativeElement.focus();
         }
 
         this.clicked = true;
@@ -1370,7 +1370,7 @@ export class CascadeSelect extends BaseEditableHolder<CascadeSelectPassThrough> 
             this.activeOptionPath.set([]);
             this.focusedOptionInfo.set({ index: -1, level: 0, parentKey: '' });
 
-            isFocus && focus(this.focusInputViewChild()?.nativeElement);
+            isFocus && focus(this.focusInputViewChild().nativeElement);
             this.onHide.emit(event);
             this.cd.markForCheck();
         };
@@ -1401,7 +1401,7 @@ export class CascadeSelect extends BaseEditableHolder<CascadeSelectPassThrough> 
 
         this.focusedOptionInfo.set(focusedOptionInfo);
 
-        isFocus && focus(this.focusInputViewChild()?.nativeElement);
+        isFocus && focus(this.focusInputViewChild().nativeElement);
     }
 
     clear(event?: MouseEvent) {
@@ -1508,7 +1508,7 @@ export class CascadeSelect extends BaseEditableHolder<CascadeSelectPassThrough> 
             }
         }
 
-        isFocus && focus(this.focusInputViewChild()?.nativeElement);
+        isFocus && focus(this.focusInputViewChild().nativeElement);
     }
 
     onOptionMouseEnter(event) {

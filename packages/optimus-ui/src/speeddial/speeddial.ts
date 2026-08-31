@@ -305,9 +305,9 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
      */
     @Output() onHide: EventEmitter<Event> = new EventEmitter<Event>();
 
-    readonly container = viewChild<ElementRef>('container');
+    readonly container = viewChild.required<ElementRef>('container');
 
-    readonly list = viewChild<ElementRef>('list');
+    readonly list = viewChild.required<ElementRef>('list');
     /**
      * Custom button template.
      * @param {SpeedDialButtonTemplateContext} context - button context.
@@ -376,9 +376,9 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
     onAfterViewInit() {
         if (isPlatformBrowser(this.platformId)) {
             if (this.type !== 'linear') {
-                const button = <any>findSingle(this.container()?.nativeElement, '[data-pc-name="pcbutton"]');
+                const button = <any>findSingle(this.container().nativeElement, '[data-pc-name="pcbutton"]');
                 const list = this.list();
-                const firstItem = <any>findSingle(list?.nativeElement, '[data-pc-section="item"]');
+                const firstItem = <any>findSingle(list.nativeElement, '[data-pc-section="item"]');
 
                 if (button && firstItem) {
                     const wDiff = Math.abs(button.offsetWidth - firstItem.offsetWidth);
@@ -551,7 +551,7 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
 
     onEnterKey(event: any) {
         const container = this.container();
-        const items = find(container?.nativeElement, '[data-pc-section="item"]');
+        const items = find(container.nativeElement, '[data-pc-section="item"]');
         const itemIndex = [...items].findIndex((item) => item.id === this.focusedOptionIndex());
 
         if (itemIndex !== -1 && this.model && this.model[itemIndex]) {
@@ -567,7 +567,7 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
     onEscapeKey(event: KeyboardEvent) {
         this.hide();
 
-        const buttonEl = <any>findSingle(this.container()?.nativeElement, 'button');
+        const buttonEl = <any>findSingle(this.container().nativeElement, 'button');
 
         buttonEl && focus(buttonEl);
     }
@@ -598,7 +598,7 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
 
     onTogglerArrowUp(event) {
         this.focused = true;
-        focus(this.list()?.nativeElement);
+        focus(this.list().nativeElement);
 
         this.show();
         this.navigatePrevItem(event);
@@ -608,7 +608,7 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
 
     onTogglerArrowDown(event) {
         this.focused = true;
-        focus(this.list()?.nativeElement);
+        focus(this.list().nativeElement);
 
         this.show();
         this.navigateNextItem(event);
@@ -633,7 +633,7 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
     }
 
     findPrevOptionIndex(index) {
-        const items = find(this.container()?.nativeElement, '[data-pc-section="item"]');
+        const items = find(this.container().nativeElement, '[data-pc-section="item"]');
 
         const filteredItems = [...items].filter((item) => !hasClass(findSingle(item, 'a')!, 'p-disabled'));
         const newIndex = index === -1 ? filteredItems[filteredItems.length - 1].id : index;
@@ -645,7 +645,7 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
     }
 
     findNextOptionIndex(index) {
-        const items = find(this.container()?.nativeElement, '[data-pc-section="item"]');
+        const items = find(this.container().nativeElement, '[data-pc-section="item"]');
         const filteredItems = [...items].filter((item) => !hasClass(findSingle(item, 'a')!, 'p-disabled'));
         const newIndex = index === -1 ? filteredItems[0].id : index;
         let matchedOptionIndex = filteredItems.findIndex((link) => link.getAttribute('id') === newIndex);
@@ -656,7 +656,7 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
     }
 
     changeFocusedOptionIndex(index) {
-        const items = find(this.container()?.nativeElement, '[data-pc-section="item"]');
+        const items = find(this.container().nativeElement, '[data-pc-section="item"]');
         const filteredItems = [...items].filter((item) => !hasClass(findSingle(item, 'a')!, 'p-disabled'));
 
         if (filteredItems[index]) {
@@ -743,7 +743,7 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
 
     isOutsideClicked(event: Event) {
         const container = this.container();
-        return container && !(container.nativeElement.isSameNode(event.target) || container.nativeElement.contains(event.target) || this.isItemClicked);
+        return !(container.nativeElement.isSameNode(event.target) || container.nativeElement.contains(event.target) || this.isItemClicked);
     }
 
     bindDocumentClickListener() {

@@ -89,11 +89,11 @@ export class ScrollPanel extends BaseComponent<ScrollPanelPassThrough> {
      */
     @Input({ transform: numberAttribute }) step: number = 5;
 
-    readonly contentViewChild = viewChild<ElementRef>('content');
+    readonly contentViewChild = viewChild.required<ElementRef>('content');
 
-    readonly xBarViewChild = viewChild<ElementRef>('xBar');
+    readonly xBarViewChild = viewChild.required<ElementRef>('xBar');
 
-    readonly yBarViewChild = viewChild<ElementRef>('yBar');
+    readonly yBarViewChild = viewChild.required<ElementRef>('yBar');
     /**
      * Custom content template.
      * @group Templates
@@ -325,7 +325,7 @@ export class ScrollPanel extends BaseComponent<ScrollPanelPassThrough> {
 
     repeat(bar, step) {
         const contentViewChild = this.contentViewChild();
-        contentViewChild?.nativeElement && (contentViewChild.nativeElement[bar] += step);
+        contentViewChild.nativeElement[bar] += step;
         this.moveBar();
     }
 
@@ -373,10 +373,10 @@ export class ScrollPanel extends BaseComponent<ScrollPanelPassThrough> {
     onYBarMouseDown(e: MouseEvent) {
         this.isYBarClicked = true;
         const yBarViewChild = this.yBarViewChild();
-        yBarViewChild?.nativeElement?.focus();
+        yBarViewChild.nativeElement.focus();
         this.lastPageY = e.pageY;
 
-        yBarViewChild?.nativeElement?.setAttribute('data-p-scrollpanel-grabbed', 'true');
+        yBarViewChild.nativeElement.setAttribute('data-p-scrollpanel-grabbed', 'true');
         !this.$unstyled() && addClass((yBarViewChild as ElementRef).nativeElement, 'p-scrollpanel-grabbed');
 
         this.document.body.setAttribute('data-p-scrollpanel-grabbed', 'true');
@@ -388,10 +388,10 @@ export class ScrollPanel extends BaseComponent<ScrollPanelPassThrough> {
     onXBarMouseDown(e: MouseEvent) {
         this.isXBarClicked = true;
         const xBarViewChild = this.xBarViewChild();
-        xBarViewChild?.nativeElement?.focus();
+        xBarViewChild.nativeElement.focus();
         this.lastPageX = e.pageX;
 
-        xBarViewChild?.nativeElement?.setAttribute('data-p-scrollpanel-grabbed', 'false');
+        xBarViewChild.nativeElement.setAttribute('data-p-scrollpanel-grabbed', 'false');
         !this.$unstyled() && addClass((xBarViewChild as ElementRef).nativeElement, 'p-scrollpanel-grabbed');
 
         this.document.body.setAttribute('data-p-scrollpanel-grabbed', 'false');
@@ -441,9 +441,9 @@ export class ScrollPanel extends BaseComponent<ScrollPanelPassThrough> {
     }
 
     onFocus(event) {
-        if (this.xBarViewChild()?.nativeElement?.isSameNode(event.target)) {
+        if (this.xBarViewChild().nativeElement?.isSameNode(event.target)) {
             this.orientation = 'horizontal';
-        } else if (this.yBarViewChild()?.nativeElement?.isSameNode(event.target)) {
+        } else if (this.yBarViewChild().nativeElement?.isSameNode(event.target)) {
             this.orientation = 'vertical';
         }
     }
@@ -456,10 +456,10 @@ export class ScrollPanel extends BaseComponent<ScrollPanelPassThrough> {
 
     onDocumentMouseUp(e: Event) {
         const yBarViewChild = this.yBarViewChild();
-        yBarViewChild?.nativeElement?.setAttribute('data-p-scrollpanel-grabbed', 'false');
+        yBarViewChild.nativeElement.setAttribute('data-p-scrollpanel-grabbed', 'false');
         !this.$unstyled() && removeClass((yBarViewChild as ElementRef).nativeElement, 'p-scrollpanel-grabbed');
         const xBarViewChild = this.xBarViewChild();
-        xBarViewChild?.nativeElement?.setAttribute('data-p-scrollpanel-grabbed', 'false');
+        xBarViewChild.nativeElement.setAttribute('data-p-scrollpanel-grabbed', 'false');
         !this.$unstyled() && removeClass((xBarViewChild as ElementRef).nativeElement, 'p-scrollpanel-grabbed');
         this.document.body.setAttribute('data-p-scrollpanel-grabbed', 'false');
         !this.$unstyled() && removeClass(this.document.body, 'p-scrollpanel-grabbed');

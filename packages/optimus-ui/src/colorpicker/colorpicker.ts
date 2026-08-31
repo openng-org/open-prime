@@ -695,9 +695,8 @@ export class ColorPicker extends BaseEditableHolder<ColorPickerPassThrough> impl
             this.scrollHandler = null;
         }
 
-        const overlayViewChild = this.overlayViewChild();
-        if (overlayViewChild?.nativeElement && this.autoZIndex) {
-            ZIndexUtils.clear(overlayViewChild?.nativeElement);
+        if (this.autoZIndex) {
+            ZIndexUtils.clear(this.overlayViewChild().nativeElement);
         }
     }
 }

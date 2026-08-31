@@ -557,7 +557,7 @@ export class MegaMenu extends BaseComponent<MegaMenuPassThrough> {
 
     readonly menubuttonViewChild = viewChild<ElementRef>('menubutton');
 
-    readonly rootmenu = viewChild<MegaMenuSub>('rootmenu');
+    readonly rootmenu = viewChild.required<MegaMenuSub>('rootmenu');
 
     _startTemplate: TemplateRef<void> | undefined;
 
@@ -762,7 +762,7 @@ export class MegaMenu extends BaseComponent<MegaMenuPassThrough> {
 
             this.dirty = !root;
             if (!this.mobileActive) {
-                focus(this.rootmenu()?.el?.nativeElement, { preventScroll: true });
+                focus(this.rootmenu().el?.nativeElement, { preventScroll: true });
             }
         } else {
             if (grouped) {
@@ -790,11 +790,11 @@ export class MegaMenu extends BaseComponent<MegaMenuPassThrough> {
     toggle(event: MouseEvent) {
         if (this.mobileActive) {
             this.mobileActive = false;
-            ZIndexUtils.clear(this.rootmenu()?.el.nativeElement);
+            ZIndexUtils.clear(this.rootmenu().el.nativeElement);
             this.hide();
         } else {
             this.mobileActive = true;
-            ZIndexUtils.set('menu', this.rootmenu()?.el.nativeElement, this.config.zIndex.menu);
+            ZIndexUtils.set('menu', this.rootmenu().el.nativeElement, this.config.zIndex.menu);
             setTimeout(() => {
                 this.show();
             }, 0);
@@ -807,7 +807,7 @@ export class MegaMenu extends BaseComponent<MegaMenuPassThrough> {
     show() {
         this.focusedItemInfo.set({ index: this.findFirstFocusedItemIndex(), level: 0, parentKey: '' });
 
-        focus(this.rootmenu()?.el.nativeElement);
+        focus(this.rootmenu().el.nativeElement);
     }
 
     scrollInView(index: number = -1) {
@@ -818,7 +818,7 @@ export class MegaMenu extends BaseComponent<MegaMenuPassThrough> {
         if (id === null && this.queryMatches()) {
             element = this.menubuttonViewChild()?.nativeElement;
         } else {
-            element = findSingle(this.rootmenu()?.el?.nativeElement, `li[id="${id}"]`);
+            element = findSingle(this.rootmenu().el?.nativeElement, `li[id="${id}"]`);
         }
 
         if (element) {
@@ -840,7 +840,7 @@ export class MegaMenu extends BaseComponent<MegaMenuPassThrough> {
         this.focusedItemInfo.set({ index, key, parentKey, item });
 
         grouped && (this.dirty = true);
-        isFocus && focus(this.rootmenu()?.el?.nativeElement);
+        isFocus && focus(this.rootmenu().el?.nativeElement);
     }
 
     hide(event?, isFocus?: boolean) {
@@ -855,7 +855,7 @@ export class MegaMenu extends BaseComponent<MegaMenuPassThrough> {
         this.activeItem.set(null);
         this.focusedItemInfo.set({ index: -1, key: '', parentKey: '', item: null });
 
-        isFocus && focus(this.rootmenu()?.el?.nativeElement);
+        isFocus && focus(this.rootmenu().el?.nativeElement);
         this.dirty = false;
     }
 
@@ -1217,7 +1217,7 @@ export class MegaMenu extends BaseComponent<MegaMenuPassThrough> {
 
     onEnterKey(event: KeyboardEvent) {
         if (this.focusedItemInfo().index !== -1) {
-            const element = <any>findSingle(this.rootmenu()?.el?.nativeElement, `li[id="${`${this.focusedItemId}`}"]`);
+            const element = <any>findSingle(this.rootmenu().el?.nativeElement, `li[id="${`${this.focusedItemId}`}"]`);
             const anchorElement = element && (<any>findSingle(element, '[data-pc-section="itemlink"]') || findSingle(element, 'a,button'));
 
             anchorElement ? anchorElement.click() : element && element.click();

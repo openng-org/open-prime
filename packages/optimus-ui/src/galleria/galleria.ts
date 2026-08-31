@@ -15,7 +15,6 @@ import {
     NgModule,
     numberAttribute,
     Output,
-    QueryList,
     signal,
     SimpleChanges,
     TemplateRef,
@@ -1223,7 +1222,7 @@ export class GalleriaThumbnails extends BaseComponent<GalleriaPassThrough> {
 
     @Input() showThumbnailNavigators = true;
 
-    @Input() templates: QueryList<PrimeTemplate> | undefined;
+    @Input() templates: readonly PrimeTemplate[] | undefined;
 
     @Output() onActiveIndexChange: EventEmitter<number> = new EventEmitter();
 

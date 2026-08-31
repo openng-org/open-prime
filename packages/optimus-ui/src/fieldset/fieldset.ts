@@ -278,17 +278,14 @@ export class Fieldset extends BaseComponent<FieldsetPassThrough> implements Bloc
     }
 
     updateTabIndex() {
-        const contentWrapperViewChild = this.contentWrapperViewChild();
-        if (contentWrapperViewChild) {
-            const focusableElements = contentWrapperViewChild.nativeElement.querySelectorAll('input, button, select, a, textarea, [tabindex]');
-            focusableElements.forEach((element: HTMLElement) => {
-                if (this.collapsed) {
-                    element.setAttribute('tabindex', '-1');
-                } else {
-                    element.removeAttribute('tabindex');
-                }
-            });
-        }
+        const focusableElements = this.contentWrapperViewChild().nativeElement.querySelectorAll('input, button, select, a, textarea, [tabindex]');
+        focusableElements.forEach((element: HTMLElement) => {
+            if (this.collapsed) {
+                element.setAttribute('tabindex', '-1');
+            } else {
+                element.removeAttribute('tabindex');
+            }
+        });
     }
 
     onToggleDone(event: MotionEvent) {

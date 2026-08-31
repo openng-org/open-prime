@@ -729,7 +729,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
 
     spin(event: Event, dir: number) {
         let step = (this.step() ?? 1) * dir;
-        let currentValue = this.parseValue(this.input()?.nativeElement.value) || 0;
+        let currentValue = this.parseValue(this.input().nativeElement.value) || 0;
         let newValue = this.validateValue((currentValue as number) + step);
         const max = this.maxlength();
         if (max && max < this.formatValue(newValue).length) {
@@ -755,7 +755,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
         }
 
         if (!this.$disabled()) {
-            this.input()?.nativeElement.focus();
+            this.input().nativeElement.focus();
             this.repeat(event, null, 1);
             event.preventDefault();
         }
@@ -791,7 +791,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
             return;
         }
         if (!this.$disabled()) {
-            this.input()?.nativeElement.focus();
+            this.input().nativeElement.focus();
             this.repeat(event, null, -1);
             event.preventDefault();
         }
@@ -912,7 +912,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
                             this._decimal.lastIndex = 0;
 
                             if (decimalLength) {
-                                this.input()?.nativeElement.setSelectionRange(selectionStart - 1, selectionStart - 1);
+                                this.input().nativeElement.setSelectionRange(selectionStart - 1, selectionStart - 1);
                             } else {
                                 newValueStr = inputValue.slice(0, selectionStart - 1) + inputValue.slice(selectionStart);
                             }
@@ -958,7 +958,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
                             this._decimal.lastIndex = 0;
 
                             if (decimalLength) {
-                                this.input()?.nativeElement.setSelectionRange(selectionStart + 1, selectionStart + 1);
+                                this.input().nativeElement.setSelectionRange(selectionStart + 1, selectionStart + 1);
                             } else {
                                 newValueStr = inputValue.slice(0, selectionStart) + inputValue.slice(selectionStart + 1);
                             }
@@ -1258,7 +1258,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     }
 
     onInputClick() {
-        const currentValue = this.input()?.nativeElement.value;
+        const currentValue = this.input().nativeElement.value;
 
         if (!this.readonly && currentValue !== getSelection()) {
             this.initCursor();
@@ -1282,7 +1282,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     }
 
     updateValue(event: Event, valueStr: Nullable<string>, insertedValueStr: Nullable<string>, operation: Nullable<string>) {
-        let currentValue = this.input()?.nativeElement.value;
+        let currentValue = this.input().nativeElement.value;
         let newValue: any = null;
 
         if (valueStr != null) {
@@ -1297,7 +1297,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     handleOnInput(event: Event, currentValue: string, newValue: any) {
         if (this.isValueChanged(currentValue, newValue)) {
             (this.input() as ElementRef).nativeElement.value = this.formatValue(newValue);
-            this.input()?.nativeElement.setAttribute('aria-valuenow', newValue);
+            this.input().nativeElement.setAttribute('aria-valuenow', newValue);
             this.updateModel(event, newValue);
             this.onInput.emit({ originalEvent: event, value: newValue, formattedValue: currentValue });
         }

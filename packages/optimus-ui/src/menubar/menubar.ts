@@ -545,7 +545,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
 
     readonly menubutton = viewChild<ElementRef>('menubutton');
 
-    readonly rootmenu = viewChild<MenubarSub>('rootmenu');
+    readonly rootmenu = viewChild.required<MenubarSub>('rootmenu');
 
     mobileActive: boolean | undefined;
 
@@ -770,7 +770,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
             this.focusedItemInfo.set({ index, level, parentKey, item });
 
             this.dirty = !root;
-            focus(this.rootmenu()?.el.nativeElement);
+            focus(this.rootmenu().el.nativeElement);
         } else {
             if (grouped) {
                 this.onItemChange(event);
@@ -780,7 +780,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
                 this.changeFocusedItemIndex(originalEvent, rootProcessedItem ? rootProcessedItem.index : -1);
 
                 this.mobileActive = false;
-                focus(this.rootmenu()?.el.nativeElement);
+                focus(this.rootmenu().el.nativeElement);
             }
         }
     }
@@ -817,7 +817,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
 
     scrollInView(index: number = -1) {
         const id = index !== -1 ? `${this.id}_${index}` : this.focusedItemId;
-        const element = findSingle(this.rootmenu()?.el.nativeElement, `li[id="${id}"]`);
+        const element = findSingle(this.rootmenu().el.nativeElement, `li[id="${id}"]`);
 
         if (element) {
             element.scrollIntoView && element.scrollIntoView({ block: 'nearest', inline: 'nearest' });
@@ -837,7 +837,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
         this.focusedItemInfo.set({ index, level, parentKey, item });
 
         grouped && (this.dirty = true);
-        isFocus && focus(this.rootmenu()?.el.nativeElement);
+        isFocus && focus(this.rootmenu().el.nativeElement);
 
         if (type === 'hover' && this.queryMatches()) {
             return;
@@ -849,11 +849,11 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
     toggle(event: MouseEvent) {
         if (this.mobileActive) {
             this.mobileActive = false;
-            ZIndexUtils.clear(this.rootmenu()?.el.nativeElement);
+            ZIndexUtils.clear(this.rootmenu().el.nativeElement);
             this.hide();
         } else {
             this.mobileActive = true;
-            ZIndexUtils.set('menu', this.rootmenu()?.el.nativeElement, this.config.zIndex.menu);
+            ZIndexUtils.set('menu', this.rootmenu().el.nativeElement, this.config.zIndex.menu);
             setTimeout(() => {
                 this.show();
             }, 0);
@@ -873,14 +873,14 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
         this.activeItemPath.set([]);
         this.focusedItemInfo.set({ index: -1, level: 0, parentKey: '', item: null });
 
-        isFocus && focus(this.rootmenu()?.el.nativeElement);
+        isFocus && focus(this.rootmenu().el.nativeElement);
         this.dirty = false;
     }
 
     show() {
         const processedItem = this.findVisibleItem(this.findFirstFocusedItemIndex());
         this.focusedItemInfo.set({ index: this.findFirstFocusedItemIndex(), level: 0, parentKey: '', item: processedItem?.item });
-        focus(this.rootmenu()?.el.nativeElement);
+        focus(this.rootmenu().el.nativeElement);
     }
 
     onMenuMouseDown(event: any) {
@@ -1199,7 +1199,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
 
     onEnterKey(event: KeyboardEvent) {
         if (this.focusedItemInfo().index !== -1) {
-            const element = <any>findSingle(this.rootmenu()?.el.nativeElement, `li[id="${`${this.focusedItemId}`}"]`);
+            const element = <any>findSingle(this.rootmenu().el.nativeElement, `li[id="${`${this.focusedItemId}`}"]`);
             const anchorElement = element && (<any>findSingle(element, '[data-pc-section="itemlink"]') || findSingle(element, 'a,button'));
 
             anchorElement ? anchorElement.click() : element && element.click();
@@ -1248,7 +1248,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
             if (!this.outsideClickListener) {
                 this.outsideClickListener = this.renderer.listen(this.document, 'click', (event) => {
                     const rootmenu = this.rootmenu();
-                    const isOutsideContainer = rootmenu?.el.nativeElement !== event.target && !rootmenu?.el.nativeElement?.contains(event.target);
+                    const isOutsideContainer = rootmenu.el.nativeElement !== event.target && !rootmenu.el.nativeElement?.contains(event.target);
                     const menubutton = this.menubutton();
                     const isOutsideMenuButton = this.mobileActive && menubutton?.nativeElement !== event.target && !menubutton?.nativeElement?.contains(event.target);
 

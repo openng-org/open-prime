@@ -5,7 +5,6 @@ import { find, findSingle } from '@openng/optimus-ui-utils';
 import { MenuItem, SharedModule } from '@openng/optimus-ui/api';
 import { BaseComponent } from '@openng/optimus-ui/basecomponent';
 import { TooltipModule } from '@openng/optimus-ui/tooltip';
-import { Nullable } from '@openng/optimus-ui/ts-helpers';
 import { Subscription } from 'rxjs';
 import { StepsStyle } from './style/stepsstyle';
 
@@ -131,7 +130,7 @@ export class Steps extends BaseComponent {
      */
     @Output() activeIndexChange: EventEmitter<number> = new EventEmitter<number>();
 
-    readonly listViewChild = viewChild<Nullable<ElementRef>>('list');
+    readonly listViewChild = viewChild.required<ElementRef>('list');
 
     router = inject(Router);
 
@@ -194,7 +193,7 @@ export class Steps extends BaseComponent {
 
             case 'Tab':
                 if (i !== (this.activeIndex ?? -1)) {
-                    const siblings = <any>find(this.listViewChild()?.nativeElement, '[data-pc-section="menuitem"]');
+                    const siblings = <any>find(this.listViewChild().nativeElement, '[data-pc-section="menuitem"]');
                     siblings[i].children[0].tabIndex = '-1';
                     siblings[this.activeIndex ?? 0].children[0].tabIndex = '0';
                 }
@@ -249,13 +248,13 @@ export class Steps extends BaseComponent {
     }
 
     findFirstItem() {
-        const firstSibling = findSingle(this.listViewChild()?.nativeElement, '[data-pc-section="menuitem"]');
+        const firstSibling = findSingle(this.listViewChild().nativeElement, '[data-pc-section="menuitem"]');
 
         return firstSibling ? firstSibling.children[0] : null;
     }
 
     findLastItem() {
-        const siblings = find(this.listViewChild()?.nativeElement, '[data-pc-section="menuitem"]');
+        const siblings = find(this.listViewChild().nativeElement, '[data-pc-section="menuitem"]');
 
         return siblings ? siblings[siblings.length - 1].children[0] : null;
     }

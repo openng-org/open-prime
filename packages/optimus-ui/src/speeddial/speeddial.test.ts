@@ -1382,13 +1382,6 @@ describe('SpeedDial', () => {
             expect(speedDialInstance.visible).toBe(false);
         });
 
-        it('should handle missing container element gracefully', () => {
-            (speedDialInstance as any).container = () => undefined as any;
-
-            expect(() => {
-                speedDialInstance.isOutsideClicked(new Event('click'));
-            }).not.toThrow();
-        });
     });
 
     describe('Public Methods', () => {

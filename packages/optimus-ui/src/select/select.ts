@@ -796,7 +796,7 @@ export class Select extends BaseInput<SelectPassThrough> implements AfterViewIni
 
     readonly scroller = viewChild<Nullable<Scroller>>('scroller');
 
-    readonly overlayViewChild = viewChild<Nullable<Overlay>>('overlay');
+    readonly overlayViewChild = viewChild.required<Overlay>('overlay');
 
     readonly firstHiddenFocusableElementOnOverlay = viewChild<Nullable<ElementRef>>('firstHiddenFocusableEl');
 
@@ -1179,16 +1179,13 @@ export class Select extends BaseInput<SelectPassThrough> implements AfterViewIni
 
             this.zone.runOutsideAngular(() => {
                 setTimeout(() => {
-                    const overlayViewChild = this.overlayViewChild();
-                    if (overlayViewChild) {
-                        overlayViewChild.alignOverlay();
-                    }
+                    this.overlayViewChild().alignOverlay();
                 }, 1);
             });
         }
 
         if (this.selectedOptionUpdated && this.itemsWrapper) {
-            let selectedItem = <any>findSingle(this.overlayViewChild()?.overlayViewChild()?.nativeElement, 'li[data-p-selected="true"]');
+            let selectedItem = <any>findSingle(this.overlayViewChild().overlayViewChild()?.nativeElement, 'li[data-p-selected="true"]');
             if (selectedItem) {
                 scrollInView(this.itemsWrapper, selectedItem);
             }
@@ -1366,7 +1363,7 @@ export class Select extends BaseInput<SelectPassThrough> implements AfterViewIni
         const overlayViewChild = this.overlayViewChild();
         if (event.target.tagName === 'INPUT' || event.target.getAttribute('data-pc-section') === 'clearicon' || event.target.closest('[data-pc-section="clearicon"]')) {
             return;
-        } else if (!overlayViewChild || !overlayViewChild.el.nativeElement.contains(event.target)) {
+        } else if (!overlayViewChild.el.nativeElement.contains(event.target)) {
             this.overlayVisible ? this.hide(true) : this.show(true);
         }
 
@@ -1411,7 +1408,7 @@ export class Select extends BaseInput<SelectPassThrough> implements AfterViewIni
     }
 
     onOverlayBeforeEnter(event: any) {
-        this.itemsWrapper = <any>findSingle(this.overlayViewChild()?.overlayViewChild()?.nativeElement, this.virtualScroll ? '[data-pc-name="virtualscroller"]' : '[data-pc-section="listcontainer"]');
+        this.itemsWrapper = <any>findSingle(this.overlayViewChild().overlayViewChild()?.nativeElement, this.virtualScroll ? '[data-pc-name="virtualscroller"]' : '[data-pc-section="listcontainer"]');
         this.virtualScroll && this.scroller()?.setContentEl(this.itemsViewChild()?.nativeElement);
 
         if (this.options && this.options.length) {
@@ -1859,20 +1856,20 @@ export class Select extends BaseInput<SelectPassThrough> implements AfterViewIni
 
     onFirstHiddenFocus(event) {
         const focusInputViewChild = this.focusInputViewChild();
-        const focusableEl = event.relatedTarget === focusInputViewChild?.nativeElement ? getFirstFocusableElement(this.overlayViewChild()?.el?.nativeElement, ':not([data-p-hidden-focusable="true"])') : focusInputViewChild?.nativeElement;
+        const focusableEl = event.relatedTarget === focusInputViewChild?.nativeElement ? getFirstFocusableElement(this.overlayViewChild().el?.nativeElement, ':not([data-p-hidden-focusable="true"])') : focusInputViewChild?.nativeElement;
         focus(focusableEl);
     }
 
     onLastHiddenFocus(event) {
         const focusInputViewChild = this.focusInputViewChild();
         const focusableEl =
-            event.relatedTarget === focusInputViewChild?.nativeElement ? getLastFocusableElement(this.overlayViewChild()?.overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])') : focusInputViewChild?.nativeElement;
+            event.relatedTarget === focusInputViewChild?.nativeElement ? getLastFocusableElement(this.overlayViewChild().overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])') : focusInputViewChild?.nativeElement;
 
         focus(focusableEl);
     }
 
     hasFocusableElements() {
-        return getFocusableElements(this.overlayViewChild()?.overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])').length > 0;
+        return getFocusableElements(this.overlayViewChild().overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])').length > 0;
     }
 
     onBackspaceKey(event: KeyboardEvent, pressedInInputText = false) {
@@ -1930,7 +1927,7 @@ export class Select extends BaseInput<SelectPassThrough> implements AfterViewIni
         this.onFilter.emit({ originalEvent: event, filter: this._filterValue() });
         !this.virtualScrollerDisabled && this.scroller()?.scrollToIndex(0);
         setTimeout(() => {
-            this.overlayViewChild()?.alignOverlay();
+            this.overlayViewChild().alignOverlay();
         });
         this.cd.markForCheck();
     }

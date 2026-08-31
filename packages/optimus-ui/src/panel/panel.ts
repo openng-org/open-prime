@@ -342,17 +342,14 @@ export class Panel extends BaseComponent<PanelPassThrough> implements BlockableU
     }
 
     updateTabIndex() {
-        const contentWrapperViewChild = this.contentWrapperViewChild();
-        if (contentWrapperViewChild) {
-            const focusableElements = contentWrapperViewChild.nativeElement.querySelectorAll('input, button, select, a, textarea, [tabindex]');
-            focusableElements.forEach((element: HTMLElement) => {
-                if (this.collapsed) {
-                    element.setAttribute('tabindex', '-1');
-                } else {
-                    element.removeAttribute('tabindex');
-                }
-            });
-        }
+        const focusableElements = this.contentWrapperViewChild().nativeElement.querySelectorAll('input, button, select, a, textarea, [tabindex]');
+        focusableElements.forEach((element: HTMLElement) => {
+            if (this.collapsed) {
+                element.setAttribute('tabindex', '-1');
+            } else {
+                element.removeAttribute('tabindex');
+            }
+        });
     }
 
     onKeyDown(event: KeyboardEvent) {

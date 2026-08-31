@@ -929,11 +929,11 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
      */
     @Output() onSelectAllChange: EventEmitter<MultiSelectSelectAllChangeEvent> = new EventEmitter<MultiSelectSelectAllChangeEvent>();
 
-    readonly overlayViewChild = viewChild<Nullable<Overlay>>('overlay');
+    readonly overlayViewChild = viewChild.required<Overlay>('overlay');
 
     readonly filterInputChild = viewChild<Nullable<ElementRef>>('filterInput');
 
-    readonly focusInputViewChild = viewChild<Nullable<ElementRef>>('focusInput');
+    readonly focusInputViewChild = viewChild.required<ElementRef>('focusInput');
 
     readonly itemsViewChild = viewChild<Nullable<ElementRef>>('items');
 
@@ -1358,7 +1358,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         if (this.filtered) {
             this.zone.runOutsideAngular(() => {
                 setTimeout(() => {
-                    this.overlayViewChild()?.alignOverlay();
+                    this.overlayViewChild().alignOverlay();
                 }, 1);
             });
             this.filtered = false;
@@ -1419,7 +1419,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         this.updateModel(value, originalEvent);
         index !== -1 && this.focusedOptionIndex.set(index);
 
-        isFocus && focus(this.focusInputViewChild()?.nativeElement);
+        isFocus && focus(this.focusInputViewChild().nativeElement);
 
         this.onChange.emit({
             originalEvent: event,
@@ -1844,12 +1844,12 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
 
     onContainerClick(event: any) {
         const focusInputViewChild = this.focusInputViewChild();
-        if (this.$disabled() || this.loading || this.readonly || event.target?.isSameNode?.(focusInputViewChild?.nativeElement)) {
+        if (this.$disabled() || this.loading || this.readonly || event.target?.isSameNode?.(focusInputViewChild.nativeElement)) {
             return;
         }
 
         const overlayViewChild = this.overlayViewChild();
-        if (!overlayViewChild || !overlayViewChild.el.nativeElement.contains(event.target)) {
+        if (!overlayViewChild.el.nativeElement.contains(event.target)) {
             if (this.clickInProgress) {
                 return;
             }
@@ -1862,7 +1862,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
 
             this.overlayVisible ? this.hide(true) : this.show(true);
         }
-        focusInputViewChild?.nativeElement.focus({ preventScroll: true });
+        focusInputViewChild.nativeElement.focus({ preventScroll: true });
         this.onClick.emit(event);
         this.cd.detectChanges();
     }
@@ -1870,7 +1870,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     onFirstHiddenFocus(event) {
         const focusInputViewChild = this.focusInputViewChild();
         const focusableEl =
-            event.relatedTarget === focusInputViewChild?.nativeElement ? getFirstFocusableElement(this.overlayViewChild()?.overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])') : focusInputViewChild?.nativeElement;
+            event.relatedTarget === focusInputViewChild.nativeElement ? getFirstFocusableElement(this.overlayViewChild().overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])') : focusInputViewChild.nativeElement;
 
         focus(focusableEl);
     }
@@ -1901,14 +1901,14 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
 
         !this.virtualScrollerDisabled && this.scroller()?.scrollToIndex(0);
         setTimeout(() => {
-            this.overlayViewChild()?.alignOverlay();
+            this.overlayViewChild().alignOverlay();
         });
     }
 
     onLastHiddenFocus(event) {
         const focusInputViewChild = this.focusInputViewChild();
         const focusableEl =
-            event.relatedTarget === focusInputViewChild?.nativeElement ? getLastFocusableElement(this.overlayViewChild()?.overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])') : focusInputViewChild?.nativeElement;
+            event.relatedTarget === focusInputViewChild.nativeElement ? getLastFocusableElement(this.overlayViewChild().overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])') : focusInputViewChild.nativeElement;
 
         focus(focusableEl);
     }
@@ -2021,7 +2021,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         this.focusedOptionIndex.set(focusedOptionIndex);
 
         if (isFocus) {
-            focus(this.focusInputViewChild()?.nativeElement);
+            focus(this.focusInputViewChild().nativeElement);
         }
 
         this.cd.markForCheck();
@@ -2042,12 +2042,12 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
             unblockBodyScroll();
         }
 
-        isFocus && focus(this.focusInputViewChild()?.nativeElement);
+        isFocus && focus(this.focusInputViewChild().nativeElement);
         this.cd.markForCheck();
     }
 
     onOverlayBeforeEnter(event: any) {
-        this.itemsWrapper = <any>findSingle(this.overlayViewChild()?.overlayViewChild()?.nativeElement, this.virtualScroll ? '[data-pc-name="virtualscroller"]' : '[data-pc-section="listcontainer"]');
+        this.itemsWrapper = <any>findSingle(this.overlayViewChild().overlayViewChild()?.nativeElement, this.virtualScroll ? '[data-pc-name="virtualscroller"]' : '[data-pc-section="listcontainer"]');
         this.virtualScroll && this.scroller()?.setContentEl(this.itemsViewChild()?.nativeElement);
 
         if (this.options && this.options.length) {
@@ -2214,7 +2214,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     }
 
     hasFocusableElements() {
-        return getFocusableElements(this.overlayViewChild()?.overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])').length > 0;
+        return getFocusableElements(this.overlayViewChild().overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])').length > 0;
     }
 
     hasFilter() {

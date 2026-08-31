@@ -30,7 +30,6 @@ import { BaseEditableHolder } from '@openng/optimus-ui/baseeditableholder';
 import { Bind, BindModule } from '@openng/optimus-ui/bind';
 import { CheckIcon } from '@openng/optimus-ui/icons/check';
 import { MinusIcon } from '@openng/optimus-ui/icons/minus';
-import { Nullable } from '@openng/optimus-ui/ts-helpers';
 import { CheckboxChangeEvent, CheckboxIconTemplateContext, CheckboxPassThrough } from '@openng/optimus-ui/types/checkbox';
 import { CheckboxStyle } from './style/checkboxstyle';
 
@@ -215,7 +214,7 @@ export class Checkbox extends BaseEditableHolder<CheckboxPassThrough> {
      */
     @Output() onBlur: EventEmitter<Event> = new EventEmitter<Event>();
 
-    readonly inputViewChild = viewChild<Nullable<ElementRef>>('input');
+    readonly inputViewChild = viewChild.required<ElementRef>('input');
 
     get checked() {
         return this._indeterminate() ? false : this.binary ? this.modelValue() === this.trueValue : contains(this.value, this.modelValue());
@@ -318,7 +317,7 @@ export class Checkbox extends BaseEditableHolder<CheckboxPassThrough> {
     }
 
     focus() {
-        this.inputViewChild()?.nativeElement.focus();
+        this.inputViewChild().nativeElement.focus();
     }
 
     /**

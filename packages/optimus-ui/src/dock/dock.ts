@@ -8,7 +8,6 @@ import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent
 import { Bind } from '@openng/optimus-ui/bind';
 import { Ripple } from '@openng/optimus-ui/ripple';
 import { TooltipModule } from '@openng/optimus-ui/tooltip';
-import { Nullable } from '@openng/optimus-ui/ts-helpers';
 import { DockItemTemplateContext, DockPassThrough } from '@openng/optimus-ui/types/dock';
 import { DockStyle } from './style/dockstyle';
 
@@ -185,7 +184,7 @@ export class Dock extends BaseComponent<DockPassThrough> {
      */
     @Output() onBlur: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
 
-    readonly listViewChild = viewChild<Nullable<ElementRef>>('list');
+    readonly listViewChild = viewChild.required<ElementRef>('list');
 
     currentIndex: number;
 
@@ -352,25 +351,25 @@ export class Dock extends BaseComponent<DockPassThrough> {
     }
 
     onEndKey() {
-        this.changeFocusedOptionIndex(find(this.listViewChild()?.nativeElement, 'li[data-pc-section="item"][data-p-disabled="false"]').length - 1);
+        this.changeFocusedOptionIndex(find(this.listViewChild().nativeElement, 'li[data-pc-section="item"][data-p-disabled="false"]').length - 1);
     }
 
     onSpaceKey() {
-        const element = <HTMLElement>findSingle(this.listViewChild()?.nativeElement, `li[id="${`${this.focusedOptionIndex}`}"]`);
+        const element = <HTMLElement>findSingle(this.listViewChild().nativeElement, `li[id="${`${this.focusedOptionIndex}`}"]`);
         const anchorElement = element && <HTMLElement>findSingle(element, 'a,button');
 
         anchorElement ? anchorElement.click() : element && element.click();
     }
 
     findNextOptionIndex(index) {
-        const menuitems = find(this.listViewChild()?.nativeElement, 'li[data-pc-section="item"][data-p-disabled="false"]');
+        const menuitems = find(this.listViewChild().nativeElement, 'li[data-pc-section="item"][data-p-disabled="false"]');
         const matchedOptionIndex = [...menuitems].findIndex((link) => link.id === index);
 
         return matchedOptionIndex > -1 ? matchedOptionIndex + 1 : 0;
     }
 
     changeFocusedOptionIndex(index) {
-        const menuitems = <any>find(this.listViewChild()?.nativeElement, 'li[data-pc-section="item"][data-p-disabled="false"]');
+        const menuitems = <any>find(this.listViewChild().nativeElement, 'li[data-pc-section="item"][data-p-disabled="false"]');
 
         let order = index >= menuitems.length ? menuitems.length - 1 : index < 0 ? 0 : index;
 
@@ -378,7 +377,7 @@ export class Dock extends BaseComponent<DockPassThrough> {
     }
 
     findPrevOptionIndex(index) {
-        const menuitems = find(this.listViewChild()?.nativeElement, 'li[data-pc-section="item"][data-p-disabled="false"]');
+        const menuitems = find(this.listViewChild().nativeElement, 'li[data-pc-section="item"][data-p-disabled="false"]');
         const matchedOptionIndex = [...menuitems].findIndex((link) => link.id === index);
 
         return matchedOptionIndex > -1 ? matchedOptionIndex - 1 : 0;

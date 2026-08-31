@@ -704,9 +704,9 @@ export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
 
     readonly filterViewChild = viewChild<Nullable<ElementRef>>('filter');
 
-    readonly lastHiddenFocusableElement = viewChild<Nullable<ElementRef>>('lastHiddenFocusableElement');
+    readonly lastHiddenFocusableElement = viewChild.required<ElementRef>('lastHiddenFocusableElement');
 
-    readonly firstHiddenFocusableElement = viewChild<Nullable<ElementRef>>('firstHiddenFocusableElement');
+    readonly firstHiddenFocusableElement = viewChild.required<ElementRef>('firstHiddenFocusableElement');
 
     readonly scroller = viewChild<Nullable<Scroller>>('scroller');
 
@@ -1161,8 +1161,8 @@ export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
         const firstFocusableEl = getFirstFocusableElement(this.el?.nativeElement, ':not([data-p-hidden-focusable="true"])');
         const lastHiddenFocusableElement = this.lastHiddenFocusableElement();
         const firstHiddenFocusableElement = this.firstHiddenFocusableElement();
-        lastHiddenFocusableElement?.nativeElement && (lastHiddenFocusableElement.nativeElement.tabIndex = isEmpty(firstFocusableEl) ? -1 : undefined);
-        firstHiddenFocusableElement?.nativeElement && (firstHiddenFocusableElement.nativeElement.tabIndex = -1);
+        lastHiddenFocusableElement.nativeElement.tabIndex = isEmpty(firstFocusableEl) ? -1 : undefined;
+        firstHiddenFocusableElement.nativeElement.tabIndex = -1;
     }
 
     onLastHiddenFocus(event: FocusEvent) {
@@ -1172,19 +1172,17 @@ export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
             const firstFocusableEl = <any>getFirstFocusableElement(this.el?.nativeElement, ':not([data-p-hidden-focusable="true"])');
 
             focus(firstFocusableEl);
-            const firstHiddenFocusableElement = this.firstHiddenFocusableElement();
-            firstHiddenFocusableElement?.nativeElement && (firstHiddenFocusableElement.nativeElement.tabIndex = undefined);
+            this.firstHiddenFocusableElement().nativeElement.tabIndex = undefined;
         } else {
-            focus(this.firstHiddenFocusableElement()?.nativeElement);
+            focus(this.firstHiddenFocusableElement().nativeElement);
         }
-        const lastHiddenFocusableElement = this.lastHiddenFocusableElement();
-        lastHiddenFocusableElement?.nativeElement && (lastHiddenFocusableElement.nativeElement.tabIndex = -1);
+        this.lastHiddenFocusableElement().nativeElement.tabIndex = -1;
     }
 
     onFocusout(event: FocusEvent) {
         const lastHiddenFocusableElement = this.lastHiddenFocusableElement();
         const firstHiddenFocusableElement = this.firstHiddenFocusableElement();
-        if (!this.el.nativeElement.contains(event.relatedTarget) && lastHiddenFocusableElement && firstHiddenFocusableElement) {
+        if (!this.el.nativeElement.contains(event.relatedTarget)) {
             firstHiddenFocusableElement.nativeElement.tabIndex = lastHiddenFocusableElement.nativeElement.tabIndex = undefined;
             this.scrollerTabIndex = '0';
         }

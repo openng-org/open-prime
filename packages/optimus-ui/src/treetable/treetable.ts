@@ -2591,9 +2591,9 @@ export class TTScrollableView extends BaseComponent {
 
     @Input({ transform: booleanAttribute }) frozen: boolean | undefined;
 
-    readonly scrollHeaderViewChild = viewChild<Nullable<ElementRef>>('scrollHeader');
+    readonly scrollHeaderViewChild = viewChild.required<ElementRef>('scrollHeader');
 
-    readonly scrollHeaderBoxViewChild = viewChild<Nullable<ElementRef>>('scrollHeaderBox');
+    readonly scrollHeaderBoxViewChild = viewChild.required<ElementRef>('scrollHeaderBox');
 
     readonly scrollBodyViewChild = viewChild<Nullable<ElementRef>>('scrollBody');
 
@@ -2646,10 +2646,7 @@ export class TTScrollableView extends BaseComponent {
 
                 if (this.scrollHeight) {
                     let scrollBarWidth = calculateScrollbarWidth();
-                    const scrollHeaderBoxViewChild = this.scrollHeaderBoxViewChild();
-                    if (scrollHeaderBoxViewChild?.nativeElement) {
-                        scrollHeaderBoxViewChild.nativeElement.style.paddingRight = scrollBarWidth + 'px';
-                    }
+                    this.scrollHeaderBoxViewChild().nativeElement.style.paddingRight = scrollBarWidth + 'px';
 
                     const scrollFooterBoxViewChild = this.scrollFooterBoxViewChild();
                     if (scrollFooterBoxViewChild && scrollFooterBoxViewChild.nativeElement) {
@@ -2670,10 +2667,7 @@ export class TTScrollableView extends BaseComponent {
     bindEvents() {
         if (isPlatformBrowser(this.platformId)) {
             this.zone.runOutsideAngular(() => {
-                const scrollHeaderViewChild = this.scrollHeaderViewChild();
-                if (scrollHeaderViewChild && scrollHeaderViewChild.nativeElement) {
-                    this.headerScrollListener = this.renderer.listen(this.scrollHeaderBoxViewChild()?.nativeElement, 'scroll', this.onHeaderScroll.bind(this));
-                }
+                this.headerScrollListener = this.renderer.listen(this.scrollHeaderBoxViewChild().nativeElement, 'scroll', this.onHeaderScroll.bind(this));
 
                 const scrollFooterViewChild = this.scrollFooterViewChild();
                 if (scrollFooterViewChild && scrollFooterViewChild.nativeElement) {
@@ -2693,12 +2687,9 @@ export class TTScrollableView extends BaseComponent {
 
     unbindEvents() {
         if (isPlatformBrowser(this.platformId)) {
-            const scrollHeaderViewChild = this.scrollHeaderViewChild();
-            if (scrollHeaderViewChild && scrollHeaderViewChild.nativeElement) {
-                if (this.headerScrollListener) {
-                    this.headerScrollListener();
-                    this.headerScrollListener = null;
-                }
+            if (this.headerScrollListener) {
+                this.headerScrollListener();
+                this.headerScrollListener = null;
             }
 
             const scrollFooterViewChild = this.scrollFooterViewChild();
@@ -2728,7 +2719,7 @@ export class TTScrollableView extends BaseComponent {
     }
 
     onHeaderScroll() {
-        const scrollLeft = this.scrollHeaderViewChild()?.nativeElement.scrollLeft;
+        const scrollLeft = this.scrollHeaderViewChild().nativeElement.scrollLeft;
 
         (this.scrollBodyViewChild() as ElementRef).nativeElement.scrollLeft = scrollLeft;
 
@@ -2744,10 +2735,7 @@ export class TTScrollableView extends BaseComponent {
         const scrollLeft = this.scrollFooterViewChild()?.nativeElement.scrollLeft;
         (this.scrollBodyViewChild() as ElementRef).nativeElement.scrollLeft = scrollLeft;
 
-        const scrollHeaderViewChild = this.scrollHeaderViewChild();
-        if (scrollHeaderViewChild && scrollHeaderViewChild.nativeElement) {
-            scrollHeaderViewChild.nativeElement.scrollLeft = scrollLeft;
-        }
+        this.scrollHeaderViewChild().nativeElement.scrollLeft = scrollLeft;
 
         this.preventBodyScrollPropagation = true;
     }
@@ -2758,10 +2746,7 @@ export class TTScrollableView extends BaseComponent {
             return;
         }
 
-        const scrollHeaderViewChild = this.scrollHeaderViewChild();
-        if (scrollHeaderViewChild && scrollHeaderViewChild.nativeElement) {
-            (this.scrollHeaderBoxViewChild() as ElementRef).nativeElement.style.marginLeft = -1 * event.target.scrollLeft + 'px';
-        }
+        (this.scrollHeaderBoxViewChild() as ElementRef).nativeElement.style.marginLeft = -1 * event.target.scrollLeft + 'px';
 
         const scrollFooterViewChild = this.scrollFooterViewChild();
         if (scrollFooterViewChild && scrollFooterViewChild.nativeElement) {

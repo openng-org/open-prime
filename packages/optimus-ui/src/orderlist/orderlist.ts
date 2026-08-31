@@ -698,7 +698,7 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
             this.movedUp = true;
             this.onReorder.emit(this.selection);
         }
-        this.listViewChild()?.cd?.markForCheck();
+        this.listViewChild().cd?.markForCheck();
     }
 
     moveTop() {
@@ -729,7 +729,7 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
                 this.listViewChild().scrollInView(0);
             });
         }
-        this.listViewChild()?.cd?.markForCheck();
+        this.listViewChild().cd?.markForCheck();
     }
 
     moveDown() {
@@ -758,7 +758,7 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
             this.onReorder.emit(this.selection);
         }
 
-        this.listViewChild()?.cd?.markForCheck();
+        this.listViewChild().cd?.markForCheck();
     }
 
     moveBottom() {
@@ -784,9 +784,9 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
             }
 
             this.onReorder.emit(this.selection);
-            this.listViewChild()?.scrollInView(this.value?.length ? this.value.length - 1 : 0);
+            this.listViewChild().scrollInView(this.value?.length ? this.value.length - 1 : 0);
         }
-        this.listViewChild()?.cd?.markForCheck();
+        this.listViewChild().cd?.markForCheck();
     }
 
     onDrop(event: CdkDragDrop<string[]>) {

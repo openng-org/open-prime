@@ -101,9 +101,9 @@ export class TabList extends BaseComponent<TabListPassThrough> {
 
     readonly content = viewChild.required<ElementRef<HTMLDivElement>>('content');
 
-    readonly prevButton = viewChild.required<ElementRef<HTMLButtonElement>>('prevButton');
+    readonly prevButton = viewChild<ElementRef<HTMLButtonElement>>('prevButton');
 
-    readonly nextButton = viewChild.required<ElementRef<HTMLButtonElement>>('nextButton');
+    readonly nextButton = viewChild<ElementRef<HTMLButtonElement>>('nextButton');
 
     readonly inkbar = viewChild.required<ElementRef<HTMLSpanElement>>('inkbar');
 
@@ -199,7 +199,7 @@ export class TabList extends BaseComponent<TabListPassThrough> {
     }
 
     updateButtonState() {
-        const _content = this.content()?.nativeElement;
+        const _content = this.content().nativeElement;
         const _list = this.el?.nativeElement;
 
         const { scrollWidth, offsetWidth } = _content;
@@ -211,15 +211,13 @@ export class TabList extends BaseComponent<TabListPassThrough> {
     }
 
     updateInkBar() {
-        const _content = this.content()?.nativeElement;
-        const _inkbar = this.inkbar()?.nativeElement;
-        const _tabs = this.tabs()?.nativeElement;
+        const _content = this.content().nativeElement;
+        const _inkbar = this.inkbar().nativeElement;
+        const _tabs = this.tabs().nativeElement;
 
         const activeTab = findSingle(_content, '[data-pc-name="tab"][data-p-active="true"]');
-        if (_inkbar) {
-            _inkbar.style.width = getOuterWidth(activeTab) + 'px';
-            _inkbar.style.left = <any>getOffset(activeTab).left - <any>getOffset(_tabs).left + 'px';
-        }
+        _inkbar.style.width = getOuterWidth(activeTab) + 'px';
+        _inkbar.style.left = <any>getOffset(activeTab).left - <any>getOffset(_tabs).left + 'px';
     }
 
     getVisibleButtonWidths() {

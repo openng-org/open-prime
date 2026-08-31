@@ -1041,13 +1041,10 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
     onAfterViewChecked() {
         this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
         //Use timeouts as since Angular 4.2, AfterViewChecked is broken and not called after panel is updated
-        if (this.suggestionsUpdated && this.overlayViewChild()) {
+        if (this.suggestionsUpdated) {
             this.zone.runOutsideAngular(() => {
                 setTimeout(() => {
-                    const overlayViewChild = this.overlayViewChild();
-                    if (overlayViewChild) {
-                        overlayViewChild.alignOverlay();
-                    }
+                    this.overlayViewChild().alignOverlay();
                 }, 1);
                 this.suggestionsUpdated = false;
             });
@@ -1179,8 +1176,7 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
             return;
         }
 
-        const overlayViewChild = this.overlayViewChild();
-        if (!overlayViewChild || !overlayViewChild.overlayViewChild()?.nativeElement.contains(event.target)) {
+        if (!this.overlayViewChild().overlayViewChild()?.nativeElement.contains(event.target)) {
             focus(this.inputEL()?.nativeElement);
         }
     }
