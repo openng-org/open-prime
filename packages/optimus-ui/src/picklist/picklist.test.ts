@@ -17,6 +17,8 @@ import {
 } from '@openng/optimus-ui/types/picklist';
 import { PickList } from './picklist';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { SharedModule } from '@openng/optimus-ui/api';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -1857,5 +1859,64 @@ describe('PickList', () => {
                 });
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [PickList, SharedModule],
+    template: `
+        <p-picklist [source]="src" [target]="tgt" filterBy="name">
+            <ng-template #sourceFilter>sf</ng-template>
+            <ng-template #targetFilter>tf</ng-template>
+            <ng-template #emptymessagesource>ems</ng-template>
+            <ng-template #emptyfiltermessagesource>efms</ng-template>
+            <ng-template #emptymessagetarget>emt</ng-template>
+            <ng-template #emptyfiltermessagetarget>efmt</ng-template>
+            <ng-template #moveupicon>u</ng-template>
+            <ng-template #movetopicon>t</ng-template>
+            <ng-template #movedownicon>d</ng-template>
+            <ng-template #movebottomicon>b</ng-template>
+            <ng-template #movetotargeticon>mt</ng-template>
+            <ng-template #movealltotargeticon>mat</ng-template>
+            <ng-template #movetosourceicon>ms</ng-template>
+            <ng-template #movealltosourceicon>mas</ng-template>
+            <ng-template #targetfiltericon>tfi</ng-template>
+            <ng-template #sourcefiltericon>sfi</ng-template>
+            <ng-template pTemplate="item">i</ng-template>
+        </p-picklist>
+    `
+})
+class PickListQueryApiHostComponent {
+    src = [{ name: 'a' }];
+    tgt = [{ name: 'b' }];
+}
+
+describe('PickList Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [PickListQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(PickListQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(PickList)).componentInstance;
+
+        for (const hook of ['sourceFilterTemplate','targetFilterTemplate','emptyMessageSourceTemplate','emptyFilterMessageSourceTemplate','emptyMessageTargetTemplate','emptyFilterMessageTargetTemplate','moveUpIconTemplate','moveTopIconTemplate','moveDownIconTemplate','moveBottomIconTemplate','moveToTargetIconTemplate','moveAllToTargetIconTemplate','moveToSourceIconTemplate','moveAllToSourceIconTemplate','targetFilterIconTemplate','sourceFilterIconTemplate']) {
+            expect((instance as any)[hook](), `${hook} should resolve`).toBeDefined();
+        }
+        expect(instance.listViewSourceChild()).toBeDefined();
+        expect(instance.listViewTargetChild()).toBeDefined();
+        // #sourceFilter / #targetFilter elements no longer exist in the PickList template
+        // (filtering is delegated to the inner listboxes), so these queries never resolve
+        expect(instance.sourceFilterViewChild()).toBeUndefined();
+        expect(instance.targetFilterViewChild()).toBeUndefined();
+        expect(instance.templates().some((t: any) => t.getType() === 'item')).toBe(true);
     });
 });

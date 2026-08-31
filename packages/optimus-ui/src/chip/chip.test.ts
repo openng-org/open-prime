@@ -7,6 +7,8 @@ import { SharedModule } from '@openng/optimus-ui/api';
 import { ChipProps } from '@openng/optimus-ui/types/chip';
 import { Chip, ChipModule } from './chip';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { PrimeTemplate } from '@openng/optimus-ui/api';
 const TEST_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 const TEST_IMAGE_2 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
 
@@ -1438,5 +1440,41 @@ describe('Chip', () => {
                 expect(hookCalled).toBe(true);
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Chip, PrimeTemplate],
+    template: `
+        <p-chip>
+            <ng-template pTemplate="header">QUERY-HEADER</ng-template>
+            <ng-template pTemplate="footer">QUERY-FOOTER</ng-template>
+        </p-chip>
+    `
+})
+class ChipQueryApiHostComponent {}
+
+describe('Chip Signal Query API', () => {
+    it('should collect projected PrimeTemplates via the templates contentChildren query', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [ChipQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(ChipQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const instance = fixture.debugElement.query(By.directive(Chip)).componentInstance;
+        const templates = instance.templates();
+        expect(Array.isArray(templates)).toBe(true);
+        expect(templates.length).toBe(2);
+        expect(templates.map((t: any) => t.getType())).toEqual(['header', 'footer']);
+        expect(templates[0].template).toBeDefined();
     });
 });

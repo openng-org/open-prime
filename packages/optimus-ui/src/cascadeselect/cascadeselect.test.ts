@@ -2157,3 +2157,37 @@ describe('CascadeSelect', () => {
         });
     });
 });
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [CascadeSelect, SharedModule],
+    template: `
+        <p-cascadeselect [options]="opts">
+            <ng-template pTemplate="value">v</ng-template>
+        </p-cascadeselect>
+    `
+})
+class CascadeSelectQueryApiHostComponent {
+    opts = [];
+}
+
+describe('CascadeSelect Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [CascadeSelectQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(CascadeSelectQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(CascadeSelect)).componentInstance;
+
+        expect(instance.templates().length).toBeGreaterThan(0);
+        expect(instance.panelViewChild()).toBeUndefined();
+    });
+});

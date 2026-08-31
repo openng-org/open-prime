@@ -2070,3 +2070,36 @@ describe('InputMaskDirective', () => {
         });
     });
 });
+
+// ---------------------------------------------------------------------------
+// Initial form value (guards the pre-view-init write path; the decorator-era
+// query used static: true — this pins the behavior post-migration)
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [InputMask, ReactiveFormsModule],
+    template: `
+        <form [formGroup]="form">
+            <p-inputmask mask="999-999" formControlName="code"></p-inputmask>
+        </form>
+    `
+})
+class InputMaskInitialValueHostComponent {
+    form = new FormGroup({ code: new FormControl('123456') });
+}
+
+describe('InputMask initial form value', () => {
+    it('should render the masked initial reactive-form value into the input element', async () => {
+        TestBed.configureTestingModule({
+            imports: [InputMaskInitialValueHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(InputMaskInitialValueHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const input = fixture.debugElement.query(By.css('input')).nativeElement as HTMLInputElement;
+        expect(input.value).toBe('123-456');
+    });
+});

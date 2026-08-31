@@ -5,6 +5,8 @@ import { By } from '@angular/platform-browser';
 import { MeterItem } from '@openng/optimus-ui/types/metergroup';
 import { MeterGroup, MeterGroupLabel, MeterGroupModule } from './metergroup';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { PrimeTemplate } from '@openng/optimus-ui/api';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -924,5 +926,43 @@ describe('MeterGroup', () => {
 
             expect(totalPercent).toBe(Math.round((totalUsed / totalStorage) * 100));
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [MeterGroup, PrimeTemplate],
+    template: `
+        <p-metergroup [value]="meterValue">
+            <ng-template pTemplate="header">QUERY-HEADER</ng-template>
+            <ng-template pTemplate="footer">QUERY-FOOTER</ng-template>
+        </p-metergroup>
+    `
+})
+class MeterGroupQueryApiHostComponent {
+    meterValue = [{ label: 'm', value: 10, color: 'red' }];
+}
+
+describe('MeterGroup Signal Query API', () => {
+    it('should collect projected PrimeTemplates via the templates contentChildren query', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [MeterGroupQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(MeterGroupQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const instance = fixture.debugElement.query(By.directive(MeterGroup)).componentInstance;
+        const templates = instance.templates();
+        expect(Array.isArray(templates)).toBe(true);
+        expect(templates.length).toBe(2);
+        expect(templates.map((t: any) => t.getType())).toEqual(['header', 'footer']);
+        expect(templates[0].template).toBeDefined();
     });
 });

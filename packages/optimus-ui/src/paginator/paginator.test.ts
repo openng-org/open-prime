@@ -10,6 +10,8 @@ import { Ripple } from '@openng/optimus-ui/ripple';
 import { SharedModule } from '@openng/optimus-ui/api';
 import { PaginatorState } from '@openng/optimus-ui/types/paginator';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { PrimeTemplate } from '@openng/optimus-ui/api';
 // Test component for basic paginator functionality
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -1440,3 +1442,39 @@ describe('Paginator inside a parent form', () => {
 class TestFormIsolationPaginatorComponent {
     form = new FormGroup({ value: new FormControl(1) });
 }
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Paginator, PrimeTemplate],
+    template: `
+        <p-paginator [rows]="10" [totalRecords]="100">
+            <ng-template pTemplate="header">QUERY-HEADER</ng-template>
+            <ng-template pTemplate="footer">QUERY-FOOTER</ng-template>
+        </p-paginator>
+    `
+})
+class PaginatorQueryApiHostComponent {}
+
+describe('Paginator Signal Query API', () => {
+    it('should collect projected PrimeTemplates via the templates contentChildren query', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [PaginatorQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(PaginatorQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const instance = fixture.debugElement.query(By.directive(Paginator)).componentInstance;
+        const templates = instance.templates();
+        expect(Array.isArray(templates)).toBe(true);
+        expect(templates.length).toBe(2);
+        expect(templates.map((t: any) => t.getType())).toEqual(['header', 'footer']);
+        expect(templates[0].template).toBeDefined();
+    });
+});

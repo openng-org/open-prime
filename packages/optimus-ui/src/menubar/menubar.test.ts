@@ -6,6 +6,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { MenuItem, SharedModule } from '@openng/optimus-ui/api';
 import { Menubar, MenubarSub } from './menubar';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -1403,5 +1404,34 @@ describe('Menubar', () => {
 
             expect(hookCalled).toBe(true);
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Menubar, SharedModule],
+    template: ` <p-menubar [model]="model"> </p-menubar> `
+})
+class MenubarQueryApiHostComponent {
+    model = [{ label: 'a' }];
+}
+
+describe('Menubar Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [MenubarQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(MenubarQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(Menubar)).componentInstance;
+
+        expect(instance.menubutton()).toBeDefined();
     });
 });

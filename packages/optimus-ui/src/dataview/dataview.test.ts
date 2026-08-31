@@ -5,6 +5,8 @@ import { CommonModule } from '@angular/common';
 import { DataView } from './dataview';
 import { PaginatorModule } from '@openng/optimus-ui/paginator';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { SharedModule } from '@openng/optimus-ui/api';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -1758,3 +1760,42 @@ class TestDynamicDataViewComponent {
         }, 500);
     }
 }
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [DataView, SharedModule],
+    template: `
+        <p-dataview [value]="items">
+            <p-header>H</p-header>
+            <p-footer>F</p-footer>
+            <ng-template #paginatordropdownitem let-item>{{ item?.label }}</ng-template>
+            <ng-template #loadingicon>li</ng-template>
+        </p-dataview>
+    `
+})
+class DataViewQueryApiHostComponent {
+    items = [];
+}
+
+describe('DataView Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [DataViewQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(DataViewQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(DataView)).componentInstance;
+
+        expect(instance.paginatordropdownitem()).toBeDefined();
+        expect(instance.loadingicon()).toBeDefined();
+        expect(instance.header()).toBeDefined();
+        expect(instance.footer()).toBeDefined();
+    });
+});

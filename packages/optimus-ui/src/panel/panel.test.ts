@@ -7,6 +7,7 @@ import { MinusIcon, PlusIcon } from '@openng/optimus-ui/icons';
 import { PanelAfterToggleEvent, PanelBeforeToggleEvent } from '@openng/optimus-ui/types/panel';
 import { Panel } from './panel';
 
+import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -1375,5 +1376,43 @@ describe('Panel', () => {
                 expect(footerEl).toBeFalsy();
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Panel, SharedModule],
+    template: `
+        <p-panel>
+            <p-footer>F</p-footer>
+            <ng-template pTemplate="header">QUERY-HEADER</ng-template>
+            <ng-template pTemplate="footer">QUERY-FOOTER</ng-template>
+        </p-panel>
+    `
+})
+class PanelQueryApiHostComponent {}
+
+describe('Panel Signal Query API', () => {
+    it('should collect projected PrimeTemplates via the templates contentChildren query', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [PanelQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(PanelQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const instance = fixture.debugElement.query(By.directive(Panel)).componentInstance;
+        const templates = instance.templates();
+        expect(Array.isArray(templates)).toBe(true);
+        expect(templates.length).toBe(2);
+        expect(templates.map((t: any) => t.getType())).toEqual(['header', 'footer']);
+        expect(templates[0].template).toBeDefined();
+        expect(instance.footerFacet()).toBeDefined();
     });
 });

@@ -8,6 +8,7 @@ import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { provideOptimus } from '@openng/optimus-ui/config';
 import type { EditorBlurEvent, EditorChangeEvent, EditorFocusEvent, EditorInitEvent, EditorSelectionChangeEvent, EditorTextChangeEvent } from '@openng/optimus-ui/types/editor';
 import { Editor } from './editor';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 // Test Components for different scenarios
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -1319,5 +1320,38 @@ describe('Editor', () => {
                 expect(hookEvents.some((e) => e.hook === 'onAfterViewInit')).toBe(true);
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Editor, SharedModule],
+    template: `
+        <p-editor>
+            <p-header>T</p-header>
+            <ng-template pTemplate="header">h</ng-template>
+        </p-editor>
+    `
+})
+class EditorQueryApiHostComponent {}
+
+describe('Editor Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [EditorQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(EditorQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(Editor)).componentInstance;
+
+        expect(instance.toolbar()).toBeDefined();
+        expect(instance.templates().length).toBeGreaterThan(0);
     });
 });

@@ -3,10 +3,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 
-import { TreeNode } from '@openng/optimus-ui/api';
+import { SharedModule, TreeNode } from '@openng/optimus-ui/api';
 import { provideOptimus } from '@openng/optimus-ui/config';
 import { of } from 'rxjs';
-import { TreeTable, TreeTableModule } from './treetable';
+import { TreeTable, TreeTableModule, TTScrollableView } from './treetable';
 
 describe('TreeTable', () => {
     let component: TestBasicTreeTableComponent;
@@ -3858,5 +3858,178 @@ describe('TreeTable Inline PT', () => {
 
         const host = fixture.nativeElement.querySelector('p-treetable');
         expect(host?.classList.contains('INLINE_HOST_CLASS')).toBe(true);
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [TreeTableModule, SharedModule],
+    template: `
+        <p-treetable [value]="nodes" [resizableColumns]="true" [reorderableColumns]="true">
+            <ng-template #header>
+                <tr>
+                    <th>Name</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-rowNode let-rowData="rowData">
+                <tr>
+                    <td>{{ rowData.name }}</td>
+                </tr>
+            </ng-template>
+            <ng-template #colgroup>
+                <colgroup>
+                    <col />
+                </colgroup>
+            </ng-template>
+            <ng-template #paginatorleft>L</ng-template>
+            <ng-template #paginatorright>R</ng-template>
+            <ng-template #paginatordropdownitem let-item>{{ item?.label }}</ng-template>
+            <ng-template #frozenheader>
+                <tr>
+                    <th>fh</th>
+                </tr>
+            </ng-template>
+            <ng-template #frozenbody>
+                <tr>
+                    <td>fb</td>
+                </tr>
+            </ng-template>
+            <ng-template #frozenfooter>
+                <tr>
+                    <td>ff</td>
+                </tr>
+            </ng-template>
+            <ng-template #frozencolgroup>
+                <colgroup>
+                    <col />
+                </colgroup>
+            </ng-template>
+            <ng-template #loadingicon>…</ng-template>
+            <ng-template #reorderindicatorupicon>^</ng-template>
+            <ng-template #reorderindicatordownicon>v</ng-template>
+            <ng-template #sorticon let-sortOrder>{{ sortOrder }}</ng-template>
+            <ng-template #checkboxicon>x</ng-template>
+            <ng-template #headercheckboxicon>hx</ng-template>
+            <ng-template #togglericon>t</ng-template>
+            <ng-template #paginatorfirstpagelinkicon>first</ng-template>
+            <ng-template #paginatorlastpagelinkicon>last</ng-template>
+            <ng-template #paginatorpreviouspagelinkicon>prev</ng-template>
+            <ng-template #paginatornextpagelinkicon>next</ng-template>
+            <ng-template #loader>load</ng-template>
+            <ng-template pTemplate="caption">caption</ng-template>
+        </p-treetable>
+    `
+})
+class TreeTableQueryApiHostComponent {
+    nodes: TreeNode[] = [{ data: { name: 'root' }, children: [{ data: { name: 'child' } }] }];
+}
+
+@Component({
+    standalone: true,
+    imports: [TreeTableModule, SharedModule],
+    template: `
+        <p-treetable [value]="nodes" [scrollable]="true" scrollHeight="200px">
+            <ng-template #header>
+                <tr>
+                    <th>Name</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-rowNode let-rowData="rowData">
+                <tr>
+                    <td>{{ rowData.name }}</td>
+                </tr>
+            </ng-template>
+            <ng-template #footer>
+                <tr>
+                    <td>F</td>
+                </tr>
+            </ng-template>
+        </p-treetable>
+    `
+})
+class TreeTableScrollableQueryApiHostComponent {
+    nodes: TreeNode[] = [{ data: { name: 'root' } }];
+}
+
+describe('TreeTable Signal Query API', () => {
+    it('should resolve all contentChild template hooks and the templates query', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TreeTableQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(TreeTableQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(TreeTable)).componentInstance;
+
+        const hooks = [
+            '_colGroupTemplate',
+            '_paginatorLeftTemplate',
+            '_paginatorRightTemplate',
+            '_paginatorDropdownItemTemplate',
+            '_frozenHeaderTemplate',
+            '_frozenBodyTemplate',
+            '_frozenFooterTemplate',
+            '_frozenColGroupTemplate',
+            '_loadingIconTemplate',
+            '_reorderIndicatorUpIconTemplate',
+            '_reorderIndicatorDownIconTemplate',
+            '_sortIconTemplate',
+            '_checkboxIconTemplate',
+            '_headerCheckboxIconTemplate',
+            '_togglerIconTemplate',
+            '_paginatorFirstPageLinkIconTemplate',
+            '_paginatorLastPageLinkIconTemplate',
+            '_paginatorPreviousPageLinkIconTemplate',
+            '_paginatorNextPageLinkIconTemplate',
+            '_loaderTemplate'
+        ];
+        for (const hook of hooks) {
+            expect((instance as any)[hook](), `${hook} should resolve`).toBeDefined();
+        }
+
+        const templates = instance.templates();
+        expect(Array.isArray(templates)).toBe(true);
+        expect(templates.some((t: any) => t.getType() === 'caption')).toBe(true);
+
+        expect(instance.tableViewChild()?.nativeElement).toBeDefined();
+        expect(instance.resizeHelperViewChild()?.nativeElement).toBeDefined();
+        expect(instance.reorderIndicatorUpViewChild()?.nativeElement).toBeDefined();
+        expect(instance.reorderIndicatorDownViewChild()?.nativeElement).toBeDefined();
+        expect(instance.scrollableViewChild()).toBeUndefined();
+        expect(instance.scrollableFrozenViewChild()).toBeUndefined();
+    });
+
+    it('should resolve scrollable view queries when scrollable is enabled', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TreeTableScrollableQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(TreeTableScrollableQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const instance = fixture.debugElement.query(By.directive(TreeTable)).componentInstance;
+        expect(instance.scrollable, 'scrollable input should be applied').toBe(true);
+        const sv = fixture.debugElement.query(By.directive(TTScrollableView));
+        expect(sv, 'TTScrollableView should be rendered').toBeTruthy();
+        // the #scrollableView element hosts the TTScrollableView component, so the query resolves to it
+        expect(instance.scrollableViewChild()).toBe(sv.componentInstance);
+
+        const scrollableView = fixture.debugElement.query(By.directive(TTScrollableView)).componentInstance;
+        expect(scrollableView.scrollHeaderViewChild().nativeElement).toBeDefined();
+        expect(scrollableView.scrollHeaderBoxViewChild().nativeElement).toBeDefined();
+        expect(scrollableView.scrollBodyViewChild()?.nativeElement).toBeDefined();
+        expect(scrollableView.scrollFooterViewChild()?.nativeElement).toBeDefined();
+        expect(scrollableView.scrollFooterBoxViewChild()?.nativeElement).toBeDefined();
+        // frozen-only / virtual-scroll-only queries stay unresolved in this host
+        expect(scrollableView.scrollableAlignerViewChild()).toBeUndefined();
+        expect(scrollableView.scroller()).toBeUndefined();
     });
 });

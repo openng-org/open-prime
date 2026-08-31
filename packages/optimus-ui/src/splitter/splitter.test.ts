@@ -4,6 +4,8 @@ import { By } from '@angular/platform-browser';
 
 import { Splitter } from './splitter';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { SharedModule } from '@openng/optimus-ui/api';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -1029,5 +1031,45 @@ describe('Splitter', () => {
             expect(hostEl.nativeElement.className).toContain('SET_INPUT_CLASS');
             expect(gutter.nativeElement.className).toContain('GUTTER_SET_INPUT');
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Splitter, SharedModule],
+    template: `
+        <p-splitter>
+            <ng-template pTemplate="panel">
+                <p-splitter>
+                    <ng-template pTemplate="panel">inner</ng-template>
+                </p-splitter>
+            </ng-template>
+        </p-splitter>
+    `
+})
+class SplitterQueryApiHostComponent {}
+
+describe('Splitter Signal Query API', () => {
+    it('should collect panel templates and detect a nested splitter', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [SplitterQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(SplitterQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const splitters = fixture.debugElement.queryAll(By.directive(Splitter));
+        expect(splitters.length).toBe(2);
+        const outer = splitters[0].componentInstance;
+        const inner = splitters[1].componentInstance;
+        expect(outer.templates().some((t: any) => t.getType() === 'panel')).toBe(true);
+        expect(inner.splitter()).toBeUndefined();
+        expect(inner.nestedState()).toBeUndefined();
     });
 });

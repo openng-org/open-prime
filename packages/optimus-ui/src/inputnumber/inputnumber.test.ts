@@ -8,6 +8,8 @@ import { provideOptimus } from '@openng/optimus-ui/config';
 import type { InputNumberInputEvent } from '@openng/optimus-ui/types/inputnumber';
 import { InputNumber, InputNumberModule } from './inputnumber';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { SharedModule } from '@openng/optimus-ui/api';
 // Test Components
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -1513,5 +1515,37 @@ describe('InputNumber', () => {
                 }
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [InputNumber, SharedModule],
+    template: `
+        <p-inputnumber>
+            <ng-template pTemplate="incrementbuttonicon">+</ng-template>
+        </p-inputnumber>
+    `
+})
+class InputNumberQueryApiHostComponent {}
+
+describe('InputNumber Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [InputNumberQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(InputNumberQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(InputNumber)).componentInstance;
+
+        expect(instance.input()).toBeDefined();
+        expect(instance.templates().length).toBeGreaterThan(0);
     });
 });

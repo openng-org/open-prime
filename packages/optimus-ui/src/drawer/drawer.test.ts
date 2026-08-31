@@ -5,6 +5,7 @@ import { By } from '@angular/platform-browser';
 import { PrimeTemplate } from '@openng/optimus-ui/api';
 import { Drawer } from './drawer';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -1488,5 +1489,41 @@ describe('Drawer', () => {
                 expect(component.onDestroyCalled).toBe(true);
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Drawer, PrimeTemplate],
+    template: `
+        <p-drawer>
+            <ng-template pTemplate="header">QUERY-HEADER</ng-template>
+            <ng-template pTemplate="footer">QUERY-FOOTER</ng-template>
+        </p-drawer>
+    `
+})
+class DrawerQueryApiHostComponent {}
+
+describe('Drawer Signal Query API', () => {
+    it('should collect projected PrimeTemplates via the templates contentChildren query', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [DrawerQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(DrawerQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const instance = fixture.debugElement.query(By.directive(Drawer)).componentInstance;
+        const templates = instance.templates();
+        expect(Array.isArray(templates)).toBe(true);
+        expect(templates.length).toBe(2);
+        expect(templates.map((t: any) => t.getType())).toEqual(['header', 'footer']);
+        expect(templates[0].template).toBeDefined();
     });
 });

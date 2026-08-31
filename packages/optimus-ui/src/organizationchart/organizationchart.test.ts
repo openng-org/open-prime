@@ -6,6 +6,8 @@ import { TreeNode } from '@openng/optimus-ui/api';
 import { provideOptimus } from '@openng/optimus-ui/config';
 import { OrganizationChart, OrganizationChartNode } from './organizationchart';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { PrimeTemplate } from '@openng/optimus-ui/api';
 // Test component for basic use cases
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -1104,5 +1106,43 @@ describe('OrganizationChart', () => {
                 expect(selectedNode).toBeTruthy();
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [OrganizationChart, PrimeTemplate],
+    template: `
+        <p-organizationchart [value]="chartValue">
+            <ng-template pTemplate="header">QUERY-HEADER</ng-template>
+            <ng-template pTemplate="footer">QUERY-FOOTER</ng-template>
+        </p-organizationchart>
+    `
+})
+class OrganizationChartQueryApiHostComponent {
+    chartValue = [{ label: 'root' }];
+}
+
+describe('OrganizationChart Signal Query API', () => {
+    it('should collect projected PrimeTemplates via the templates contentChildren query', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [OrganizationChartQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(OrganizationChartQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const instance = fixture.debugElement.query(By.directive(OrganizationChart)).componentInstance;
+        const templates = instance.templates();
+        expect(Array.isArray(templates)).toBe(true);
+        expect(templates.length).toBe(2);
+        expect(templates.map((t: any) => t.getType())).toEqual(['header', 'footer']);
+        expect(templates[0].template).toBeDefined();
     });
 });

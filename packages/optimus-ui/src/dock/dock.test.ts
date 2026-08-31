@@ -7,6 +7,7 @@ import { MenuItem, SharedModule } from '@openng/optimus-ui/api';
 import { provideOptimus } from '@openng/optimus-ui/config';
 import { Dock } from './dock';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -1406,5 +1407,34 @@ describe('Dock', () => {
                 expect(true).toBe(true); // Pass for now as global CSS handling varies
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Dock, SharedModule],
+    template: ` <p-dock [model]="model"> </p-dock> `
+})
+class DockQueryApiHostComponent {
+    model = [{ label: 'a' }];
+}
+
+describe('Dock Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [DockQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(DockQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(Dock)).componentInstance;
+
+        expect(instance.listViewChild()).toBeDefined();
     });
 });

@@ -8,6 +8,8 @@ import { MessageService } from '@openng/optimus-ui/api';
 import { BehaviorSubject, delay, of, Subscription, timer } from 'rxjs';
 import { FileUpload } from './fileupload';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { PrimeTemplate } from '@openng/optimus-ui/api';
 describe('FileUpload', () => {
     let component: FileUpload;
     let fixture: ComponentFixture<FileUpload>;
@@ -3131,5 +3133,41 @@ describe('FileUpload Input Properties - Observable/Async Values', () => {
                 expect(component.onDestroyCalled).toBe(true);
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [FileUpload, PrimeTemplate],
+    template: `
+        <p-fileupload name="demo" url="/upload">
+            <ng-template pTemplate="header">QUERY-HEADER</ng-template>
+            <ng-template pTemplate="footer">QUERY-FOOTER</ng-template>
+        </p-fileupload>
+    `
+})
+class FileUploadQueryApiHostComponent {}
+
+describe('FileUpload Signal Query API', () => {
+    it('should collect projected PrimeTemplates via the templates contentChildren query', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [FileUploadQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(FileUploadQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const instance = fixture.debugElement.query(By.directive(FileUpload)).componentInstance;
+        const templates = instance.templates();
+        expect(Array.isArray(templates)).toBe(true);
+        expect(templates.length).toBe(2);
+        expect(templates.map((t: any) => t.getType())).toEqual(['header', 'footer']);
+        expect(templates[0].template).toBeDefined();
     });
 });

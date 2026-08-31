@@ -6,6 +6,8 @@ import { provideOptimus } from '@openng/optimus-ui/config';
 import { ColorPickerChangeEvent } from '@openng/optimus-ui/types/colorpicker';
 import { ColorPicker } from './colorpicker';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { SharedModule } from '@openng/optimus-ui/api';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -1752,5 +1754,32 @@ describe('ColorPicker', () => {
             const hue = fixture.nativeElement.querySelector('.p-colorpicker-hue');
             expect(hue?.style.opacity).toBe('1');
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [ColorPicker, SharedModule],
+    template: ` <p-colorpicker> </p-colorpicker> `
+})
+class ColorPickerQueryApiHostComponent {}
+
+describe('ColorPicker Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [ColorPickerQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(ColorPickerQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(ColorPicker)).componentInstance;
+
+        expect(instance.overlayViewChild()).toBeDefined();
     });
 });

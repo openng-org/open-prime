@@ -6,6 +6,8 @@ import { provideOptimus } from '@openng/optimus-ui/config';
 import { FieldsetAfterToggleEvent, FieldsetBeforeToggleEvent } from '@openng/optimus-ui/types/fieldset';
 import { Fieldset } from './fieldset';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { SharedModule } from '@openng/optimus-ui/api';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: true,
@@ -1251,5 +1253,37 @@ describe('Fieldset', () => {
                 expect(toggleButton.nativeElement.className).toContain('TOGGLE_BUTTON_CLASS');
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Fieldset, SharedModule],
+    template: `
+        <p-fieldset legend="L">
+            <ng-template pTemplate="header">h</ng-template>
+        </p-fieldset>
+    `
+})
+class FieldsetQueryApiHostComponent {}
+
+describe('Fieldset Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [FieldsetQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(FieldsetQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(Fieldset)).componentInstance;
+
+        expect(instance.contentWrapperViewChild()).toBeDefined();
+        expect(instance.templates().some((t: any) => t.getType() === 'header')).toBe(true);
     });
 });

@@ -9,6 +9,7 @@ import { ListboxChangeEvent } from '@openng/optimus-ui/types/listbox';
 import { BehaviorSubject, Observable, delay, of } from 'rxjs';
 import { Listbox } from './listbox';
 
+import { SharedModule } from '@openng/optimus-ui/api';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -2860,3 +2861,44 @@ class TestFormIsolationListboxComponent {
     form = new FormGroup({ value: new FormControl<string[]>([]) });
     options = ['A', 'B'];
 }
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Listbox, SharedModule],
+    template: `
+        <p-listbox [options]="opts">
+            <p-header>H</p-header>
+            <p-footer>F</p-footer>
+            <ng-template pTemplate="item">i</ng-template>
+        </p-listbox>
+    `
+})
+class ListboxQueryApiHostComponent {
+    opts = [{ label: 'a', value: 1 }];
+}
+
+describe('Listbox Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [ListboxQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(ListboxQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(Listbox)).componentInstance;
+
+        expect(instance.headerFacet()).toBeDefined();
+        expect(instance.footerFacet()).toBeDefined();
+        expect(instance.templates().some((t: any) => t.getType() === 'item')).toBe(true);
+        expect(instance.firstHiddenFocusableElement()).toBeDefined();
+        expect(instance.lastHiddenFocusableElement()).toBeDefined();
+        expect(instance.scroller()).toBeUndefined();
+        expect(instance.headerCheckboxViewChild()).toBeUndefined();
+    });
+});

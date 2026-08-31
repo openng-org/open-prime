@@ -7,6 +7,9 @@ import { TabList } from './tablist';
 import { Tabs } from './tabs';
 import { TabsModule } from './tabs.module';
 
+import { SharedModule } from '@openng/optimus-ui/api';
+import { TabPanel } from './tabpanel';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -1207,5 +1210,56 @@ describe('Tabs', () => {
 
             expect(tabsEl.nativeElement.className).toContain('SETINPUT_ROOT_CLASS');
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [TabsModule, SharedModule],
+    template: `
+        <p-tabs [value]="1">
+            <p-tablist>
+                <ng-template #previcon>p</ng-template>
+                <ng-template #nexticon>n</ng-template>
+                <p-tab [value]="1">Tab 1</p-tab>
+            </p-tablist>
+            <p-tabpanels>
+                <p-tabpanel [value]="1">
+                    <ng-template #content>C1</ng-template>
+                </p-tabpanel>
+            </p-tabpanels>
+        </p-tabs>
+    `
+})
+class TabsQueryApiHostComponent {}
+
+describe('Tabs Signal Query API', () => {
+    it('should resolve TabList and TabPanel signal queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TabsQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(TabsQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const tablist = fixture.debugElement.query(By.directive(TabList)).componentInstance;
+        expect(tablist.prevIconTemplate()).toBeDefined();
+        expect(tablist.nextIconTemplate()).toBeDefined();
+        expect(Array.isArray(tablist.templates())).toBe(true);
+        expect(tablist.content()).toBeDefined();
+        expect(tablist.tabs()).toBeDefined();
+        expect(tablist.inkbar()).toBeDefined();
+        // navigator buttons only render while scrolling is possible
+        expect(tablist.prevButton()).toBeUndefined();
+        expect(tablist.nextButton()).toBeUndefined();
+
+        const tabpanel = fixture.debugElement.query(By.directive(TabPanel)).componentInstance;
+        expect(tabpanel.content()).toBeDefined();
     });
 });

@@ -11,6 +11,8 @@ import { provideOptimus } from '@openng/optimus-ui/config';
 import { ToggleSwitchChangeEvent } from '@openng/optimus-ui/types/toggleswitch';
 import { ToggleSwitch, ToggleSwitchModule } from './toggleswitch';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { PrimeTemplate } from '@openng/optimus-ui/api';
 describe('ToggleSwitch', () => {
     let component: ToggleSwitch;
     let fixture: ComponentFixture<ToggleSwitch>;
@@ -1362,5 +1364,41 @@ describe('PassThrough (PT) Tests', () => {
 
             expect(hookCalls).toContain('onDestroy');
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [ToggleSwitch, PrimeTemplate],
+    template: `
+        <p-toggleswitch>
+            <ng-template pTemplate="header">QUERY-HEADER</ng-template>
+            <ng-template pTemplate="footer">QUERY-FOOTER</ng-template>
+        </p-toggleswitch>
+    `
+})
+class ToggleSwitchQueryApiHostComponent {}
+
+describe('ToggleSwitch Signal Query API', () => {
+    it('should collect projected PrimeTemplates via the templates contentChildren query', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [ToggleSwitchQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(ToggleSwitchQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const instance = fixture.debugElement.query(By.directive(ToggleSwitch)).componentInstance;
+        const templates = instance.templates();
+        expect(Array.isArray(templates)).toBe(true);
+        expect(templates.length).toBe(2);
+        expect(templates.map((t: any) => t.getType())).toEqual(['header', 'footer']);
+        expect(templates[0].template).toBeDefined();
     });
 });

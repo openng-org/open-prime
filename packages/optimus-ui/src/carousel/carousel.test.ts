@@ -9,6 +9,7 @@ import { provideOptimus } from '@openng/optimus-ui/config';
 import type { CarouselPageEvent, CarouselResponsiveOptions } from '@openng/optimus-ui/types/carousel';
 import { Carousel } from './carousel';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 // Mock data for testing
 const mockProducts = [
     { id: '1', name: 'Product 1', image: 'product1.jpg', price: 100, inventoryStatus: 'INSTOCK' },
@@ -1368,5 +1369,45 @@ describe('Carousel', () => {
                 }
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Carousel, SharedModule],
+    template: `
+        <p-carousel [value]="items" [numVisible]="1" [numScroll]="1">
+            <ng-template #item let-item>{{ item }}</ng-template>
+            <ng-template #previousicon>p</ng-template>
+            <ng-template #nexticon>n</ng-template>
+            <ng-template pTemplate="footer">f</ng-template>
+        </p-carousel>
+    `
+})
+class CarouselQueryApiHostComponent {
+    items = [1, 2, 3];
+}
+
+describe('Carousel Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [CarouselQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(CarouselQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(Carousel)).componentInstance;
+
+        expect(instance.previousIconTemplate()).toBeDefined();
+        expect(instance.nextIconTemplate()).toBeDefined();
+        expect(instance.templates().some((t: any) => t.getType() === 'footer')).toBe(true);
+        expect(instance.itemsContainer()).toBeDefined();
+        expect(instance.indicatorContent()).toBeDefined();
     });
 });

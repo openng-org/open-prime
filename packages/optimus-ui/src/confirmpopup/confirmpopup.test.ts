@@ -7,6 +7,8 @@ import { ButtonModule } from '@openng/optimus-ui/button';
 import { FocusTrap } from '@openng/optimus-ui/focustrap';
 import { ConfirmPopup } from './confirmpopup';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { SharedModule } from '@openng/optimus-ui/api';
 // Basic ConfirmPopup Component Test
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -1962,5 +1964,33 @@ describe('ConfirmPopup', () => {
                 expect(component.onDestroyCalled).toBe(true);
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [ConfirmPopup, SharedModule],
+    template: ` <p-confirmpopup> </p-confirmpopup> `
+})
+class ConfirmPopupQueryApiHostComponent {}
+
+describe('ConfirmPopup Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [ConfirmPopupQueryApiHostComponent],
+            providers: [ConfirmationService, provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(ConfirmPopupQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(ConfirmPopup)).componentInstance;
+
+        expect(instance.acceptButtonViewChild()).toBeUndefined();
+        expect(instance.rejectButtonViewChild()).toBeUndefined();
     });
 });

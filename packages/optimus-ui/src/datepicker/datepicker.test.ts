@@ -6,6 +6,8 @@ import { By } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import type { DatePickerMonthChangeEvent, DatePickerYearChangeEvent } from '@openng/optimus-ui/types/datepicker';
 import { DatePicker } from './datepicker';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { SharedModule } from '@openng/optimus-ui/api';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -1873,5 +1875,37 @@ describe('DatePicker', () => {
 
             expect(ptFixture.componentInstance).toBeTruthy();
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [DatePicker, SharedModule],
+    template: `
+        <p-datepicker>
+            <ng-template #buttonbar>bb</ng-template>
+        </p-datepicker>
+    `
+})
+class DatePickerQueryApiHostComponent {}
+
+describe('DatePicker Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [DatePickerQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(DatePickerQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(DatePicker)).componentInstance;
+
+        expect(instance.buttonBarTemplate()).toBeDefined();
+        expect(instance.inputfieldViewChild()).toBeDefined();
     });
 });

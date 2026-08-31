@@ -6,7 +6,7 @@ import { By } from '@angular/platform-browser';
 
 import { SharedModule, SortMeta } from '@openng/optimus-ui/api';
 import { Select } from '@openng/optimus-ui/select';
-import { CellEditor, Table, TableModule, TableService } from './table';
+import { CellEditor, ColumnFilter, Table, TableModule, TableRadioButton, TableService } from './table';
 
 describe('Table', () => {
     let component: Table;
@@ -1729,5 +1729,212 @@ describe('Table', () => {
             expect(cellEditor.editableRow).toBeNull();
             expect(cellEditor.editing).toBe(false);
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [TableModule, SharedModule],
+    template: `
+        <p-table [value]="rows" [paginator]="true" [rows]="2" [resizableColumns]="true" [reorderableColumns]="true">
+            <ng-template #header>
+                <tr>
+                    <th>Name</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr>
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+            <ng-template #colgroup>
+                <colgroup>
+                    <col />
+                </colgroup>
+            </ng-template>
+            <ng-template #loadingbody>
+                <tr>
+                    <td>loading…</td>
+                </tr>
+            </ng-template>
+            <ng-template #footergrouped>
+                <tr>
+                    <td>fg</td>
+                </tr>
+            </ng-template>
+            <ng-template #expandedrow let-row>
+                <tr>
+                    <td>{{ row.name }} expanded</td>
+                </tr>
+            </ng-template>
+            <ng-template #groupheader>
+                <tr>
+                    <td>gh</td>
+                </tr>
+            </ng-template>
+            <ng-template #groupfooter>
+                <tr>
+                    <td>gf</td>
+                </tr>
+            </ng-template>
+            <ng-template #frozenexpandedrow>
+                <tr>
+                    <td>fe</td>
+                </tr>
+            </ng-template>
+            <ng-template #frozenbody>
+                <tr>
+                    <td>fb</td>
+                </tr>
+            </ng-template>
+            <ng-template #emptymessage>
+                <tr>
+                    <td>empty</td>
+                </tr>
+            </ng-template>
+            <ng-template #paginatorleft>L</ng-template>
+            <ng-template #paginatorright>R</ng-template>
+            <ng-template #paginatordropdownitem let-item>{{ item?.label }}</ng-template>
+            <ng-template #loadingicon>…</ng-template>
+            <ng-template #reorderindicatorupicon>^</ng-template>
+            <ng-template #reorderindicatordownicon>v</ng-template>
+            <ng-template #sorticon let-sortOrder>{{ sortOrder }}</ng-template>
+            <ng-template #checkboxicon>x</ng-template>
+            <ng-template #headercheckboxicon>hx</ng-template>
+            <ng-template #paginatordropdownicon>pd</ng-template>
+            <ng-template #paginatorfirstpagelinkicon>first</ng-template>
+            <ng-template #paginatorlastpagelinkicon>last</ng-template>
+            <ng-template #paginatorpreviouspagelinkicon>prev</ng-template>
+            <ng-template #paginatornextpagelinkicon>next</ng-template>
+            <ng-template pTemplate="caption">caption</ng-template>
+        </p-table>
+    `
+})
+class TableQueryApiHostComponent {
+    rows = [{ name: 'a' }, { name: 'b' }, { name: 'c' }];
+}
+
+describe('Table Signal Query API', () => {
+    let instance: Table;
+    let fixture: ComponentFixture<TableQueryApiHostComponent>;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TableQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        fixture = TestBed.createComponent(TableQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        instance = fixture.debugElement.query(By.directive(Table)).componentInstance;
+    });
+
+    it('should resolve all contentChild template hooks', () => {
+        const hooks = [
+            '_colGroupTemplate',
+            '_loadingBodyTemplate',
+            '_footerGroupedTemplate',
+            '_expandedRowTemplate',
+            '_groupHeaderTemplate',
+            '_groupFooterTemplate',
+            '_frozenExpandedRowTemplate',
+            '_frozenBodyTemplate',
+            '_emptyMessageTemplate',
+            '_paginatorLeftTemplate',
+            '_paginatorRightTemplate',
+            '_paginatorDropdownItemTemplate',
+            '_loadingIconTemplate',
+            '_reorderIndicatorUpIconTemplate',
+            '_reorderIndicatorDownIconTemplate',
+            '_sortIconTemplate',
+            '_checkboxIconTemplate',
+            '_headerCheckboxIconTemplate',
+            '_paginatorDropdownIconTemplate',
+            '_paginatorFirstPageLinkIconTemplate',
+            '_paginatorLastPageLinkIconTemplate',
+            '_paginatorPreviousPageLinkIconTemplate',
+            '_paginatorNextPageLinkIconTemplate'
+        ];
+        for (const hook of hooks) {
+            expect((instance as any)[hook](), `${hook} should resolve`).toBeDefined();
+        }
+    });
+
+    it('should collect pTemplate directives via the _templates contentChildren query', () => {
+        const templates = (instance as any)._templates();
+        expect(Array.isArray(templates)).toBe(true);
+        expect(templates.some((t: any) => t.getType() === 'caption')).toBe(true);
+    });
+
+    it('should resolve structural viewChild queries after render', () => {
+        expect(instance.wrapperViewChild().nativeElement).toBeDefined();
+        expect(instance.tableViewChild()?.nativeElement).toBeDefined();
+        expect(instance.resizeHelperViewChild()?.nativeElement).toBeDefined();
+        expect(instance.reorderIndicatorUpViewChild()?.nativeElement).toBeDefined();
+        expect(instance.reorderIndicatorDownViewChild()?.nativeElement).toBeDefined();
+    });
+
+    it('should leave the scroller viewChild unresolved when virtual scrolling is off', () => {
+        expect(instance.scroller()).toBeUndefined();
+    });
+});
+
+@Component({
+    standalone: true,
+    imports: [TableModule, SharedModule, FormsModule],
+    template: `
+        <p-table [value]="rows" dataKey="name" [(selection)]="selection">
+            <ng-template #header>
+                <tr>
+                    <th>
+                        Name
+                        <p-columnFilter field="name" matchMode="contains" display="menu">
+                            <ng-template #filtericon>fi</ng-template>
+                            <ng-template #removeruleicon>rri</ng-template>
+                            <ng-template #addruleicon>ari</ng-template>
+                        </p-columnFilter>
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr>
+                    <td><p-tableRadioButton [value]="row"></p-tableRadioButton>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TableFilterQueryApiHostComponent {
+    rows = [{ name: 'a' }];
+    selection: any = null;
+}
+
+describe('Table internals Signal Query API', () => {
+    it('should resolve ColumnFilter and TableRadioButton queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TableFilterQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(TableFilterQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const cf = fixture.debugElement.query(By.directive(ColumnFilter)).componentInstance;
+        expect(cf.filterIconTemplate()).toBeDefined();
+        expect(cf.removeRuleIconTemplate()).toBeDefined();
+        expect(cf.addRuleIconTemplate()).toBeDefined();
+        expect(Array.isArray(cf._templates())).toBe(true);
+        expect(cf.icon()).toBeDefined();
+        // the clear button lives in the filter overlay menu, which is closed by default
+        expect(cf.clearButtonViewChild()).toBeUndefined();
+
+        const rb = fixture.debugElement.query(By.directive(TableRadioButton)).componentInstance;
+        expect(rb.inputViewChild()).toBeDefined();
     });
 });

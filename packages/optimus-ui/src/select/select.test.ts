@@ -8,6 +8,8 @@ import { BehaviorSubject, timer } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { Select } from './select';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { SharedModule } from '@openng/optimus-ui/api';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -4457,5 +4459,42 @@ describe('Select PT (PassThrough)', () => {
                 expect(emptyMessage.nativeElement.getAttribute('data-empty')).toBe('true');
             }
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Select, SharedModule],
+    template: `
+        <p-select [options]="opts">
+            <ng-template #group>g</ng-template>
+            <ng-template pTemplate="item">i</ng-template>
+        </p-select>
+    `
+})
+class SelectQueryApiHostComponent {
+    opts = [{ label: 'a', value: 1 }];
+}
+
+describe('Select Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [SelectQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(SelectQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(Select)).componentInstance;
+
+        expect(instance.groupTemplate()).toBeDefined();
+        expect(instance.templates().some((t: any) => t.getType() === 'item')).toBe(true);
+        expect(instance.focusInputViewChild()).toBeDefined();
+        expect(instance.editableInputViewChild()).toBeUndefined();
     });
 });

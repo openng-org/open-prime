@@ -1906,3 +1906,37 @@ describe('OrderList', () => {
         });
     });
 });
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [OrderList, SharedModule],
+    template: `
+        <p-orderlist [value]="items">
+            <ng-template pTemplate="item">i</ng-template>
+        </p-orderlist>
+    `
+})
+class OrderListQueryApiHostComponent {
+    items = [{ name: 'a' }];
+}
+
+describe('OrderList Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [OrderListQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(OrderListQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(OrderList)).componentInstance;
+
+        expect(instance.listViewChild()).toBeDefined();
+        expect(instance.templates().some((t: any) => t.getType() === 'item')).toBe(true);
+    });
+});

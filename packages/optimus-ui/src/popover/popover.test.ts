@@ -7,6 +7,7 @@ import type { Mock } from 'vitest';
 import { OverlayService, PrimeTemplate } from '@openng/optimus-ui/api';
 import { Popover } from './popover';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 // function createMockAnimationEvent(toState: string, fromState: string = 'void'): AnimationEvent {
 //     return {
 //         element: document.createElement('div'),
@@ -775,5 +776,41 @@ describe('Popover', () => {
             expect(popoverInstance.onContainerDestroy).toHaveBeenCalled();
             expect(mockSubscription.unsubscribe).toHaveBeenCalled();
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Popover, PrimeTemplate],
+    template: `
+        <p-popover>
+            <ng-template pTemplate="header">QUERY-HEADER</ng-template>
+            <ng-template pTemplate="footer">QUERY-FOOTER</ng-template>
+        </p-popover>
+    `
+})
+class PopoverQueryApiHostComponent {}
+
+describe('Popover Signal Query API', () => {
+    it('should collect projected PrimeTemplates via the templates contentChildren query', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [PopoverQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(PopoverQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const instance = fixture.debugElement.query(By.directive(Popover)).componentInstance;
+        const templates = instance.templates();
+        expect(Array.isArray(templates)).toBe(true);
+        expect(templates.length).toBe(2);
+        expect(templates.map((t: any) => t.getType())).toEqual(['header', 'footer']);
+        expect(templates[0].template).toBeDefined();
     });
 });

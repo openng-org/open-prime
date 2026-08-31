@@ -5,8 +5,9 @@ import { By } from '@angular/platform-browser';
 
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { GalleriaResponsiveOptions } from '@openng/optimus-ui/types/galleria';
-import { Galleria, GalleriaModule } from './galleria';
+import { Galleria, GalleriaModule, GalleriaThumbnails } from './galleria';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 // Mock data for testing
 const mockImages = [
     { itemImageSrc: 'https://primefaces.org/cdn/primeng/images/galleria/galleria1.jpg', thumbnailImageSrc: 'https://primefaces.org/cdn/primeng/images/galleria/galleria1s.jpg', alt: 'Image 1', title: 'Title 1' },
@@ -1290,5 +1291,53 @@ describe('Galleria', () => {
                 expect(footer.classList.contains('custom-footer')).toBe(true);
             }
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [GalleriaModule, SharedModule],
+    template: `
+        <p-galleria [value]="items">
+            <ng-template #indicator>ind</ng-template>
+            <ng-template #closeicon>cl</ng-template>
+            <ng-template #previousthumbnailicon>pt</ng-template>
+            <ng-template #nextthumbnailicon>nt</ng-template>
+            <ng-template #itempreviousicon>ip</ng-template>
+            <ng-template #itemnexticon>in</ng-template>
+            <ng-template pTemplate="item">i</ng-template>
+        </p-galleria>
+    `
+})
+class GalleriaQueryApiHostComponent {
+    items = [{ itemImageSrc: 'a.png' }];
+}
+
+describe('Galleria Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [GalleriaQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(GalleriaQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(Galleria)).componentInstance;
+
+        expect(instance.indicatorTemplate()).toBeDefined();
+        expect(instance._closeIconTemplate()).toBeDefined();
+        expect(instance._previousThumbnailIconTemplate()).toBeDefined();
+        expect(instance._nextThumbnailIconTemplate()).toBeDefined();
+        expect(instance._itemPreviousIconTemplate()).toBeDefined();
+        expect(instance._itemNextIconTemplate()).toBeDefined();
+        expect(instance.templates().some((t: any) => t.getType() === 'item')).toBe(true);
+
+        const thumbnails = fixture.debugElement.query(By.directive(GalleriaThumbnails)).componentInstance;
+        expect(thumbnails.itemsContainer()).toBeDefined();
     });
 });

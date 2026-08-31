@@ -8,6 +8,7 @@ import { TreeSelectNodeCollapseEvent, TreeSelectNodeExpandEvent } from '@openng/
 import { BehaviorSubject } from 'rxjs';
 import { TreeSelect, TreeSelectModule } from './treeselect';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 const mockTreeNodes: TreeNode[] = [
     {
         key: '0',
@@ -1556,5 +1557,49 @@ describe('TreeSelect', () => {
             const root = fixture.debugElement;
             expect(root.nativeElement.classList.contains('global-root')).toBe(true);
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [TreeSelect, SharedModule],
+    template: `
+        <p-treeselect [options]="opts">
+            <ng-template #dropdownicon>di</ng-template>
+            <ng-template #filtericon>fi</ng-template>
+            <ng-template pTemplate="value">v</ng-template>
+        </p-treeselect>
+    `
+})
+class TreeSelectQueryApiHostComponent {
+    opts = [];
+}
+
+describe('TreeSelect Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TreeSelectQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(TreeSelectQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(TreeSelect)).componentInstance;
+
+        expect(instance.dropdownIconTemplate()).toBeDefined();
+        expect(instance.filterIconTemplate()).toBeDefined();
+        expect(instance.templates().some((t: any) => t.getType() === 'value')).toBe(true);
+        expect(instance.focusInput()).toBeDefined();
+        expect(instance.overlayViewChild()).toBeDefined();
+        expect(instance.filterViewChild()).toBeUndefined();
+        expect(instance.treeViewChild()).toBeUndefined();
+        expect(instance.panelEl()).toBeUndefined();
+        expect(instance.firstHiddenFocusableElementOnOverlay()).toBeUndefined();
+        expect(instance.lastHiddenFocusableElementOnOverlay()).toBeUndefined();
     });
 });

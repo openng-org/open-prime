@@ -4,6 +4,8 @@ import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Overlay } from './overlay';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { SharedModule } from '@openng/optimus-ui/api';
 describe('Overlay', () => {
     describe('PassThrough API', () => {
         @Component({
@@ -388,5 +390,40 @@ describe('Overlay', () => {
                 expect(hookCalled).toBe(true);
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Overlay, SharedModule],
+    template: `
+        <p-overlay>
+            <ng-template #content>C</ng-template>
+            <ng-template pTemplate="content">c2</ng-template>
+        </p-overlay>
+    `
+})
+class OverlayQueryApiHostComponent {}
+
+describe('Overlay Signal Query API', () => {
+    it('should resolve content queries and leave view queries unresolved while hidden', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [OverlayQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(OverlayQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const instance = fixture.debugElement.query(By.directive(Overlay)).componentInstance;
+        expect(instance.contentTemplate()).toBeDefined();
+        expect(instance.templates().some((t: any) => t.getType() === 'content')).toBe(true);
+        expect(instance.overlayViewChild()).toBeUndefined();
+        expect(instance.contentViewChild()).toBeUndefined();
     });
 });

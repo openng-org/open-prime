@@ -5,6 +5,7 @@ import { By } from '@angular/platform-browser';
 import { SharedModule } from '@openng/optimus-ui/api';
 import { Image, ImageModule } from './image';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 // Using image paths from photoservice.ts to ensure consistency
 const mockImageSrc = 'https://primefaces.org/cdn/primeng/images/galleria/galleria1.jpg';
 const mockPreviewImageSrc = 'https://primefaces.org/cdn/primeng/images/galleria/galleria2.jpg';
@@ -1053,5 +1054,33 @@ describe('Image', () => {
                 expect(imageElement.nativeElement.classList.contains('IMAGE_PT')).toBe(true);
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Image, SharedModule],
+    template: ` <p-image src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" [preview]="true"> </p-image> `
+})
+class ImageQueryApiHostComponent {}
+
+describe('Image Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [ImageQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(ImageQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(Image)).componentInstance;
+
+        expect(instance.previewButton()).toBeDefined();
+        expect(instance.closeButton()).toBeUndefined();
     });
 });

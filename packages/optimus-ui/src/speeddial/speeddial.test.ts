@@ -7,6 +7,8 @@ import { MenuItem } from '@openng/optimus-ui/api';
 import { ButtonModule } from '@openng/optimus-ui/button';
 import { SpeedDial } from './speeddial';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { SharedModule } from '@openng/optimus-ui/api';
 // Basic SpeedDial Test Component
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -1381,7 +1383,6 @@ describe('SpeedDial', () => {
 
             expect(speedDialInstance.visible).toBe(false);
         });
-
     });
 
     describe('Public Methods', () => {
@@ -2141,5 +2142,35 @@ describe('SpeedDial', () => {
                 expect(rootElement?.getAttribute('data-masked')).toBe('false');
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [SpeedDial, SharedModule],
+    template: ` <p-speeddial [model]="model"> </p-speeddial> `
+})
+class SpeedDialQueryApiHostComponent {
+    model = [{ label: 'a' }];
+}
+
+describe('SpeedDial Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [SpeedDialQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(SpeedDialQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(SpeedDial)).componentInstance;
+
+        expect(instance.container()).toBeDefined();
+        expect(instance.list()).toBeDefined();
     });
 });

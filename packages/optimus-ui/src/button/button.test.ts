@@ -4,6 +4,8 @@ import { By } from '@angular/platform-browser';
 
 import { Button, ButtonDirective, ButtonIcon, ButtonLabel } from './button';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { SharedModule } from '@openng/optimus-ui/api';
 // Basic Button Component Test
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -1582,5 +1584,40 @@ describe('ButtonDirective', () => {
             buttonDirective.raised = true;
             expect(buttonDirective.raised).toBe(true);
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [ButtonDirective, ButtonIcon, ButtonLabel, SharedModule],
+    template: `
+        <button pButton>
+            <span pButtonIcon>I</span>
+            <span pButtonLabel>L</span>
+        </button>
+    `
+})
+class ButtonQueryApiHostComponent {}
+
+describe('ButtonDirective Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [ButtonQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(ButtonQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(ButtonDirective)).injector.get(ButtonDirective);
+
+        // iconSignal/labelSignal are private; their resolution is observable via the public computeds
+        expect(instance.isIconOnly()).toBe(false);
+        expect((instance as any).iconSignal()).toBeDefined();
+        expect((instance as any).labelSignal()).toBeDefined();
     });
 });

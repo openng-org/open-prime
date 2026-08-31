@@ -8,6 +8,7 @@ import { BehaviorSubject } from 'rxjs';
 import type { Mock } from 'vitest';
 import { AUTOCOMPLETE_VALUE_ACCESSOR, AutoComplete, AutoCompleteModule } from './autocomplete';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 const mockCountries = [
     { name: 'Afghanistan', code: 'AF' },
     { name: 'Albania', code: 'AL' },
@@ -2773,5 +2774,40 @@ describe('AutoComplete generic typing', () => {
         typedComponent.onAdd.emit({ originalEvent: new Event('blur'), value: ' Afghanistan ' });
 
         expect(addedValue).toBe('Afghanistan');
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [AutoComplete, SharedModule],
+    template: `
+        <p-autocomplete [suggestions]="suggestions">
+            <ng-template #removeicon>ri</ng-template>
+        </p-autocomplete>
+    `
+})
+class AutoCompleteQueryApiHostComponent {
+    suggestions = [];
+}
+
+describe('AutoComplete Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [AutoCompleteQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(AutoCompleteQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(AutoComplete)).componentInstance;
+
+        expect(instance.removeIconTemplate()).toBeDefined();
+        expect(instance.itemsViewChild()).toBeUndefined();
+        expect(instance.scroller()).toBeUndefined();
     });
 });

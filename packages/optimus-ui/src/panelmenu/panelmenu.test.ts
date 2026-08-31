@@ -6,6 +6,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { MenuItem, SharedModule } from '@openng/optimus-ui/api';
 import { PanelMenu } from './panelmenu';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { PanelMenuList } from './panelmenu';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -1411,5 +1413,35 @@ describe('PanelMenu', () => {
                 expect(hostElement.classList.contains('HOOK_TEST_CLASS')).toBe(true);
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [PanelMenu],
+    template: ` <p-panelmenu [model]="model"></p-panelmenu> `
+})
+class PanelMenuQueryApiHostComponent {
+    model = [{ label: 'Root', expanded: true, items: [{ label: 'Child' }] }];
+}
+
+describe('PanelMenu Signal Query API', () => {
+    it('should resolve the submenu viewChild of the rendered panel list', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [PanelMenuQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(PanelMenuQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const list = fixture.debugElement.query(By.directive(PanelMenuList));
+        expect(list, 'expanded panel should render its PanelMenuList').toBeTruthy();
+        expect(list.componentInstance.subMenuViewChild()).toBeDefined();
     });
 });

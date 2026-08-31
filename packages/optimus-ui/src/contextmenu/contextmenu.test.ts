@@ -6,6 +6,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { MenuItem, SharedModule } from '@openng/optimus-ui/api';
 import { ContextMenu } from './contextmenu';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -1617,5 +1618,34 @@ describe('ContextMenu', () => {
                 }
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [ContextMenu, SharedModule],
+    template: ` <p-contextmenu [model]="model"> </p-contextmenu> `
+})
+class ContextMenuQueryApiHostComponent {
+    model = [{ label: 'a' }];
+}
+
+describe('ContextMenu Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [ContextMenuQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(ContextMenuQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(ContextMenu)).componentInstance;
+
+        expect(() => instance.rootmenu()?.sublistViewChild()).not.toThrow();
     });
 });

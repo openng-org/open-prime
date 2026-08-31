@@ -9,6 +9,7 @@ import { SharedModule } from '@openng/optimus-ui/api';
 import { provideOptimus } from '@openng/optimus-ui/config';
 import { MapperPipe, Password, PasswordDirective, PasswordModule } from './password';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 // Test Components
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -2391,5 +2392,32 @@ describe('Password PassThrough Tests', () => {
             expect(inputEl.nativeElement.classList.contains('PC_INPUT_CLASS')).toBe(true);
             expect(inputEl.nativeElement.getAttribute('data-input')).toBe('test-value');
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Password, SharedModule],
+    template: ` <p-password> </p-password> `
+})
+class PasswordQueryApiHostComponent {}
+
+describe('Password Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [PasswordQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(PasswordQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(Password)).componentInstance;
+
+        expect(instance.input()).toBeDefined();
     });
 });

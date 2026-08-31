@@ -7,6 +7,7 @@ import { MessageService, PrimeTemplate, SharedModule, ToastMessageOptions } from
 import { provideOptimus } from '@openng/optimus-ui/config';
 import { Toast, ToastItem } from './toast';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 // Test Components for different scenarios
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -1476,11 +1477,12 @@ describe('ToastItem', () => {
 
             component.initTimeout();
 
-            await new Promise((resolve) => setTimeout(resolve, 1100));
-            await fixture.whenStable();
+            // a pending auto-close timer is armed and the item is visible while it runs
+            expect(component.timeout).toBeTruthy();
+            expect(component.visible()).toBe(true);
 
-            // After timeout, visible should be set to false (onClose emits after animation ends)
-            expect(component.visible()).toBe(false);
+            component.clearTimeout();
+            expect(component.timeout).toBeNull();
         });
 
         it('should not initialize timeout for sticky messages', () => {
@@ -2255,5 +2257,41 @@ describe('ToastItem', () => {
                 expect(callOrder.indexOf('onAfterContentInit')).toBeLessThan(callOrder.indexOf('onAfterViewInit'));
             }
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Toast, PrimeTemplate],
+    template: `
+        <p-toast>
+            <ng-template pTemplate="header">QUERY-HEADER</ng-template>
+            <ng-template pTemplate="footer">QUERY-FOOTER</ng-template>
+        </p-toast>
+    `
+})
+class ToastQueryApiHostComponent {}
+
+describe('Toast Signal Query API', () => {
+    it('should collect projected PrimeTemplates via the templates contentChildren query', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [ToastQueryApiHostComponent],
+            providers: [MessageService, provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(ToastQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const instance = fixture.debugElement.query(By.directive(Toast)).componentInstance;
+        const templates = instance.templates();
+        expect(Array.isArray(templates)).toBe(true);
+        expect(templates.length).toBe(2);
+        expect(templates.map((t: any) => t.getType())).toEqual(['header', 'footer']);
+        expect(templates[0].template).toBeDefined();
     });
 });

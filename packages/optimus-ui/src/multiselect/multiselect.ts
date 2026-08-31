@@ -1869,8 +1869,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
 
     onFirstHiddenFocus(event) {
         const focusInputViewChild = this.focusInputViewChild();
-        const focusableEl =
-            event.relatedTarget === focusInputViewChild.nativeElement ? getFirstFocusableElement(this.overlayViewChild().overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])') : focusInputViewChild.nativeElement;
+        const focusableEl = event.relatedTarget === focusInputViewChild.nativeElement ? getFirstFocusableElement(this.overlayViewChild().overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])') : focusInputViewChild.nativeElement;
 
         focus(focusableEl);
     }
@@ -1907,8 +1906,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
 
     onLastHiddenFocus(event) {
         const focusInputViewChild = this.focusInputViewChild();
-        const focusableEl =
-            event.relatedTarget === focusInputViewChild.nativeElement ? getLastFocusableElement(this.overlayViewChild().overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])') : focusInputViewChild.nativeElement;
+        const focusableEl = event.relatedTarget === focusInputViewChild.nativeElement ? getLastFocusableElement(this.overlayViewChild().overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])') : focusInputViewChild.nativeElement;
 
         focus(focusableEl);
     }

@@ -7,6 +7,7 @@ import { MegaMenuItem, SharedModule } from '@openng/optimus-ui/api';
 import { provideOptimus } from '@openng/optimus-ui/config';
 import { MegaMenu } from './megamenu';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -1740,5 +1741,40 @@ describe('MegaMenu', () => {
                 }
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [MegaMenu, SharedModule],
+    template: `
+        <p-megamenu [model]="model">
+            <ng-template #submenuicon>si</ng-template>
+        </p-megamenu>
+    `
+})
+class MegaMenuQueryApiHostComponent {
+    model = [{ label: 'a' }];
+}
+
+describe('MegaMenu Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [MegaMenuQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(MegaMenuQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(MegaMenu)).componentInstance;
+
+        expect(instance.submenuIconTemplate()).toBeDefined();
+        expect(instance.rootmenu()).toBeDefined();
+        expect(instance.menubuttonViewChild()).toBeDefined();
     });
 });

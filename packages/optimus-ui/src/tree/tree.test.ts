@@ -6,6 +6,8 @@ import { FormControl, FormGroup, FormsModule, NgModel, ReactiveFormsModule } fro
 import { TreeDragDropService, TreeNode } from '@openng/optimus-ui/api';
 import { Tree, UITreeNode } from './tree';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { SharedModule } from '@openng/optimus-ui/api';
 // Test component for basic use cases
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -3020,3 +3022,39 @@ class TestFormIsolationTreeComponent {
     form = new FormGroup({ value: new FormControl<TreeNode[]>([]) });
     nodes: TreeNode[] = [{ key: '0', label: 'Root', children: [{ key: '0-0', label: 'Child' }] }];
 }
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Tree, SharedModule],
+    template: `
+        <p-tree [value]="nodes">
+            <ng-template pTemplate="default">d</ng-template>
+        </p-tree>
+    `
+})
+class TreeQueryApiHostComponent {
+    nodes = [{ label: 'root' }];
+}
+
+describe('Tree Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TreeQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(TreeQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(Tree)).componentInstance;
+
+        expect(instance.templates().length).toBeGreaterThan(0);
+        expect(instance.wrapperViewChild()).toBeDefined();
+        expect(instance.contentViewChild()).toBeDefined();
+        expect(instance.scroller()).toBeUndefined();
+    });
+});

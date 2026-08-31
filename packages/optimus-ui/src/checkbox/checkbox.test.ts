@@ -6,6 +6,8 @@ import { SharedModule } from '@openng/optimus-ui/api';
 import { CheckboxChangeEvent } from '@openng/optimus-ui/types/checkbox';
 import { Checkbox } from './checkbox';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { PrimeTemplate } from '@openng/optimus-ui/api';
 // Mock data for testing
 const mockIngredients = [
     { name: 'Cheese', value: 'cheese' },
@@ -1509,5 +1511,41 @@ describe('Checkbox', () => {
                 expect(checkboxElement.getAttribute('data-binary')).toBe('true');
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Checkbox, PrimeTemplate],
+    template: `
+        <p-checkbox>
+            <ng-template pTemplate="header">QUERY-HEADER</ng-template>
+            <ng-template pTemplate="footer">QUERY-FOOTER</ng-template>
+        </p-checkbox>
+    `
+})
+class CheckboxQueryApiHostComponent {}
+
+describe('Checkbox Signal Query API', () => {
+    it('should collect projected PrimeTemplates via the templates contentChildren query', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [CheckboxQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(CheckboxQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const instance = fixture.debugElement.query(By.directive(Checkbox)).componentInstance;
+        const templates = instance.templates();
+        expect(Array.isArray(templates)).toBe(true);
+        expect(templates.length).toBe(2);
+        expect(templates.map((t: any) => t.getType())).toEqual(['header', 'footer']);
+        expect(templates[0].template).toBeDefined();
     });
 });

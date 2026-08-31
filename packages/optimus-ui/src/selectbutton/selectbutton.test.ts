@@ -8,6 +8,8 @@ import { SharedModule } from '@openng/optimus-ui/api';
 import { provideOptimus } from '@openng/optimus-ui/config';
 import { SelectButton, SelectButtonModule } from './selectbutton';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { PrimeTemplate } from '@openng/optimus-ui/api';
 describe('SelectButton', () => {
     let component: SelectButton;
     let fixture: ComponentFixture<SelectButton>;
@@ -1242,3 +1244,39 @@ class TestFormIsolationSelectButtonComponent {
     form = new FormGroup({ value: new FormControl('A') });
     options = ['A', 'B'];
 }
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [SelectButton, PrimeTemplate],
+    template: `
+        <p-selectbutton>
+            <ng-template pTemplate="header">QUERY-HEADER</ng-template>
+            <ng-template pTemplate="footer">QUERY-FOOTER</ng-template>
+        </p-selectbutton>
+    `
+})
+class SelectButtonQueryApiHostComponent {}
+
+describe('SelectButton Signal Query API', () => {
+    it('should collect projected PrimeTemplates via the templates contentChildren query', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [SelectButtonQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(SelectButtonQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const instance = fixture.debugElement.query(By.directive(SelectButton)).componentInstance;
+        const templates = instance.templates();
+        expect(Array.isArray(templates)).toBe(true);
+        expect(templates.length).toBe(2);
+        expect(templates.map((t: any) => t.getType())).toEqual(['header', 'footer']);
+        expect(templates[0].template).toBeDefined();
+    });
+});

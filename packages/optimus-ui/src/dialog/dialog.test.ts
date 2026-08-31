@@ -6,6 +6,8 @@ import { ButtonModule } from '@openng/optimus-ui/button';
 import { FocusTrap } from '@openng/optimus-ui/focustrap';
 import { Dialog } from './dialog';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { SharedModule } from '@openng/optimus-ui/api';
 // Basic Dialog Test Component
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -1761,5 +1763,37 @@ describe('Dialog', () => {
                 expect(component.onDestroyCalled).toBe(true);
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Dialog, SharedModule],
+    template: `
+        <p-dialog [visible]="true" header="H">
+            <ng-template pTemplate="content">c</ng-template>
+        </p-dialog>
+    `
+})
+class DialogQueryApiHostComponent {}
+
+describe('Dialog Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [DialogQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(DialogQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(Dialog)).componentInstance;
+
+        expect(instance.headerViewChild()).toBeDefined();
+        expect(instance.templates().some((t: any) => t.getType() === 'content')).toBe(true);
     });
 });

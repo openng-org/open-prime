@@ -4,6 +4,8 @@ import { By } from '@angular/platform-browser';
 
 import { Card, CardModule } from './card';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -1793,5 +1795,45 @@ describe('Card', () => {
                 expect(titleEl.nativeElement.getAttribute('aria-level')).toBe('2');
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Card, SharedModule],
+    template: `
+        <p-card>
+            <p-header>H</p-header>
+            <p-footer>F</p-footer>
+            <ng-template pTemplate="header">QUERY-HEADER</ng-template>
+            <ng-template pTemplate="footer">QUERY-FOOTER</ng-template>
+        </p-card>
+    `
+})
+class CardQueryApiHostComponent {}
+
+describe('Card Signal Query API', () => {
+    it('should collect projected PrimeTemplates via the templates contentChildren query', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [CardQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(CardQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const instance = fixture.debugElement.query(By.directive(Card)).componentInstance;
+        const templates = instance.templates();
+        expect(Array.isArray(templates)).toBe(true);
+        expect(templates.length).toBe(2);
+        expect(templates.map((t: any) => t.getType())).toEqual(['header', 'footer']);
+        expect(templates[0].template).toBeDefined();
+        expect(instance.headerFacet()).toBeDefined();
+        expect(instance.footerFacet()).toBeDefined();
     });
 });

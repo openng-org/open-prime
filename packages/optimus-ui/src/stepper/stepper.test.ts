@@ -4,6 +4,9 @@ import { By } from '@angular/platform-browser';
 
 import { Step, StepItem, StepList, StepPanel, StepPanels, Stepper } from './stepper';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { SharedModule } from '@openng/optimus-ui/api';
+import { StepperModule } from './stepper';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -787,5 +790,80 @@ describe('Stepper', () => {
 
             expect(stepperEl.nativeElement.className).toContain('SETINPUT_ROOT_CLASS');
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [StepperModule, SharedModule],
+    template: `
+        <p-stepper [value]="1">
+            <p-step-list>
+                <p-step [value]="1">One</p-step>
+                <p-step [value]="2">Two</p-step>
+            </p-step-list>
+            <p-step-panels>
+                <p-step-panel [value]="1">P1</p-step-panel>
+            </p-step-panels>
+        </p-stepper>
+    `
+})
+class StepperListQueryApiHostComponent {}
+
+@Component({
+    standalone: true,
+    imports: [StepperModule, SharedModule],
+    template: `
+        <p-stepper [value]="1">
+            <p-step-item [value]="1">
+                <p-step [value]="1">One</p-step>
+                <p-step-panel [value]="1">P1</p-step-panel>
+            </p-step-item>
+        </p-stepper>
+    `
+})
+class StepperItemQueryApiHostComponent {}
+
+describe('Stepper Signal Query API', () => {
+    it('should resolve StepList and Stepper content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [StepperListQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(StepperListQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const stepper = fixture.debugElement.query(By.directive(Stepper)).componentInstance;
+        expect(stepper.stepList()).toBeDefined();
+
+        const stepList = fixture.debugElement.query(By.directive(StepList)).componentInstance;
+        expect(stepList.steps().length).toBe(2);
+
+        const step = fixture.debugElement.query(By.directive(Step)).componentInstance;
+        expect(Array.isArray(step.templates())).toBe(true);
+
+        const stepPanel = fixture.debugElement.query(By.directive(StepPanel)).componentInstance;
+        expect(Array.isArray(stepPanel.templates())).toBe(true);
+    });
+
+    it('should resolve StepItem content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [StepperItemQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(StepperItemQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const stepItem = fixture.debugElement.query(By.directive(StepItem)).componentInstance;
+        expect(stepItem.step()).toBeDefined();
+        expect(stepItem.stepPanel()).toBeDefined();
     });
 });

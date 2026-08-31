@@ -9,6 +9,7 @@ import { BehaviorSubject, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { MultiSelect, MultiSelectModule } from './multiselect';
 import type { MultiSelectBlurEvent, MultiSelectChangeEvent, MultiSelectFilterEvent, MultiSelectFocusEvent } from '@openng/optimus-ui/types/multiselect';
+import { SharedModule } from '@openng/optimus-ui/api';
 interface City {
     name: string;
     code: string;
@@ -3951,3 +3952,64 @@ class TestFormIsolationMultiSelectComponent {
         { name: 'Rotterdam', code: 'RTM' }
     ];
 }
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [MultiSelect, SharedModule],
+    template: `
+        <p-multiselect [options]="opts">
+            <p-footer>F</p-footer>
+            <ng-template #group>g</ng-template>
+            <ng-template #loader>l</ng-template>
+            <ng-template #filter>f</ng-template>
+            <ng-template #loadingicon>li</ng-template>
+            <ng-template #filtericon>fi</ng-template>
+            <ng-template #removetokenicon>rti</ng-template>
+            <ng-template #chipicon>ci</ng-template>
+            <ng-template #clearicon>cli</ng-template>
+            <ng-template #dropdownicon>di</ng-template>
+            <ng-template #itemcheckboxicon>ici</ng-template>
+            <ng-template #headercheckboxicon>hci</ng-template>
+            <ng-template pTemplate="item">i</ng-template>
+        </p-multiselect>
+    `
+})
+class MultiSelectQueryApiHostComponent {
+    opts = [{ label: 'a', value: 1 }];
+}
+
+describe('MultiSelect Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [MultiSelectQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(MultiSelectQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(MultiSelect)).componentInstance;
+
+        for (const hook of [
+            'groupTemplate',
+            'loaderTemplate',
+            'filterTemplate',
+            'loadingIconTemplate',
+            'filterIconTemplate',
+            'removeTokenIconTemplate',
+            'chipIconTemplate',
+            'clearIconTemplate',
+            'dropdownIconTemplate',
+            'itemCheckboxIconTemplate',
+            'headerCheckboxIconTemplate'
+        ]) {
+            expect((instance as any)[hook](), `${hook} should resolve`).toBeDefined();
+        }
+        expect(instance.footerFacet()).toBeDefined();
+        expect(instance.templates().some((t: any) => t.getType() === 'item')).toBe(true);
+    });
+});

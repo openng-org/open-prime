@@ -9,6 +9,8 @@ import { provideOptimus } from '@openng/optimus-ui/config';
 import { Tooltip } from '@openng/optimus-ui/tooltip';
 import { TieredMenu } from './tieredmenu';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { SharedModule } from '@openng/optimus-ui/api';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -1493,5 +1495,36 @@ describe('TieredMenu', () => {
                 expect(root.nativeElement.classList.contains('INLINE_OBJECT_CLASS')).toBe(true);
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [TieredMenu, SharedModule],
+    template: ` <p-tieredmenu [model]="model"> </p-tieredmenu> `
+})
+class TieredMenuQueryApiHostComponent {
+    model = [{ label: 'a' }];
+}
+
+describe('TieredMenu Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TieredMenuQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(TieredMenuQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(TieredMenu)).componentInstance;
+
+        expect(instance.rootmenu()).toBeDefined();
+        expect(instance.containerViewChild()).toBeDefined();
+        expect(() => instance.rootmenu()?.sublistViewChild()).not.toThrow();
     });
 });

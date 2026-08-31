@@ -9,6 +9,7 @@ import { provideOptimus } from '@openng/optimus-ui/config';
 import { SliderChangeEvent, SliderSlideEndEvent } from '@openng/optimus-ui/types/slider';
 import { Slider, SliderModule } from './slider';
 
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 // Test Components
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -1544,5 +1545,32 @@ describe('Slider', () => {
                 expect(hookCalls).toContain('onDestroy');
             });
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Slider, SharedModule],
+    template: ` <p-slider> </p-slider> `
+})
+class SliderQueryApiHostComponent {}
+
+describe('Slider Signal Query API', () => {
+    it('should resolve its signal-based view/content queries', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [SliderQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(SliderQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance = fixture.debugElement.query(By.directive(Slider)).componentInstance;
+
+        expect(instance.sliderHandle()).toBeDefined();
     });
 });
