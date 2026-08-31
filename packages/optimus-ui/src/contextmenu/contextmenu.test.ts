@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DebugElement, ViewChild, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement, provideZonelessChangeDetection, viewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -65,7 +65,7 @@ class TestBasicContextMenuComponent {
     `
 })
 class TestTargetContextMenuComponent {
-    @ViewChild('targetDiv', { static: true }) targetDiv: any;
+    readonly targetDiv = viewChild<any>('targetDiv');
 
     model: MenuItem[] = [
         { label: 'Copy', icon: 'pi pi-copy' },
@@ -695,7 +695,7 @@ describe('ContextMenu', () => {
             // Create mock menu items structure
             const mockMenuDiv = document.createElement('div');
             mockMenuDiv.innerHTML = '<ul><li data-pc-section="menuitem" id="item_0"></li></ul>';
-            contextMenuInstance.rootmenu!.el!.nativeElement.appendChild(mockMenuDiv);
+            contextMenuInstance.rootmenu()!.el!.nativeElement.appendChild(mockMenuDiv);
         });
 
         it('should handle arrow down key', () => {
@@ -1251,7 +1251,7 @@ describe('ContextMenu', () => {
                 template: `<p-contextmenu #cm [model]="model" [pt]="pt" [global]="true"></p-contextmenu>`
             })
             class PTStringTestComponent {
-                @ViewChild('cm') contextMenu!: ContextMenu;
+                readonly contextMenu = viewChild.required<ContextMenu>('cm');
                 model: MenuItem[] = [
                     {
                         label: 'File',
@@ -1305,7 +1305,7 @@ describe('ContextMenu', () => {
                 template: `<p-contextmenu #cm [model]="model" [pt]="pt" [global]="true"></p-contextmenu>`
             })
             class PTObjectTestComponent {
-                @ViewChild('cm') contextMenu!: ContextMenu;
+                readonly contextMenu = viewChild.required<ContextMenu>('cm');
                 model: MenuItem[] = [
                     {
                         label: 'File',
@@ -1380,7 +1380,7 @@ describe('ContextMenu', () => {
                 template: `<p-contextmenu #cm [model]="model" [pt]="pt" [global]="true"></p-contextmenu>`
             })
             class PTMixedTestComponent {
-                @ViewChild('cm') contextMenu!: ContextMenu;
+                readonly contextMenu = viewChild.required<ContextMenu>('cm');
                 model: MenuItem[] = [
                     {
                         label: 'File',
@@ -1431,7 +1431,7 @@ describe('ContextMenu', () => {
                 template: `<p-contextmenu #cm [model]="model" [pt]="pt" [global]="true"></p-contextmenu>`
             })
             class PTBasicStringTestComponent {
-                @ViewChild('cm') contextMenu!: ContextMenu;
+                readonly contextMenu = viewChild.required<ContextMenu>('cm');
                 model: MenuItem[] = [
                     { label: 'Item 1', icon: 'pi pi-file' },
                     { label: 'Item 2', icon: 'pi pi-pencil', disabled: true }
@@ -1500,7 +1500,7 @@ describe('ContextMenu', () => {
                 template: `<p-contextmenu #cm [model]="model" [pt]="pt" [global]="true"></p-contextmenu>`
             })
             class PTObjectContextTestComponent {
-                @ViewChild('cm') contextMenu!: ContextMenu;
+                readonly contextMenu = viewChild.required<ContextMenu>('cm');
                 model: MenuItem[] = [
                     { label: 'Item 0', icon: 'pi pi-file' },
                     { label: 'Disabled Item', icon: 'pi pi-ban', disabled: true },

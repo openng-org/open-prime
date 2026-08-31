@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ViewChild, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, viewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -968,7 +968,7 @@ describe('Tree', () => {
                     expect(customLoadingTemplate.nativeElement.textContent).toContain('WAIT...');
                 } else {
                     // Loading icon template should be configured
-                    expect(tree.loadingIconTemplate || true).toBeTruthy();
+                    expect(tree.loadingIconTemplate() || true).toBeTruthy();
                 }
             });
 
@@ -980,7 +980,7 @@ describe('Tree', () => {
                     expect(customFilterIconTemplate.nativeElement.textContent).toContain('FIND');
                 } else {
                     // Filter icon template should be configured
-                    expect(tree.filterIconTemplate || true).toBeTruthy();
+                    expect(tree.filterIconTemplate() || true).toBeTruthy();
                 }
             });
 
@@ -992,7 +992,7 @@ describe('Tree', () => {
                     expect(customLoaderTemplate.nativeElement.textContent).toContain('Template Loader...');
                 } else {
                     // Loader template should be configured
-                    expect(tree.loaderTemplate || true).toBeTruthy();
+                    expect(tree.loaderTemplate() || true).toBeTruthy();
                 }
             });
         });
@@ -1553,7 +1553,7 @@ describe('Tree', () => {
                     expect(customHeader.nativeElement.textContent).toContain('Tree Header with pTemplate');
                 } else {
                     // Header template is configured
-                    expect(tree.headerTemplate || true).toBeTruthy();
+                    expect(tree.headerTemplate() || true).toBeTruthy();
                 }
             });
 
@@ -1565,7 +1565,7 @@ describe('Tree', () => {
                     expect(customFooter.nativeElement.textContent).toContain('Tree Footer with pTemplate');
                 } else {
                     // Footer template is configured
-                    expect(tree.footerTemplate || true).toBeTruthy();
+                    expect(tree.footerTemplate() || true).toBeTruthy();
                 }
             });
 
@@ -1666,7 +1666,7 @@ describe('Tree', () => {
 
                 // After content init, template references should be available
                 expect(
-                    tree.nodeTemplate || tree.headerTemplate || tree.footerTemplate || tree.emptyTemplate || tree.togglerIconTemplate || true // At least one should be defined or test passes
+                    tree.nodeTemplate() || tree.headerTemplate() || tree.footerTemplate() || tree.emptyTemplate() || tree.togglerIconTemplate() || true // At least one should be defined or test passes
                 ).toBeTruthy();
             });
 
@@ -1690,7 +1690,7 @@ describe('Tree', () => {
                     expect(customHeaderTemplate.nativeElement.textContent).toContain('Tree Header with #template');
                 } else {
                     // Header template reference is available
-                    expect(tree.headerTemplate || true).toBeTruthy();
+                    expect(tree.headerTemplate() || true).toBeTruthy();
                 }
             });
 
@@ -1702,7 +1702,7 @@ describe('Tree', () => {
                     expect(customFooterTemplate.nativeElement.textContent).toContain('Tree Footer with #template');
                 } else {
                     // Footer template reference is available
-                    expect(tree.footerTemplate || true).toBeTruthy();
+                    expect(tree.footerTemplate() || true).toBeTruthy();
                 }
             });
 
@@ -2283,7 +2283,7 @@ describe('Tree', () => {
             dynamicFixture.changeDetectorRef.markForCheck();
             await dynamicFixture.whenStable();
             dynamicFixture.detectChanges();
-            dynamicTree = dynamicComponent.tree;
+            dynamicTree = dynamicComponent.tree();
         });
 
         it('should handle dynamic value changes', async () => {
@@ -2891,7 +2891,7 @@ describe('Tree', () => {
     `
 })
 class TestDynamicTreeComponent {
-    @ViewChild('tree') tree!: Tree;
+    readonly tree = viewChild.required<Tree>('tree');
 
     value: TreeNode[] = [
         {

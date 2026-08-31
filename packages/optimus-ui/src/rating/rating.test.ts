@@ -884,12 +884,12 @@ describe('Rating', () => {
 
         it('should have onicon pTemplate', () => {
             expect(ratingInstance).toBeTruthy();
-            expect(() => ratingInstance.onIconTemplate).not.toThrow();
+            expect(() => ratingInstance.onIconTemplate()).not.toThrow();
         });
 
         it('should have officon pTemplate', () => {
             expect(ratingInstance).toBeTruthy();
-            expect(() => ratingInstance.offIconTemplate).not.toThrow();
+            expect(() => ratingInstance.offIconTemplate()).not.toThrow();
         });
 
         it('should pass context parameters to onicon template', async () => {
@@ -989,12 +989,12 @@ describe('Rating', () => {
 
         it('should have onicon #template', () => {
             expect(ratingInstance).toBeTruthy();
-            expect(() => ratingInstance.onIconTemplate).not.toThrow();
+            expect(() => ratingInstance.onIconTemplate()).not.toThrow();
         });
 
         it('should have officon #template', () => {
             expect(ratingInstance).toBeTruthy();
-            expect(() => ratingInstance.offIconTemplate).not.toThrow();
+            expect(() => ratingInstance.offIconTemplate()).not.toThrow();
         });
 
         it('should pass context parameters to onicon template', async () => {

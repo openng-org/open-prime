@@ -775,7 +775,7 @@ describe('Scroller', () => {
         it('should get element reference', async () => {
             const elementRef = scroller.getElementRef();
             expect(elementRef).toBeDefined();
-            expect(elementRef).toBe(scroller.elementViewChild);
+            expect(elementRef).toBe(scroller.elementViewChild());
         });
 
         it('should calculate page by first index', async () => {
@@ -802,7 +802,7 @@ describe('Scroller', () => {
         });
 
         it('should scroll to specified options', async () => {
-            const scrollToSpy = vi.spyOn(scroller.elementViewChild?.nativeElement, 'scrollTo').mockImplementation(() => {});
+            const scrollToSpy = vi.spyOn(scroller.elementViewChild()?.nativeElement, 'scrollTo').mockImplementation(() => {});
             const scrollOptions: ScrollToOptions = { left: 100, top: 200, behavior: 'smooth' };
 
             scroller.scrollTo(scrollOptions);
@@ -1415,11 +1415,12 @@ describe('Scroller', () => {
             });
 
             // Mock element dimensions
-            Object.defineProperty(scroller.elementViewChild?.nativeElement, 'offsetHeight', {
+            const elementViewChild = scroller.elementViewChild();
+            Object.defineProperty(elementViewChild?.nativeElement, 'offsetHeight', {
                 value: 200,
                 writable: true
             });
-            Object.defineProperty(scroller.elementViewChild?.nativeElement, 'offsetWidth', {
+            Object.defineProperty(elementViewChild?.nativeElement, 'offsetWidth', {
                 value: 300,
                 writable: true
             });

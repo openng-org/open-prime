@@ -77,10 +77,11 @@ describe('FileUpload', () => {
             component.mode = 'advanced';
             fixture.detectChanges();
 
-            if (component.advancedFileInput?.nativeElement) {
-                vi.spyOn(component.advancedFileInput.nativeElement, 'click').mockImplementation(() => {});
+            const advancedFileInput = component.advancedFileInput();
+            if (advancedFileInput?.nativeElement) {
+                vi.spyOn(advancedFileInput.nativeElement, 'click').mockImplementation(() => {});
                 component.choose();
-                expect(component.advancedFileInput.nativeElement.click).toHaveBeenCalled();
+                expect(advancedFileInput.nativeElement.click).toHaveBeenCalled();
             } else {
                 // If element doesn't exist, just verify the method doesn't throw
                 expect(() => component.choose()).not.toThrow();
@@ -127,10 +128,11 @@ describe('FileUpload', () => {
             component.mode = 'basic';
             fixture.detectChanges();
 
-            if (component.basicFileInput?.nativeElement) {
-                vi.spyOn(component.basicFileInput.nativeElement, 'click').mockImplementation(() => {});
+            const basicFileInput = component.basicFileInput();
+            if (basicFileInput?.nativeElement) {
+                vi.spyOn(basicFileInput.nativeElement, 'click').mockImplementation(() => {});
                 component.onBasicUploaderClick();
-                expect(component.basicFileInput.nativeElement.click).toHaveBeenCalled();
+                expect(basicFileInput.nativeElement.click).toHaveBeenCalled();
             } else {
                 // If element doesn't exist, just verify the method doesn't throw
                 expect(() => component.onBasicUploaderClick()).not.toThrow();

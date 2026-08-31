@@ -1078,7 +1078,7 @@ describe('Menubar', () => {
             fixture.componentRef.setInput('model', [{ label: 'Test', items: [{ label: 'Subitem' }] }]);
             fixture.detectChanges();
 
-            const menubarSub = menubar.rootmenu as MenubarSub;
+            const menubarSub = menubar.rootmenu() as MenubarSub;
             const processedItem = {
                 item: { label: 'Test Item', disabled: false },
                 key: '0',
@@ -1108,7 +1108,7 @@ describe('Menubar', () => {
             fixture.componentRef.setInput('model', [{ label: 'Test', items: [{ label: 'Subitem' }] }]);
             fixture.detectChanges();
 
-            const menubarSub = menubar.rootmenu as MenubarSub;
+            const menubarSub = menubar.rootmenu() as MenubarSub;
             const processedItem = {
                 item: { label: 'Test Item' },
                 key: '0',
@@ -1127,7 +1127,7 @@ describe('Menubar', () => {
             fixture.componentRef.setInput('model', [{ label: 'Test', items: [{ label: 'Subitem' }] }]);
             fixture.detectChanges();
 
-            const menubarSub = menubar.rootmenu as MenubarSub;
+            const menubarSub = menubar.rootmenu() as MenubarSub;
             const processedItem = {
                 item: { label: 'Test Item' },
                 key: '0',
@@ -1154,7 +1154,7 @@ describe('Menubar', () => {
             fixture.componentRef.setInput('model', [{ label: 'Test', items: [{ label: 'Subitem' }] }]);
             fixture.detectChanges();
 
-            const menubarSub = menubar.rootmenu as MenubarSub;
+            const menubarSub = menubar.rootmenu() as MenubarSub;
             const processedItem = {
                 item: { label: 'Test Item', id: 'test-item-0' },
                 key: '0',
@@ -1181,7 +1181,7 @@ describe('Menubar', () => {
             fixture.componentRef.setInput('model', [{ label: 'Test', items: [{ label: 'Subitem', disabled: true }] }]);
             fixture.detectChanges();
 
-            const menubarSub = menubar.rootmenu as MenubarSub;
+            const menubarSub = menubar.rootmenu() as MenubarSub;
             const processedItem = {
                 item: { label: 'Disabled Item', disabled: true },
                 key: '0',
@@ -1208,7 +1208,7 @@ describe('Menubar', () => {
             fixture.componentRef.setInput('model', [{ label: 'Test', items: [{ label: 'Subitem' }] }]);
             fixture.detectChanges();
 
-            const menubarSub = menubar.rootmenu as MenubarSub;
+            const menubarSub = menubar.rootmenu() as MenubarSub;
             const processedItem = {
                 item: { label: 'Test Item' },
                 key: '0',
@@ -1229,7 +1229,7 @@ describe('Menubar', () => {
             fixture.componentRef.setInput('model', [{ label: 'Test', items: [{ label: 'Subitem' }] }]);
             fixture.detectChanges();
 
-            const menubarSub = menubar.rootmenu as MenubarSub;
+            const menubarSub = menubar.rootmenu() as MenubarSub;
             const processedItem = {
                 item: { label: 'Test Item' },
                 key: '0',
@@ -1254,7 +1254,7 @@ describe('Menubar', () => {
             fixture.componentRef.setInput('model', [{ label: 'Item 1' }, { label: 'Item 2' }, { label: 'Item 3' }]);
             fixture.detectChanges();
 
-            const menubarSub = menubar.rootmenu as MenubarSub;
+            const menubarSub = menubar.rootmenu() as MenubarSub;
             const processedItem = {
                 item: { label: 'Item 2' },
                 key: '1',

@@ -4,9 +4,7 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    ContentChild,
     contentChild,
-    ContentChildren,
     Directive,
     effect,
     EventEmitter,
@@ -17,9 +15,9 @@ import {
     NgModule,
     numberAttribute,
     Output,
-    QueryList,
     TemplateRef,
-    ViewEncapsulation
+    ViewEncapsulation,
+    contentChildren
 } from '@angular/core';
 import { addClass, createElement, findSingle, isEmpty } from '@openng/optimus-ui-utils';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
@@ -596,9 +594,9 @@ export class ButtonDirective extends BaseComponent {
             [attr.data-p-severity]="severity || buttonProps?.severity"
         >
             <ng-content></ng-content>
-            <ng-container *ngTemplateOutlet="contentTemplate || _contentTemplate"></ng-container>
+            <ng-container *ngTemplateOutlet="contentTemplate() || _contentTemplate"></ng-container>
             @if (loading || buttonProps?.loading) {
-                @if (!loadingIconTemplate && !_loadingIconTemplate) {
+                @if (!loadingIconTemplate() && !_loadingIconTemplate) {
                     @if (loadingIcon || buttonProps?.loadingIcon) {
                         <span [class]="cn(cx('loadingIcon'), 'pi-spin', loadingIcon || buttonProps?.loadingIcon)" [pBind]="ptm('loadingIcon')" [attr.aria-hidden]="true"></span>
                     }
@@ -606,22 +604,22 @@ export class ButtonDirective extends BaseComponent {
                         <svg data-p-icon="spinner" [class]="cn(cx('loadingIcon'), cx('spinnerIcon'))" [pBind]="ptm('loadingIcon')" [spin]="true" [attr.aria-hidden]="true" />
                     }
                 }
-                @if (loadingIconTemplate || _loadingIconTemplate) {
-                    <ng-template *ngTemplateOutlet="loadingIconTemplate || _loadingIconTemplate; context: { class: cx('loadingIcon'), pt: ptm('loadingIcon') }"></ng-template>
+                @if (loadingIconTemplate() || _loadingIconTemplate) {
+                    <ng-template *ngTemplateOutlet="loadingIconTemplate() || _loadingIconTemplate; context: { class: cx('loadingIcon'), pt: ptm('loadingIcon') }"></ng-template>
                 }
             }
             @if (!(loading || buttonProps?.loading)) {
-                @if ((icon || buttonProps?.icon) && !iconTemplate && !_iconTemplate) {
+                @if ((icon || buttonProps?.icon) && !iconTemplate() && !_iconTemplate) {
                     <span [class]="cn(cx('icon'), icon || buttonProps?.icon)" [pBind]="ptm('icon')" [attr.data-p]="dataIconP"></span>
                 }
-                @if (!icon && (iconTemplate || _iconTemplate)) {
-                    <ng-template *ngTemplateOutlet="iconTemplate || _iconTemplate; context: { class: cx('icon'), pt: ptm('icon') }"></ng-template>
+                @if (!icon && (iconTemplate() || _iconTemplate)) {
+                    <ng-template *ngTemplateOutlet="iconTemplate() || _iconTemplate; context: { class: cx('icon'), pt: ptm('icon') }"></ng-template>
                 }
             }
-            @if (!contentTemplate && !_contentTemplate && (label || buttonProps?.label)) {
+            @if (!contentTemplate() && !_contentTemplate && (label || buttonProps?.label)) {
                 <span [class]="cx('label')" [attr.aria-hidden]="(icon || buttonProps?.icon) && !(label || buttonProps?.label)" [pBind]="ptm('label')" [attr.data-p]="dataLabelP">{{ label || buttonProps?.label }}</span>
             }
-            @if (!contentTemplate && !_contentTemplate && (badge || buttonProps?.badge)) {
+            @if (!contentTemplate() && !_contentTemplate && (badge || buttonProps?.badge)) {
                 <p-badge [value]="badge || buttonProps?.badge" [severity]="badgeSeverity || buttonProps?.badgeSeverity" [pt]="ptm('pcBadge')" [unstyled]="unstyled()"></p-badge>
             }
         </button>
@@ -833,21 +831,21 @@ export class Button extends BaseComponent<ButtonPassThrough> {
      * Custom content template.
      * @group Templates
      **/
-    @ContentChild('content') contentTemplate: TemplateRef<void> | undefined;
+    readonly contentTemplate = contentChild<TemplateRef<void>>('content');
 
     /**
      * Custom loading icon template.
      * @group Templates
      **/
-    @ContentChild('loadingicon') loadingIconTemplate: TemplateRef<ButtonLoadingIconTemplateContext> | undefined;
+    readonly loadingIconTemplate = contentChild<TemplateRef<ButtonLoadingIconTemplateContext>>('loadingicon');
 
     /**
      * Custom icon template.
      * @group Templates
      **/
-    @ContentChild('icon') iconTemplate: TemplateRef<ButtonIconTemplateContext> | undefined;
+    readonly iconTemplate = contentChild<TemplateRef<ButtonIconTemplateContext>>('icon');
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     pcFluid: Fluid | null = inject(Fluid, { optional: true, host: true, skipSelf: true });
 
@@ -856,7 +854,7 @@ export class Button extends BaseComponent<ButtonPassThrough> {
     }
 
     get hasIcon() {
-        return this.icon || this.buttonProps?.icon || this.iconTemplate || this._iconTemplate || this.loadingIcon || this.loadingIconTemplate || this._loadingIconTemplate;
+        return this.icon || this.buttonProps?.icon || this.iconTemplate() || this._iconTemplate || this.loadingIcon || this.loadingIconTemplate() || this._loadingIconTemplate;
     }
 
     _contentTemplate: TemplateRef<void> | undefined;
@@ -866,7 +864,7 @@ export class Button extends BaseComponent<ButtonPassThrough> {
     _loadingIconTemplate: TemplateRef<ButtonLoadingIconTemplateContext> | undefined;
 
     onAfterContentInit() {
-        this.templates?.forEach((item) => {
+        this.templates()?.forEach((item) => {
             switch (item.getType()) {
                 case 'content':
                     this._contentTemplate = item.template;

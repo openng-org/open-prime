@@ -769,7 +769,7 @@ describe('ToggleSwitch pTemplate Tests', () => {
     it('should create component with pTemplate templates', async () => {
         expect(component).toBeTruthy();
         expect(toggleSwitchInstance).toBeTruthy();
-        expect(() => toggleSwitchInstance.handleTemplate).not.toThrow();
+        expect(() => toggleSwitchInstance.handleTemplate()).not.toThrow();
     });
 
     it('should pass context parameters to handle template', async () => {
@@ -863,7 +863,7 @@ describe('ToggleSwitch #template Reference Tests', () => {
     it('should create component with #template references', async () => {
         expect(component).toBeTruthy();
         expect(toggleSwitchInstance).toBeTruthy();
-        expect(() => toggleSwitchInstance.handleTemplate).not.toThrow();
+        expect(() => toggleSwitchInstance.handleTemplate()).not.toThrow();
     });
 
     it('should pass context parameters to handle template', async () => {

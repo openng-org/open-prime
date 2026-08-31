@@ -5,8 +5,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    ContentChild,
-    ContentChildren,
     ElementRef,
     EventEmitter,
     HostBinding,
@@ -22,7 +20,9 @@ import {
     QueryList,
     SimpleChanges,
     TemplateRef,
-    ViewEncapsulation
+    ViewEncapsulation,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Aria, PrimeTemplate, SelectItem, SharedModule } from '@openng/optimus-ui/api';
@@ -57,23 +57,23 @@ const PAGINATOR_INSTANCE = new InjectionToken<Paginator>('PAGINATOR_INSTANCE');
         }
         @if (showFirstLastIcon) {
             <button [pBind]="ptm('first')" type="button" (click)="changePageToFirst($event)" pRipple [class]="cx('first')" [attr.aria-label]="getAriaLabel('firstPageLabel')">
-                @if (!firstPageLinkIconTemplate && !_firstPageLinkIconTemplate) {
+                @if (!firstPageLinkIconTemplate() && !_firstPageLinkIconTemplate) {
                     <svg [pBind]="ptm('firstIcon')" data-p-icon="angle-double-left" [class]="cx('firstIcon')" />
                 }
-                @if (firstPageLinkIconTemplate || _firstPageLinkIconTemplate) {
+                @if (firstPageLinkIconTemplate() || _firstPageLinkIconTemplate) {
                     <span [class]="cx('firstIcon')">
-                        <ng-template *ngTemplateOutlet="firstPageLinkIconTemplate || _firstPageLinkIconTemplate"></ng-template>
+                        <ng-template *ngTemplateOutlet="firstPageLinkIconTemplate() || _firstPageLinkIconTemplate"></ng-template>
                     </span>
                 }
             </button>
         }
         <button [pBind]="ptm('prev')" type="button" [disabled]="isFirstPage() || empty()" (click)="changePageToPrev($event)" pRipple [class]="cx('prev')" [attr.aria-label]="getAriaLabel('prevPageLabel')">
-            @if (!previousPageLinkIconTemplate && !_previousPageLinkIconTemplate) {
+            @if (!previousPageLinkIconTemplate() && !_previousPageLinkIconTemplate) {
                 <svg [pBind]="ptm('prevIcon')" data-p-icon="angle-left" [class]="cx('prevIcon')" />
             }
-            @if (previousPageLinkIconTemplate || _previousPageLinkIconTemplate) {
+            @if (previousPageLinkIconTemplate() || _previousPageLinkIconTemplate) {
                 <span [class]="cx('prevIcon')">
-                    <ng-template *ngTemplateOutlet="previousPageLinkIconTemplate || _previousPageLinkIconTemplate"></ng-template>
+                    <ng-template *ngTemplateOutlet="previousPageLinkIconTemplate() || _previousPageLinkIconTemplate"></ng-template>
                 </span>
             }
         </button>
@@ -114,31 +114,31 @@ const PAGINATOR_INSTANCE = new InjectionToken<Paginator>('PAGINATOR_INSTANCE');
                         <ng-container *ngTemplateOutlet="jumpToPageItemTemplate; context: { $implicit: item }"></ng-container>
                     </ng-template>
                 }
-                @if (dropdownIconTemplate || _dropdownIconTemplate) {
+                @if (dropdownIconTemplate() || _dropdownIconTemplate) {
                     <ng-template pTemplate="dropdownicon">
-                        <ng-container *ngTemplateOutlet="dropdownIconTemplate || _dropdownIconTemplate"></ng-container>
+                        <ng-container *ngTemplateOutlet="dropdownIconTemplate() || _dropdownIconTemplate"></ng-container>
                     </ng-template>
                 }
             </p-select>
         }
         <button [pBind]="ptm('next')" type="button" [disabled]="isLastPage() || empty()" (click)="changePageToNext($event)" pRipple [class]="cx('next')" [attr.aria-label]="getAriaLabel('nextPageLabel')">
-            @if (!nextPageLinkIconTemplate && !_nextPageLinkIconTemplate) {
+            @if (!nextPageLinkIconTemplate() && !_nextPageLinkIconTemplate) {
                 <svg [pBind]="ptm('nextIcon')" data-p-icon="angle-right" [class]="cx('nextIcon')" />
             }
-            @if (nextPageLinkIconTemplate || _nextPageLinkIconTemplate) {
+            @if (nextPageLinkIconTemplate() || _nextPageLinkIconTemplate) {
                 <span [class]="cx('nextIcon')">
-                    <ng-template *ngTemplateOutlet="nextPageLinkIconTemplate || _nextPageLinkIconTemplate"></ng-template>
+                    <ng-template *ngTemplateOutlet="nextPageLinkIconTemplate() || _nextPageLinkIconTemplate"></ng-template>
                 </span>
             }
         </button>
         @if (showFirstLastIcon) {
             <button [pBind]="ptm('last')" type="button" [disabled]="isLastPage() || empty()" (click)="changePageToLast($event)" pRipple [class]="cx('last')" [attr.aria-label]="getAriaLabel('lastPageLabel')">
-                @if (!lastPageLinkIconTemplate && !_lastPageLinkIconTemplate) {
+                @if (!lastPageLinkIconTemplate() && !_lastPageLinkIconTemplate) {
                     <svg [pBind]="ptm('lastIcon')" data-p-icon="angle-double-right" [class]="cx('lastIcon')" />
                 }
-                @if (lastPageLinkIconTemplate || _lastPageLinkIconTemplate) {
+                @if (lastPageLinkIconTemplate() || _lastPageLinkIconTemplate) {
                     <span [class]="cx('lastIcon')">
-                        <ng-template *ngTemplateOutlet="lastPageLinkIconTemplate || _lastPageLinkIconTemplate"></ng-template>
+                        <ng-template *ngTemplateOutlet="lastPageLinkIconTemplate() || _lastPageLinkIconTemplate"></ng-template>
                     </span>
                 }
             </button>
@@ -173,9 +173,9 @@ const PAGINATOR_INSTANCE = new InjectionToken<Paginator>('PAGINATOR_INSTANCE');
                         <ng-container *ngTemplateOutlet="dropdownItemTemplate; context: { $implicit: item }"></ng-container>
                     </ng-template>
                 }
-                @if (dropdownIconTemplate || _dropdownIconTemplate) {
+                @if (dropdownIconTemplate() || _dropdownIconTemplate) {
                     <ng-template pTemplate="dropdownicon">
-                        <ng-container *ngTemplateOutlet="dropdownIconTemplate || _dropdownIconTemplate"></ng-container>
+                        <ng-container *ngTemplateOutlet="dropdownIconTemplate() || _dropdownIconTemplate"></ng-container>
                     </ng-template>
                 }
             </p-select>
@@ -338,33 +338,33 @@ export class Paginator extends BaseComponent<PaginatorPassThrough> {
      * Template for the dropdown icon.
      * @group Templates
      */
-    @ContentChild('dropdownicon', { descendants: false }) dropdownIconTemplate: Nullable<TemplateRef<void>>;
+    readonly dropdownIconTemplate = contentChild<Nullable<TemplateRef<void>>>('dropdownicon', { descendants: false });
 
     /**
      * Template for the first page link icon.
      * @group Templates
      */
-    @ContentChild('firstpagelinkicon', { descendants: false }) firstPageLinkIconTemplate: Nullable<TemplateRef<void>>;
+    readonly firstPageLinkIconTemplate = contentChild<Nullable<TemplateRef<void>>>('firstpagelinkicon', { descendants: false });
 
     /**
      * Template for the previous page link icon.
      * @group Templates
      */
-    @ContentChild('previouspagelinkicon', { descendants: false }) previousPageLinkIconTemplate: Nullable<TemplateRef<void>>;
+    readonly previousPageLinkIconTemplate = contentChild<Nullable<TemplateRef<void>>>('previouspagelinkicon', { descendants: false });
 
     /**
      * Template for the last page link icon.
      * @group Templates
      */
-    @ContentChild('lastpagelinkicon', { descendants: false }) lastPageLinkIconTemplate: Nullable<TemplateRef<void>>;
+    readonly lastPageLinkIconTemplate = contentChild<Nullable<TemplateRef<void>>>('lastpagelinkicon', { descendants: false });
 
     /**
      * Template for the next page link icon.
      * @group Templates
      */
-    @ContentChild('nextpagelinkicon', { descendants: false }) nextPageLinkIconTemplate: Nullable<TemplateRef<void>>;
+    readonly nextPageLinkIconTemplate = contentChild<Nullable<TemplateRef<void>>>('nextpagelinkicon', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates: Nullable<QueryList<PrimeTemplate>>;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _dropdownIconTemplate: TemplateRef<void> | undefined;
 
@@ -401,7 +401,7 @@ export class Paginator extends BaseComponent<PaginatorPassThrough> {
     }
 
     onAfterContentInit(): void {
-        (this.templates as QueryList<PrimeTemplate>).forEach((item) => {
+        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
             switch (item.getType()) {
                 case 'dropdownicon':
                     this._dropdownIconTemplate = item.template;

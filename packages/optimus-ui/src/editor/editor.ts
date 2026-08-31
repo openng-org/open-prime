@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformServer } from '@angular/common';
-import { afterNextRender, ChangeDetectionStrategy, Component, ContentChild, ContentChildren, EventEmitter, forwardRef, inject, InjectionToken, Input, NgModule, Output, QueryList, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, EventEmitter, forwardRef, inject, InjectionToken, Input, NgModule, Output, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { findSingle } from '@openng/optimus-ui-utils';
 import { Header, PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
@@ -26,13 +26,13 @@ export const EDITOR_VALUE_ACCESSOR: any = {
     standalone: true,
     imports: [CommonModule, SharedModule, BindModule],
     template: `
-        @if (toolbar || headerTemplate || _headerTemplate) {
+        @if (toolbar() || headerTemplate() || _headerTemplate) {
             <div [class]="cx('toolbar')" [pBind]="ptm('toolbar')">
                 <ng-content select="p-header"></ng-content>
-                <ng-container *ngTemplateOutlet="headerTemplate || _headerTemplate"></ng-container>
+                <ng-container *ngTemplateOutlet="headerTemplate() || _headerTemplate"></ng-container>
             </div>
         }
-        @if (!toolbar && !headerTemplate && !_headerTemplate) {
+        @if (!toolbar() && !headerTemplate() && !_headerTemplate) {
             <div [class]="cx('toolbar')" [pBind]="ptm('toolbar')">
                 <span class="ql-formats" [pBind]="ptm('formats')">
                     <select class="ql-header" [pBind]="ptm('header')">
@@ -189,7 +189,7 @@ export class Editor extends BaseEditableHolder<EditorPassThrough> {
      */
     @Output() onBlur: EventEmitter<EditorBlurEvent> = new EventEmitter<EditorBlurEvent>();
 
-    @ContentChild(Header) toolbar: any;
+    readonly toolbar = contentChild(Header);
 
     value: Nullable<string>;
 
@@ -205,9 +205,9 @@ export class Editor extends BaseEditableHolder<EditorPassThrough> {
      * Custom item template.
      * @group Templates
      */
-    @ContentChild('header', { descendants: false }) headerTemplate: Nullable<TemplateRef<any>>;
+    readonly headerTemplate = contentChild<Nullable<TemplateRef<any>>>('header', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates!: QueryList<PrimeTemplate>;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _headerTemplate: TemplateRef<any> | undefined;
 
@@ -235,7 +235,7 @@ export class Editor extends BaseEditableHolder<EditorPassThrough> {
     }
 
     onAfterContentInit() {
-        this.templates.forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'header':
                     this.headerTemplate = item.template;

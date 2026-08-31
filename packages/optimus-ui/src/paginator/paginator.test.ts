@@ -1,5 +1,5 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, viewChild } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { FormControl, FormGroup, FormsModule, NgModel, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -612,11 +612,11 @@ describe('Paginator', () => {
                 await contentChildFixture.whenStable();
 
                 const hasTemplates =
-                    contentChildPaginator.dropdownIconTemplate ||
-                    contentChildPaginator.firstPageLinkIconTemplate ||
-                    contentChildPaginator.previousPageLinkIconTemplate ||
-                    contentChildPaginator.nextPageLinkIconTemplate ||
-                    contentChildPaginator.lastPageLinkIconTemplate;
+                    contentChildPaginator.dropdownIconTemplate() ||
+                    contentChildPaginator.firstPageLinkIconTemplate() ||
+                    contentChildPaginator.previousPageLinkIconTemplate() ||
+                    contentChildPaginator.nextPageLinkIconTemplate() ||
+                    contentChildPaginator.lastPageLinkIconTemplate();
 
                 expect(hasTemplates).toBeTruthy();
             });
@@ -1169,7 +1169,7 @@ describe('Paginator', () => {
             dynamicFixture = TestBed.createComponent(TestDynamicPaginatorComponent);
             dynamicComponent = dynamicFixture.componentInstance;
             dynamicFixture.detectChanges();
-            dynamicPaginator = dynamicComponent.paginator;
+            dynamicPaginator = dynamicComponent.paginator();
         });
 
         it('should handle dynamic totalRecords changes', async () => {
@@ -1349,7 +1349,7 @@ describe('Paginator', () => {
     `
 })
 class TestDynamicPaginatorComponent {
-    @ViewChild('paginator') paginator!: Paginator;
+    readonly paginator = viewChild.required<Paginator>('paginator');
 
     totalRecords = 100;
     rows = 10;

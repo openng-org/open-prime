@@ -1,4 +1,4 @@
-import { AfterViewChecked, AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, HostListener, inject, InjectionToken, Input, NgModule, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, HostListener, inject, InjectionToken, Input, NgModule, OnDestroy, ViewEncapsulation, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { find } from '@openng/optimus-ui-utils';
 import { SharedModule } from '@openng/optimus-ui/api';
@@ -82,11 +82,11 @@ export class Terminal extends BaseComponent<TerminalPassThrough> implements Afte
 
     _componentStyle = inject(TerminalStyle);
 
-    @ViewChild('in') inputRef!: ElementRef<HTMLInputElement>;
+    readonly inputRef = viewChild.required<ElementRef<HTMLInputElement>>('in');
 
     @HostListener('click')
     onHostClick() {
-        this.focus(this.inputRef?.nativeElement);
+        this.focus(this.inputRef()?.nativeElement);
     }
 
     constructor() {

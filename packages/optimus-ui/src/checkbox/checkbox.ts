@@ -4,8 +4,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    ContentChild,
-    ContentChildren,
     ElementRef,
     EventEmitter,
     forwardRef,
@@ -16,12 +14,13 @@ import {
     NgModule,
     numberAttribute,
     Output,
-    QueryList,
     signal,
     SimpleChanges,
     TemplateRef,
-    ViewChild,
-    ViewEncapsulation
+    ViewEncapsulation,
+    viewChild,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { FormControl, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { contains, equals } from '@openng/optimus-ui-utils';
@@ -72,7 +71,7 @@ export const CHECKBOX_VALUE_ACCESSOR: any = {
             (change)="handleChange($event)"
         />
         <div [class]="cx('box')" [pBind]="ptm('box')" [attr.data-p]="dataP">
-            @if (!checkboxIconTemplate && !_checkboxIconTemplate) {
+            @if (!checkboxIconTemplate() && !_checkboxIconTemplate) {
                 @if (checked) {
                     @if (checkboxIcon) {
                         <span [class]="cx('icon')" [ngClass]="checkboxIcon" [pBind]="ptm('icon')" [attr.data-p]="dataP"></span>
@@ -85,7 +84,7 @@ export const CHECKBOX_VALUE_ACCESSOR: any = {
                     <svg data-p-icon="minus" [class]="cx('icon')" [pBind]="ptm('icon')" [attr.data-p]="dataP" />
                 }
             }
-            <ng-template *ngTemplateOutlet="checkboxIconTemplate || _checkboxIconTemplate; context: { checked: checked, class: cx('icon'), dataP: dataP }"></ng-template>
+            <ng-template *ngTemplateOutlet="checkboxIconTemplate() || _checkboxIconTemplate; context: { checked: checked, class: cx('icon'), dataP: dataP }"></ng-template>
         </div>
     `,
     providers: [CHECKBOX_VALUE_ACCESSOR, CheckboxStyle, { provide: CHECKBOX_INSTANCE, useExisting: Checkbox }, { provide: PARENT_INSTANCE, useExisting: Checkbox }],
@@ -216,7 +215,7 @@ export class Checkbox extends BaseEditableHolder<CheckboxPassThrough> {
      */
     @Output() onBlur: EventEmitter<Event> = new EventEmitter<Event>();
 
-    @ViewChild('input') inputViewChild: Nullable<ElementRef>;
+    readonly inputViewChild = viewChild<Nullable<ElementRef>>('input');
 
     get checked() {
         return this._indeterminate() ? false : this.binary ? this.modelValue() === this.trueValue : contains(this.value, this.modelValue());
@@ -227,9 +226,9 @@ export class Checkbox extends BaseEditableHolder<CheckboxPassThrough> {
      * Custom checkbox icon template.
      * @group Templates
      */
-    @ContentChild('icon', { descendants: false }) checkboxIconTemplate: TemplateRef<CheckboxIconTemplateContext> | undefined;
+    readonly checkboxIconTemplate = contentChild<TemplateRef<CheckboxIconTemplateContext>>('icon', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates: Nullable<QueryList<PrimeTemplate>>;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _checkboxIconTemplate: TemplateRef<CheckboxIconTemplateContext> | undefined;
 
@@ -244,7 +243,7 @@ export class Checkbox extends BaseEditableHolder<CheckboxPassThrough> {
     $variant = computed(() => this.variant() || this.config.inputStyle() || this.config.inputVariant());
 
     onAfterContentInit() {
-        this.templates?.forEach((item) => {
+        this.templates()?.forEach((item) => {
             switch (item.getType()) {
                 case 'icon':
                     this._checkboxIconTemplate = item.template;
@@ -319,7 +318,7 @@ export class Checkbox extends BaseEditableHolder<CheckboxPassThrough> {
     }
 
     focus() {
-        this.inputViewChild?.nativeElement.focus();
+        this.inputViewChild()?.nativeElement.focus();
     }
 
     /**

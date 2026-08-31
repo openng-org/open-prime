@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DebugElement, Input, TemplateRef, ViewChild, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement, Input, TemplateRef, provideZonelessChangeDetection, viewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -73,9 +73,9 @@ class TestLegacyTemplateToolbarComponent {}
     `
 })
 class TestContentChildToolbarComponent {
-    @ViewChild('start') startTemplate!: TemplateRef<any>;
-    @ViewChild('center') centerTemplate!: TemplateRef<any>;
-    @ViewChild('end') endTemplate!: TemplateRef<any>;
+    readonly startTemplate = viewChild.required<TemplateRef<any>>('start');
+    readonly centerTemplate = viewChild.required<TemplateRef<any>>('center');
+    readonly endTemplate = viewChild.required<TemplateRef<any>>('end');
 }
 
 @Component({
@@ -649,9 +649,9 @@ describe('Toolbar', () => {
 
         it('should have correct template references in component', () => {
             // Component's ViewChild references should be defined
-            expect(contentChildComponent.startTemplate).toBeDefined();
-            expect(contentChildComponent.centerTemplate).toBeDefined();
-            expect(contentChildComponent.endTemplate).toBeDefined();
+            expect(contentChildComponent.startTemplate()).toBeDefined();
+            expect(contentChildComponent.centerTemplate()).toBeDefined();
+            expect(contentChildComponent.endTemplate()).toBeDefined();
         });
 
         it('should render all three ContentChild sections', () => {

@@ -4,8 +4,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    ContentChild,
-    ContentChildren,
     ElementRef,
     EventEmitter,
     inject,
@@ -15,11 +13,12 @@ import {
     NgModule,
     numberAttribute,
     Output,
-    QueryList,
     signal,
     TemplateRef,
-    ViewChild,
-    ViewEncapsulation
+    ViewEncapsulation,
+    viewChild,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { MotionOptions } from '@openng/optimus-ui-motion';
 import { uuid } from '@openng/optimus-ui-utils';
@@ -48,7 +47,7 @@ type SplitButtonIconPosition = 'left' | 'right';
     standalone: true,
     imports: [CommonModule, ButtonDirective, TieredMenu, AutoFocus, ChevronDownIcon, Ripple, TooltipModule, SharedModule],
     template: `
-        @if (contentTemplate || _contentTemplate) {
+        @if (contentTemplate() || _contentTemplate) {
             <button
                 [class]="cx('pcButton')"
                 type="button"
@@ -71,7 +70,7 @@ type SplitButtonIconPosition = 'left' | 'right';
                 [pt]="ptm('pcButton')"
                 [unstyled]="unstyled()"
             >
-                <ng-container *ngTemplateOutlet="contentTemplate || _contentTemplate"></ng-container>
+                <ng-container *ngTemplateOutlet="contentTemplate() || _contentTemplate"></ng-container>
             </button>
         } @else {
             <button
@@ -122,10 +121,10 @@ type SplitButtonIconPosition = 'left' | 'right';
                 <span [class]="dropdownIcon"></span>
             }
             @if (!dropdownIcon) {
-                @if (!dropdownIconTemplate && !_dropdownIconTemplate) {
+                @if (!dropdownIconTemplate() && !_dropdownIconTemplate) {
                     <svg data-p-icon="chevron-down" />
                 }
-                <ng-template *ngTemplateOutlet="dropdownIconTemplate || _dropdownIconTemplate"></ng-template>
+                <ng-template *ngTemplateOutlet="dropdownIconTemplate() || _dropdownIconTemplate"></ng-template>
             }
         </button>
         <p-tieredmenu
@@ -350,21 +349,21 @@ export class SplitButton extends BaseComponent<SplitButtonPassThrough> {
      */
     @Output() onDropdownClick: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
 
-    @ViewChild('defaultbtn') buttonViewChild: ElementRef | undefined;
+    readonly buttonViewChild = viewChild<ElementRef>('defaultbtn');
 
-    @ViewChild('menu') menu: TieredMenu | undefined;
+    readonly menu = viewChild<TieredMenu>('menu');
     /**
      * Custom content template.
      * @group Templates
      */
-    @ContentChild('content', { descendants: false }) contentTemplate: TemplateRef<void> | undefined;
+    readonly contentTemplate = contentChild<TemplateRef<void>>('content', { descendants: false });
     /**
      * Custom dropdown icon template.
      * @group Templates
      **/
-    @ContentChild('dropdownicon', { descendants: false }) dropdownIconTemplate: TemplateRef<void> | undefined;
+    readonly dropdownIconTemplate = contentChild<TemplateRef<void>>('dropdownicon', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     ariaId: string | undefined;
 
@@ -385,7 +384,7 @@ export class SplitButton extends BaseComponent<SplitButtonPassThrough> {
     }
 
     onAfterContentInit() {
-        this.templates?.forEach((item) => {
+        this.templates()?.forEach((item) => {
             switch (item.getType()) {
                 case 'content':
                     this._contentTemplate = item.template;
@@ -404,12 +403,12 @@ export class SplitButton extends BaseComponent<SplitButtonPassThrough> {
 
     onDefaultButtonClick(event: MouseEvent) {
         this.onClick?.emit(event);
-        this.menu?.hide();
+        this.menu()?.hide();
     }
 
     onDropdownButtonClick(event?: MouseEvent) {
         this.onDropdownClick.emit(event);
-        this.menu?.toggle({ currentTarget: this.el?.nativeElement, relativeAlign: this.$appendTo() == 'self' });
+        this.menu()?.toggle({ currentTarget: this.el?.nativeElement, relativeAlign: this.$appendTo() == 'self' });
     }
 
     onDropdownButtonKeydown(event: KeyboardEvent) {

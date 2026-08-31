@@ -1,25 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    ContentChild,
-    ContentChildren,
-    ElementRef,
-    EventEmitter,
-    inject,
-    InjectionToken,
-    input,
-    Input,
-    NgModule,
-    NgZone,
-    Output,
-    QueryList,
-    signal,
-    TemplateRef,
-    ViewChild,
-    ViewEncapsulation
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, EventEmitter, inject, InjectionToken, input, Input, NgModule, NgZone, Output, signal, TemplateRef, ViewEncapsulation, viewChild, contentChild, contentChildren } from '@angular/core';
 import { MotionEvent, MotionOptions } from '@openng/optimus-ui-motion';
 import { absolutePosition, addClass, appendChild, focus, getOuterWidth, getTargetElement, isTouchDevice, relativePosition, removeClass } from '@openng/optimus-ui-utils';
 import { OverlayModeType, OverlayOnBeforeHideEvent, OverlayOnBeforeShowEvent, OverlayOnHideEvent, OverlayOnShowEvent, OverlayOptions, OverlayService, PrimeTemplate, ResponsiveOverlayOptions, SharedModule } from '@openng/optimus-ui/api';
@@ -47,7 +27,7 @@ const OVERLAY_INSTANCE = new InjectionToken<Overlay>('OVERLAY_INSTANCE');
     template: `
         @if (inline()) {
             <ng-content></ng-content>
-            <ng-container *ngTemplateOutlet="contentTemplate || _contentTemplate; context: { $implicit: { mode: null } }"></ng-container>
+            <ng-container *ngTemplateOutlet="contentTemplate() || _contentTemplate; context: { $implicit: { mode: null } }"></ng-container>
         } @else {
             @if (modalVisible) {
                 <div #overlay [class]="cn(cx('root'), styleClass)" [style]="sx('root')" [pBind]="ptm('root')" (click)="onOverlayClick()">
@@ -65,7 +45,7 @@ const OVERLAY_INSTANCE = new InjectionToken<Overlay>('OVERLAY_INSTANCE');
                     >
                         <div #content [class]="cn(cx('content'), contentStyleClass)" [pBind]="ptm('content')" (click)="onOverlayContentClick($event)">
                             <ng-content></ng-content>
-                            <ng-container *ngTemplateOutlet="contentTemplate || _contentTemplate; context: { $implicit: { mode: overlayMode } }"></ng-container>
+                            <ng-container *ngTemplateOutlet="contentTemplate() || _contentTemplate; context: { $implicit: { mode: overlayMode } }"></ng-container>
                         </div>
                     </p-motion>
                 </div>
@@ -356,18 +336,18 @@ export class Overlay extends BaseComponent {
      */
     @Output() onAfterLeave: EventEmitter<MotionEvent> = new EventEmitter<MotionEvent>();
 
-    @ViewChild('overlay') overlayViewChild: ElementRef | undefined;
+    readonly overlayViewChild = viewChild<ElementRef>('overlay');
 
-    @ViewChild('content') contentViewChild: ElementRef | undefined;
+    readonly contentViewChild = viewChild<ElementRef>('content');
     /**
      * Content template of the component.
      * @param {OverlayContentTemplateContext} context - content context.
      * @see {@link OverlayContentTemplateContext}
      * @group Templates
      */
-    @ContentChild('content', { descendants: false }) contentTemplate: TemplateRef<OverlayContentTemplateContext> | undefined;
+    readonly contentTemplate = contentChild<TemplateRef<OverlayContentTemplateContext>>('content', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     hostAttrSelector = input<string>();
 
@@ -465,11 +445,11 @@ export class Overlay extends BaseComponent {
     }
 
     get overlayEl() {
-        return this.overlayViewChild?.nativeElement;
+        return this.overlayViewChild()?.nativeElement;
     }
 
     get contentEl() {
-        return this.contentViewChild?.nativeElement;
+        return this.contentViewChild()?.nativeElement;
     }
 
     get targetEl() {
@@ -477,7 +457,7 @@ export class Overlay extends BaseComponent {
     }
 
     onAfterContentInit() {
-        this.templates?.forEach((item) => {
+        this.templates()?.forEach((item) => {
             switch (item.getType()) {
                 case 'content':
                     this._contentTemplate = item.template;

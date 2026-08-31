@@ -4,8 +4,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    ContentChild,
-    ContentChildren,
     ElementRef,
     EventEmitter,
     HostListener,
@@ -15,11 +13,12 @@ import {
     Input,
     NgModule,
     Output,
-    QueryList,
     signal,
     TemplateRef,
-    ViewChild,
-    ViewEncapsulation
+    ViewEncapsulation,
+    viewChild,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
 import { MotionEvent, MotionOptions } from '@openng/optimus-ui-motion';
@@ -47,7 +46,7 @@ const IMAGE_INSTANCE = new InjectionToken<Image>('IMAGE_INSTANCE');
     standalone: true,
     imports: [CommonModule, RefreshIcon, EyeIcon, UndoIcon, SearchMinusIcon, SearchPlusIcon, TimesIcon, FocusTrap, SharedModule, BindModule, MotionModule],
     template: `
-        @if (!imageTemplate && !_imageTemplate) {
+        @if (!imageTemplate() && !_imageTemplate) {
             <img
                 [attr.src]="src"
                 [attr.srcset]="srcSet"
@@ -63,12 +62,12 @@ const IMAGE_INSTANCE = new InjectionToken<Image>('IMAGE_INSTANCE');
             />
         }
 
-        <ng-container *ngTemplateOutlet="imageTemplate || _imageTemplate; context: { errorCallback: imageError.bind(this) }"></ng-container>
+        <ng-container *ngTemplateOutlet="imageTemplate() || _imageTemplate; context: { errorCallback: imageError.bind(this) }"></ng-container>
 
         @if (preview) {
             <button [attr.aria-label]="zoomImageAriaLabel" type="button" [class]="cx('previewMask')" (click)="onImageClick()" #previewButton [ngStyle]="{ height: height + 'px', width: width + 'px' }" [pBind]="ptm('previewMask')">
-                @if (indicatorTemplate || _indicatorTemplate) {
-                    <ng-container *ngTemplateOutlet="indicatorTemplate || _indicatorTemplate"></ng-container>
+                @if (indicatorTemplate() || _indicatorTemplate) {
+                    <ng-container *ngTemplateOutlet="indicatorTemplate() || _indicatorTemplate"></ng-container>
                 } @else {
                     <svg data-p-icon="eye" [class]="cx('previewIcon')" [pBind]="ptm('previewIcon')" />
                 }
@@ -93,39 +92,39 @@ const IMAGE_INSTANCE = new InjectionToken<Image>('IMAGE_INSTANCE');
             >
                 <div [class]="cx('toolbar')" (click)="handleToolbarClick($event)" [pBind]="ptm('toolbar')">
                     <button [class]="cx('rotateRightButton')" (click)="rotateRight()" type="button" [attr.aria-label]="rightAriaLabel()" [pBind]="ptm('rotateRightButton')">
-                        @if (!rotateRightIconTemplate && !_rotateRightIconTemplate) {
+                        @if (!rotateRightIconTemplate() && !_rotateRightIconTemplate) {
                             <svg data-p-icon="refresh" />
                         }
-                        <ng-template *ngTemplateOutlet="rotateRightIconTemplate || _rotateRightIconTemplate"></ng-template>
+                        <ng-template *ngTemplateOutlet="rotateRightIconTemplate() || _rotateRightIconTemplate"></ng-template>
                     </button>
                     <button [class]="cx('rotateLeftButton')" (click)="rotateLeft()" type="button" [attr.aria-label]="leftAriaLabel()" [pBind]="ptm('rotateLeftButton')">
-                        @if (!rotateLeftIconTemplate && !_rotateLeftIconTemplate) {
+                        @if (!rotateLeftIconTemplate() && !_rotateLeftIconTemplate) {
                             <svg data-p-icon="undo" />
                         }
-                        <ng-template *ngTemplateOutlet="rotateLeftIconTemplate || _rotateLeftIconTemplate"></ng-template>
+                        <ng-template *ngTemplateOutlet="rotateLeftIconTemplate() || _rotateLeftIconTemplate"></ng-template>
                     </button>
                     <button [class]="cx('zoomOutButton')" (click)="zoomOut()" type="button" [disabled]="isZoomOutDisabled" [attr.aria-label]="zoomOutAriaLabel()" [pBind]="ptm('zoomOutButton')">
-                        @if (!zoomOutIconTemplate && !_zoomOutIconTemplate) {
+                        @if (!zoomOutIconTemplate() && !_zoomOutIconTemplate) {
                             <svg data-p-icon="search-minus" />
                         }
-                        <ng-template *ngTemplateOutlet="zoomOutIconTemplate || _zoomOutIconTemplate"></ng-template>
+                        <ng-template *ngTemplateOutlet="zoomOutIconTemplate() || _zoomOutIconTemplate"></ng-template>
                     </button>
                     <button [class]="cx('zoomInButton')" (click)="zoomIn()" type="button" [disabled]="isZoomInDisabled" [attr.aria-label]="zoomInAriaLabel()" [pBind]="ptm('zoomInButton')">
-                        @if (!zoomInIconTemplate && !_zoomInIconTemplate) {
+                        @if (!zoomInIconTemplate() && !_zoomInIconTemplate) {
                             <svg data-p-icon="search-plus" />
                         }
-                        <ng-template *ngTemplateOutlet="zoomInIconTemplate || _zoomInIconTemplate"></ng-template>
+                        <ng-template *ngTemplateOutlet="zoomInIconTemplate() || _zoomInIconTemplate"></ng-template>
                     </button>
                     <button [class]="cx('closeButton')" type="button" (click)="closePreview()" [attr.aria-label]="closeAriaLabel()" #closeButton [pBind]="ptm('closeButton')">
-                        @if (!closeIconTemplate && !_closeIconTemplate) {
+                        @if (!closeIconTemplate() && !_closeIconTemplate) {
                             <svg data-p-icon="times" />
                         }
-                        <ng-template *ngTemplateOutlet="closeIconTemplate || _closeIconTemplate"></ng-template>
+                        <ng-template *ngTemplateOutlet="closeIconTemplate() || _closeIconTemplate"></ng-template>
                     </button>
                 </div>
                 @if (renderPreview()) {
                     <p-motion [visible]="previewVisible" name="p-image-original" [appear]="true" [options]="computedMotionOptions()" (onBeforeEnter)="onAnimationStart($event)" (onBeforeLeave)="onBeforeLeave()" (onAfterLeave)="onAnimationEnd($event)">
-                        @if (!previewTemplate && !_previewTemplate) {
+                        @if (!previewTemplate() && !_previewTemplate) {
                             <img
                                 [attr.src]="previewImageSrc ? previewImageSrc : src"
                                 [attr.srcset]="previewImageSrcSet"
@@ -138,7 +137,7 @@ const IMAGE_INSTANCE = new InjectionToken<Image>('IMAGE_INSTANCE');
                         }
                         <ng-container
                             *ngTemplateOutlet="
-                                previewTemplate || _previewTemplate;
+                                previewTemplate() || _previewTemplate;
                                 context: {
                                     class: cx('original'),
                                     style: imagePreviewStyle(),
@@ -308,59 +307,59 @@ export class Image extends BaseComponent<ImagePassThrough> {
      */
     @Output() onImageError: EventEmitter<Event> = new EventEmitter<Event>();
 
-    @ViewChild('mask') mask: ElementRef | undefined;
+    readonly mask = viewChild<ElementRef>('mask');
 
-    @ViewChild('previewButton') previewButton: ElementRef | undefined;
+    readonly previewButton = viewChild<ElementRef>('previewButton');
 
-    @ViewChild('closeButton') closeButton: ElementRef | undefined;
+    readonly closeButton = viewChild<ElementRef>('closeButton');
 
     /**
      * Custom indicator template.
      * @group Templates
      */
-    @ContentChild('indicator', { descendants: false }) indicatorTemplate: TemplateRef<void> | undefined;
+    readonly indicatorTemplate = contentChild<TemplateRef<void>>('indicator', { descendants: false });
 
     /**
      * Custom rotate right icon template.
      * @group Templates
      */
-    @ContentChild('rotaterighticon', { descendants: false }) rotateRightIconTemplate: TemplateRef<void> | undefined;
+    readonly rotateRightIconTemplate = contentChild<TemplateRef<void>>('rotaterighticon', { descendants: false });
 
     /**
      * Custom rotate left icon template.
      * @group Templates
      */
-    @ContentChild('rotatelefticon', { descendants: false }) rotateLeftIconTemplate: TemplateRef<void> | undefined;
+    readonly rotateLeftIconTemplate = contentChild<TemplateRef<void>>('rotatelefticon', { descendants: false });
 
     /**
      * Custom zoom out icon template.
      * @group Templates
      */
-    @ContentChild('zoomouticon', { descendants: false }) zoomOutIconTemplate: TemplateRef<void> | undefined;
+    readonly zoomOutIconTemplate = contentChild<TemplateRef<void>>('zoomouticon', { descendants: false });
 
     /**
      * Custom zoom in icon template.
      * @group Templates
      */
-    @ContentChild('zoominicon', { descendants: false }) zoomInIconTemplate: TemplateRef<void> | undefined;
+    readonly zoomInIconTemplate = contentChild<TemplateRef<void>>('zoominicon', { descendants: false });
 
     /**
      * Custom close icon template.
      * @group Templates
      */
-    @ContentChild('closeicon', { descendants: false }) closeIconTemplate: TemplateRef<void> | undefined;
+    readonly closeIconTemplate = contentChild<TemplateRef<void>>('closeicon', { descendants: false });
 
     /**
      * Custom preview template.
      * @group Templates
      */
-    @ContentChild('preview', { descendants: false }) previewTemplate: TemplateRef<ImagePreviewTemplateContext> | undefined;
+    readonly previewTemplate = contentChild<TemplateRef<ImagePreviewTemplateContext>>('preview', { descendants: false });
 
     /**
      * Custom image template.
      * @group Templates
      */
-    @ContentChild('image', { descendants: false }) imageTemplate: TemplateRef<ImageImageTemplateContext> | undefined;
+    readonly imageTemplate = contentChild<TemplateRef<ImageImageTemplateContext>>('image', { descendants: false });
 
     renderMask = signal<boolean>(false);
 
@@ -399,7 +398,7 @@ export class Image extends BaseComponent<ImagePassThrough> {
         min: 0.5
     };
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _indicatorTemplate: TemplateRef<void> | undefined;
 
@@ -422,7 +421,7 @@ export class Image extends BaseComponent<ImagePassThrough> {
     }
 
     onAfterContentInit() {
-        this.templates?.forEach((item) => {
+        this.templates()?.forEach((item) => {
             switch (item.getType()) {
                 case 'indicator':
                     this._indicatorTemplate = item.template;
@@ -486,7 +485,7 @@ export class Image extends BaseComponent<ImagePassThrough> {
             case 'Escape':
                 this.onMaskClick();
                 setTimeout(() => {
-                    focus(this.previewButton?.nativeElement);
+                    focus(this.previewButton()?.nativeElement);
                 }, 25);
                 event.preventDefault();
 
@@ -529,7 +528,7 @@ export class Image extends BaseComponent<ImagePassThrough> {
         this.moveOnTop();
         this.onShow.emit({});
         setTimeout(() => {
-            focus(this.closeButton?.nativeElement);
+            focus(this.closeButton()?.nativeElement);
         }, 25);
     }
 

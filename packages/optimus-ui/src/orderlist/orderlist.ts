@@ -4,8 +4,6 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
-    ContentChild,
-    ContentChildren,
     ElementRef,
     EventEmitter,
     inject,
@@ -16,8 +14,10 @@ import {
     Output,
     QueryList,
     TemplateRef,
-    ViewChild,
-    ViewEncapsulation
+    ViewEncapsulation,
+    viewChild,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { findIndexInList, setAttribute, uuid } from '@openng/optimus-ui-utils';
@@ -45,16 +45,16 @@ const ORDERLIST_INSTANCE = new InjectionToken<OrderList>('ORDERLIST_INSTANCE');
     template: `
         <div [pBind]="ptm('controls')" [class]="cx('controls')">
             <button [pt]="ptm('pcMoveUpButton')" type="button" [disabled]="moveDisabled()" pButton pRipple (click)="moveUp()" [attr.aria-label]="moveUpAriaLabel" [buttonProps]="getButtonProps('up')" hostName="orderlist" [unstyled]="unstyled()">
-                @if (!moveUpIconTemplate && !_moveUpIconTemplate) {
+                @if (!moveUpIconTemplate() && !_moveUpIconTemplate) {
                     <svg data-p-icon="angle-up" pButtonIcon [pt]="ptm('pcMoveUpButton')['icon']" />
                 }
-                <ng-template *ngTemplateOutlet="moveUpIconTemplate || _moveUpIconTemplate"></ng-template>
+                <ng-template *ngTemplateOutlet="moveUpIconTemplate() || _moveUpIconTemplate"></ng-template>
             </button>
             <button [pt]="ptm('pcMoveTopButton')" type="button" [disabled]="moveDisabled()" pButton pRipple (click)="moveTop()" [attr.aria-label]="moveTopAriaLabel" [buttonProps]="getButtonProps('top')" hostName="orderlist" [unstyled]="unstyled()">
-                @if (!moveTopIconTemplate && !_moveTopIconTemplate) {
+                @if (!moveTopIconTemplate() && !_moveTopIconTemplate) {
                     <svg data-p-icon="angle-double-up" pButtonIcon [pt]="ptm('pcMoveTopButton')['icon']" />
                 }
-                <ng-template *ngTemplateOutlet="moveTopIconTemplate || _moveTopIconTemplate"></ng-template>
+                <ng-template *ngTemplateOutlet="moveTopIconTemplate() || _moveTopIconTemplate"></ng-template>
             </button>
             <button
                 [pt]="ptm('pcMoveDownButton')"
@@ -68,10 +68,10 @@ const ORDERLIST_INSTANCE = new InjectionToken<OrderList>('ORDERLIST_INSTANCE');
                 hostName="orderlist"
                 [unstyled]="unstyled()"
             >
-                @if (!moveDownIconTemplate && !_moveDownIconTemplate) {
+                @if (!moveDownIconTemplate() && !_moveDownIconTemplate) {
                     <svg data-p-icon="angle-down" pButtonIcon [pt]="ptm('pcMoveDownButton')['icon']" />
                 }
-                <ng-template *ngTemplateOutlet="moveDownIconTemplate || _moveDownIconTemplate"></ng-template>
+                <ng-template *ngTemplateOutlet="moveDownIconTemplate() || _moveDownIconTemplate"></ng-template>
             </button>
             <button
                 [pt]="ptm('pcMoveBottomButton')"
@@ -85,10 +85,10 @@ const ORDERLIST_INSTANCE = new InjectionToken<OrderList>('ORDERLIST_INSTANCE');
                 hostName="orderlist"
                 [unstyled]="unstyled()"
             >
-                @if (!moveBottomIconTemplate && !_moveBottomIconTemplate) {
+                @if (!moveBottomIconTemplate() && !_moveBottomIconTemplate) {
                     <svg data-p-icon="angle-double-down" pButtonIcon [pt]="ptm('pcMoveBottomButton')['icon']" />
                 }
-                <ng-template *ngTemplateOutlet="moveBottomIconTemplate || _moveBottomIconTemplate"></ng-template>
+                <ng-template *ngTemplateOutlet="moveBottomIconTemplate() || _moveBottomIconTemplate"></ng-template>
             </button>
         </div>
         <p-listbox
@@ -120,34 +120,34 @@ const ORDERLIST_INSTANCE = new InjectionToken<OrderList>('ORDERLIST_INSTANCE');
             hostName="orderlist"
             [unstyled]="unstyled()"
         >
-            @if (headerTemplate || _headerTemplate) {
+            @if (headerTemplate() || _headerTemplate) {
                 <ng-template #header>
-                    <ng-template *ngTemplateOutlet="headerTemplate || _headerTemplate"></ng-template>
+                    <ng-template *ngTemplateOutlet="headerTemplate() || _headerTemplate"></ng-template>
                 </ng-template>
             }
-            @if (itemTemplate || _itemTemplate) {
+            @if (itemTemplate() || _itemTemplate) {
                 <ng-template #item let-option let-selected="selected" let-index="index">
-                    <ng-template *ngTemplateOutlet="itemTemplate || _itemTemplate; context: { $implicit: option, selected: selected, index: index }"></ng-template>
+                    <ng-template *ngTemplateOutlet="itemTemplate() || _itemTemplate; context: { $implicit: option, selected: selected, index: index }"></ng-template>
                 </ng-template>
             }
-            @if (emptyMessageTemplate || _emptyMessageTemplate) {
+            @if (emptyMessageTemplate() || _emptyMessageTemplate) {
                 <ng-template #empty>
-                    <ng-template *ngTemplateOutlet="emptyMessageTemplate || _emptyMessageTemplate"></ng-template>
+                    <ng-template *ngTemplateOutlet="emptyMessageTemplate() || _emptyMessageTemplate"></ng-template>
                 </ng-template>
             }
-            @if (emptyFilterMessageTemplate || _emptyFilterMessageTemplate) {
+            @if (emptyFilterMessageTemplate() || _emptyFilterMessageTemplate) {
                 <ng-template #emptyfilter>
-                    <ng-template *ngTemplateOutlet="emptyFilterMessageTemplate || _emptyFilterMessageTemplate"></ng-template>
+                    <ng-template *ngTemplateOutlet="emptyFilterMessageTemplate() || _emptyFilterMessageTemplate"></ng-template>
                 </ng-template>
             }
-            @if (filterIconTemplate || _filterIconTemplate) {
+            @if (filterIconTemplate() || _filterIconTemplate) {
                 <ng-template #filtericon>
-                    <ng-template *ngTemplateOutlet="filterIconTemplate || _filterIconTemplate"></ng-template>
+                    <ng-template *ngTemplateOutlet="filterIconTemplate() || _filterIconTemplate"></ng-template>
                 </ng-template>
             }
-            @if (filterTemplate || _filterTemplate) {
+            @if (filterTemplate() || _filterTemplate) {
                 <ng-template #filter let-options="options">
-                    <ng-template *ngTemplateOutlet="filterTemplate || _filterTemplate; context: { options: options }"></ng-template>
+                    <ng-template *ngTemplateOutlet="filterTemplate() || _filterTemplate; context: { options: options }"></ng-template>
                 </ng-template>
             }
         </p-listbox>
@@ -402,9 +402,9 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
      */
     @Output() onBlur: EventEmitter<Event> = new EventEmitter<Event>();
 
-    @ViewChild('listelement') listViewChild!: Listbox;
+    readonly listViewChild = viewChild.required<Listbox>('listelement');
 
-    @ViewChild('filter') filterViewChild: Nullable<ElementRef>;
+    readonly filterViewChild = viewChild<Nullable<ElementRef>>('filter');
 
     /**
      * Custom item template.
@@ -412,19 +412,19 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
      * @see {@link OrderListItemTemplateContext}
      * @group Templates
      */
-    @ContentChild('item', { descendants: false }) itemTemplate: TemplateRef<OrderListItemTemplateContext> | undefined;
+    readonly itemTemplate = contentChild<TemplateRef<OrderListItemTemplateContext>>('item', { descendants: false });
 
     /**
      * Custom empty template.
      * @group Templates
      */
-    @ContentChild('empty', { descendants: false }) emptyMessageTemplate: TemplateRef<void> | undefined;
+    readonly emptyMessageTemplate = contentChild<TemplateRef<void>>('empty', { descendants: false });
 
     /**
      * Custom empty filter template.
      * @group Templates
      */
-    @ContentChild('emptyfilter', { descendants: false }) emptyFilterMessageTemplate: TemplateRef<void> | undefined;
+    readonly emptyFilterMessageTemplate = contentChild<TemplateRef<void>>('emptyfilter', { descendants: false });
 
     /**
      * Custom filter template.
@@ -432,43 +432,43 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
      * @see {@link OrderListFilterTemplateContext}
      * @group Templates
      */
-    @ContentChild('filter', { descendants: false }) filterTemplate: TemplateRef<OrderListFilterTemplateContext> | undefined;
+    readonly filterTemplate = contentChild<TemplateRef<OrderListFilterTemplateContext>>('filter', { descendants: false });
 
     /**
      * Custom header template.
      * @group Templates
      */
-    @ContentChild('header', { descendants: false }) headerTemplate: TemplateRef<void> | undefined;
+    readonly headerTemplate = contentChild<TemplateRef<void>>('header', { descendants: false });
 
     /**
      * Custom move up icon template.
      * @group Templates
      */
-    @ContentChild('moveupicon', { descendants: false }) moveUpIconTemplate: TemplateRef<void> | undefined;
+    readonly moveUpIconTemplate = contentChild<TemplateRef<void>>('moveupicon', { descendants: false });
 
     /**
      * Custom move top icon template.
      * @group Templates
      */
-    @ContentChild('movetopicon', { descendants: false }) moveTopIconTemplate: TemplateRef<void> | undefined;
+    readonly moveTopIconTemplate = contentChild<TemplateRef<void>>('movetopicon', { descendants: false });
 
     /**
      * Custom move down icon template.
      * @group Templates
      */
-    @ContentChild('movedownicon', { descendants: false }) moveDownIconTemplate: TemplateRef<void> | undefined;
+    readonly moveDownIconTemplate = contentChild<TemplateRef<void>>('movedownicon', { descendants: false });
 
     /**
      * Custom move bottom icon template.
      * @group Templates
      */
-    @ContentChild('movebottomicon', { descendants: false }) moveBottomIconTemplate: TemplateRef<void> | undefined;
+    readonly moveBottomIconTemplate = contentChild<TemplateRef<void>>('movebottomicon', { descendants: false });
 
     /**
      * Custom filter icon template.
      * @group Templates
      */
-    @ContentChild('filtericon', { descendants: false }) filterIconTemplate: TemplateRef<void> | undefined;
+    readonly filterIconTemplate = contentChild<TemplateRef<void>>('filtericon', { descendants: false });
 
     get moveUpAriaLabel() {
         return this.config.translation.aria ? this.config.translation.aria.moveUp : undefined;
@@ -543,7 +543,7 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
         }
     }
 
-    @ContentChildren(PrimeTemplate) templates: Nullable<QueryList<PrimeTemplate>>;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _itemTemplate: TemplateRef<OrderListItemTemplateContext> | undefined;
 
@@ -566,7 +566,7 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
     _filterIconTemplate: TemplateRef<void> | undefined;
 
     onAfterContentInit() {
-        (this.templates as QueryList<PrimeTemplate>).forEach((item) => {
+        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
             switch (item.getType()) {
                 case 'item':
                     this._itemTemplate = item.template;
@@ -646,7 +646,7 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
      */
     public resetFilter() {
         this.filterValue = '';
-        this.filterViewChild && ((<HTMLInputElement>this.filterViewChild.nativeElement).value = '');
+        filterViewChild && ((<HTMLInputElement>filterViewChild.nativeElement).value = '');
     }
 
     isItemVisible(item: any): boolean | undefined {
@@ -698,7 +698,7 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
             this.movedUp = true;
             this.onReorder.emit(this.selection);
         }
-        this.listViewChild?.cd?.markForCheck();
+        this.listViewChild()?.cd?.markForCheck();
     }
 
     moveTop() {
@@ -726,10 +726,10 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
 
             this.onReorder.emit(this.selection);
             setTimeout(() => {
-                this.listViewChild.scrollInView(0);
+                this.listViewChild().scrollInView(0);
             });
         }
-        this.listViewChild?.cd?.markForCheck();
+        this.listViewChild()?.cd?.markForCheck();
     }
 
     moveDown() {
@@ -758,7 +758,7 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
             this.onReorder.emit(this.selection);
         }
 
-        this.listViewChild?.cd?.markForCheck();
+        this.listViewChild()?.cd?.markForCheck();
     }
 
     moveBottom() {
@@ -784,9 +784,9 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
             }
 
             this.onReorder.emit(this.selection);
-            this.listViewChild?.scrollInView(this.value?.length ? this.value.length - 1 : 0);
+            this.listViewChild()?.scrollInView(this.value?.length ? this.value.length - 1 : 0);
         }
-        this.listViewChild?.cd?.markForCheck();
+        this.listViewChild()?.cd?.markForCheck();
     }
 
     onDrop(event: CdkDragDrop<string[]>) {

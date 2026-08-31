@@ -6,8 +6,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    ContentChild,
-    ContentChildren,
     EventEmitter,
     forwardRef,
     inject,
@@ -18,7 +16,9 @@ import {
     Output,
     QueryList,
     TemplateRef,
-    ViewEncapsulation
+    ViewEncapsulation,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
@@ -52,7 +52,7 @@ export { InputOtpChangeEvent, InputOtpInputTemplateContext, InputOtpTemplateEven
     imports: [CommonModule, InputText, AutoFocus, SharedModule, BindModule],
     template: `
         @for (i of getRange(length); track trackByFn($index)) {
-            @if (!inputTemplate && !_inputTemplate) {
+            @if (!inputTemplate() && !_inputTemplate) {
                 <input
                     type="text"
                     pInputText
@@ -79,8 +79,8 @@ export { InputOtpChangeEvent, InputOtpInputTemplateContext, InputOtpTemplateEven
                     [unstyled]="unstyled()"
                 />
             }
-            @if (inputTemplate || _inputTemplate) {
-                <ng-container *ngTemplateOutlet="inputTemplate || _inputTemplate; context: { $implicit: getToken(i - 1), events: getTemplateEvents(i - 1), index: i }"> </ng-container>
+            @if (inputTemplate() || _inputTemplate) {
+                <ng-container *ngTemplateOutlet="inputTemplate() || _inputTemplate; context: { $implicit: getToken(i - 1), events: getTemplateEvents(i - 1), index: i }"> </ng-container>
             }
         }
     `,
@@ -175,9 +175,9 @@ export class InputOtp extends BaseEditableHolder<InputOtpPassThrough> implements
      * @see {@link InputOtpInputTemplateContext}
      * @group Templates
      */
-    @ContentChild('input', { descendants: false }) inputTemplate: TemplateRef<InputOtpInputTemplateContext> | undefined;
+    readonly inputTemplate = contentChild<TemplateRef<InputOtpInputTemplateContext>>('input', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates: Nullable<QueryList<PrimeTemplate>>;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _inputTemplate: TemplateRef<InputOtpInputTemplateContext> | undefined;
 
@@ -196,7 +196,7 @@ export class InputOtp extends BaseEditableHolder<InputOtpPassThrough> implements
     }
 
     onAfterContentInit() {
-        (this.templates as QueryList<PrimeTemplate>).forEach((item) => {
+        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
             switch (item.getType()) {
                 case 'input':
                     this._inputTemplate = item.template;

@@ -620,7 +620,7 @@ describe('InputOtp', () => {
 
         it('should have input pTemplate', () => {
             expect(inputOtpInstance).toBeTruthy();
-            expect(() => inputOtpInstance.inputTemplate).not.toThrow();
+            expect(() => inputOtpInstance.inputTemplate()).not.toThrow();
         });
 
         it('should pass context parameters to input template', async () => {
@@ -706,7 +706,7 @@ describe('InputOtp', () => {
 
         it('should have input #template', () => {
             expect(inputOtpInstance).toBeTruthy();
-            expect(() => inputOtpInstance.inputTemplate).not.toThrow();
+            expect(() => inputOtpInstance.inputTemplate()).not.toThrow();
         });
 
         it('should pass context parameters to input template', async () => {

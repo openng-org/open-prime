@@ -4,8 +4,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    ContentChild,
-    ContentChildren,
     Directive,
     effect,
     ElementRef,
@@ -22,11 +20,12 @@ import {
     Output,
     Pipe,
     PipeTransform,
-    QueryList,
     signal,
     TemplateRef,
-    ViewChild,
-    ViewEncapsulation
+    ViewEncapsulation,
+    viewChild,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MotionOptions } from '@openng/optimus-ui-motion';
@@ -468,32 +467,32 @@ export const Password_VALUE_ACCESSOR: any = {
             [unstyled]="unstyled()"
         />
         @if (showClear && value != null) {
-            @if (!clearIconTemplate && !_clearIconTemplate) {
+            @if (!clearIconTemplate() && !_clearIconTemplate) {
                 <svg data-p-icon="times" [class]="cx('clearIcon')" (click)="clear()" [pBind]="ptm('clearIcon')" />
             }
             <span (click)="clear()" [class]="cx('clearIcon')" [pBind]="ptm('clearIcon')">
-                <ng-template *ngTemplateOutlet="clearIconTemplate || _clearIconTemplate"></ng-template>
+                <ng-template *ngTemplateOutlet="clearIconTemplate() || _clearIconTemplate"></ng-template>
             </span>
         }
 
         @if (toggleMask) {
             @if (unmasked) {
-                @if (!hideIconTemplate && !_hideIconTemplate) {
+                @if (!hideIconTemplate() && !_hideIconTemplate) {
                     <svg data-p-icon="eyeslash" [class]="cx('maskIcon')" [pBind]="ptm('maskIcon')" (click)="onMaskToggle()" />
                 }
-                @if (hideIconTemplate || _hideIconTemplate) {
+                @if (hideIconTemplate() || _hideIconTemplate) {
                     <span (click)="onMaskToggle()" [pBind]="ptm('maskIcon')">
-                        <ng-template *ngTemplateOutlet="hideIconTemplate || _hideIconTemplate; context: { class: cx('maskIcon') }"></ng-template>
+                        <ng-template *ngTemplateOutlet="hideIconTemplate() || _hideIconTemplate; context: { class: cx('maskIcon') }"></ng-template>
                     </span>
                 }
             }
             @if (!unmasked) {
-                @if (!showIconTemplate && !_showIconTemplate) {
+                @if (!showIconTemplate() && !_showIconTemplate) {
                     <svg data-p-icon="eye" [class]="cx('unmaskIcon')" [pBind]="ptm('unmaskIcon')" (click)="onMaskToggle()" />
                 }
-                @if (showIconTemplate || _showIconTemplate) {
+                @if (showIconTemplate() || _showIconTemplate) {
                     <span (click)="onMaskToggle()" [pBind]="ptm('unmaskIcon')">
-                        <ng-template *ngTemplateOutlet="showIconTemplate || _showIconTemplate; context: { class: cx('unmaskIcon') }"></ng-template>
+                        <ng-template *ngTemplateOutlet="showIconTemplate() || _showIconTemplate; context: { class: cx('unmaskIcon') }"></ng-template>
                     </span>
                 }
             }
@@ -502,9 +501,9 @@ export const Password_VALUE_ACCESSOR: any = {
         <p-overlay #overlay [hostAttrSelector]="$attrSelector" [(visible)]="overlayVisible" [options]="overlayOptions" [target]="'@parent'" [appendTo]="$appendTo()" [unstyled]="unstyled()" [pt]="ptm('pcOverlay')" [motionOptions]="motionOptions()">
             <ng-template #content>
                 <div [class]="cx('overlay')" [style]="sx('overlay')" (click)="onOverlayClick($event)" [pBind]="ptm('overlay')" [attr.data-p]="overlayDataP">
-                    <ng-container *ngTemplateOutlet="headerTemplate || _headerTemplate"></ng-container>
-                    @if (contentTemplate || _contentTemplate) {
-                        <ng-container *ngTemplateOutlet="contentTemplate || _contentTemplate"></ng-container>
+                    <ng-container *ngTemplateOutlet="headerTemplate() || _headerTemplate"></ng-container>
+                    @if (contentTemplate() || _contentTemplate) {
+                        <ng-container *ngTemplateOutlet="contentTemplate() || _contentTemplate"></ng-container>
                     } @else {
                         <div [class]="cx('content')" [pBind]="ptm('content')">
                             <div [class]="cx('meter')" [pBind]="ptm('meter')">
@@ -513,7 +512,7 @@ export const Password_VALUE_ACCESSOR: any = {
                             <div [class]="cx('meterText')" [pBind]="ptm('meterText')">{{ infoText }}</div>
                         </div>
                     }
-                    <ng-container *ngTemplateOutlet="footerTemplate || _footerTemplate"></ng-container>
+                    <ng-container *ngTemplateOutlet="footerTemplate() || _footerTemplate"></ng-container>
                 </div>
             </ng-template>
         </p-overlay>
@@ -692,33 +691,33 @@ export class Password extends BaseInput<PasswordPassThrough> {
      */
     @Output() onClear: EventEmitter<any> = new EventEmitter<any>();
 
-    @ViewChild('overlay') overlayViewChild!: Overlay;
+    readonly overlayViewChild = viewChild.required<Overlay>('overlay');
 
-    @ViewChild('input') input!: ElementRef;
+    readonly input = viewChild.required<ElementRef>('input');
 
     /**
      * Custom template of content.
      * @group Templates
      */
-    @ContentChild('content', { descendants: false }) contentTemplate: Nullable<TemplateRef<void>>;
+    readonly contentTemplate = contentChild<Nullable<TemplateRef<void>>>('content', { descendants: false });
 
     /**
      * Custom template of footer.
      * @group Templates
      */
-    @ContentChild('footer', { descendants: false }) footerTemplate: Nullable<TemplateRef<void>>;
+    readonly footerTemplate = contentChild<Nullable<TemplateRef<void>>>('footer', { descendants: false });
 
     /**
      * Custom template of header.
      * @group Templates
      */
-    @ContentChild('header', { descendants: false }) headerTemplate: Nullable<TemplateRef<void>>;
+    readonly headerTemplate = contentChild<Nullable<TemplateRef<void>>>('header', { descendants: false });
 
     /**
      * Custom template of clear icon.
      * @group Templates
      */
-    @ContentChild('clearicon', { descendants: false }) clearIconTemplate: Nullable<TemplateRef<void>>;
+    readonly clearIconTemplate = contentChild<Nullable<TemplateRef<void>>>('clearicon', { descendants: false });
 
     /**
      * Custom template of hide icon.
@@ -726,7 +725,7 @@ export class Password extends BaseInput<PasswordPassThrough> {
      * @see {@link PasswordIconTemplateContext}
      * @group Templates
      */
-    @ContentChild('hideicon', { descendants: false }) hideIconTemplate: Nullable<TemplateRef<PasswordIconTemplateContext>>;
+    readonly hideIconTemplate = contentChild<Nullable<TemplateRef<PasswordIconTemplateContext>>>('hideicon', { descendants: false });
 
     /**
      * Custom template of show icon.
@@ -734,9 +733,9 @@ export class Password extends BaseInput<PasswordPassThrough> {
      * @see {@link PasswordIconTemplateContext}
      * @group Templates
      */
-    @ContentChild('showicon', { descendants: false }) showIconTemplate: Nullable<TemplateRef<PasswordIconTemplateContext>>;
+    readonly showIconTemplate = contentChild<Nullable<TemplateRef<PasswordIconTemplateContext>>>('showicon', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates!: QueryList<PrimeTemplate>;
+    readonly templates = contentChildren(PrimeTemplate);
 
     $appendTo = computed(() => this.appendTo() || this.config.overlayAppendTo());
 
@@ -788,7 +787,7 @@ export class Password extends BaseInput<PasswordPassThrough> {
     }
 
     onAfterContentInit() {
-        this.templates.forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'content':
                     this._contentTemplate = item.template;

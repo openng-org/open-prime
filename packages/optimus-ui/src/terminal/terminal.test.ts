@@ -136,8 +136,8 @@ describe('Terminal', () => {
         });
 
         it('should have input reference after view init', () => {
-            expect(terminalInstance.inputRef).toBeTruthy();
-            expect(terminalInstance.inputRef.nativeElement.tagName.toLowerCase()).toBe('input');
+            expect(terminalInstance.inputRef()).toBeTruthy();
+            expect(terminalInstance.inputRef().nativeElement.tagName.toLowerCase()).toBe('input');
         });
     });
 
@@ -451,7 +451,7 @@ describe('Terminal', () => {
         });
 
         it('should focus input element', () => {
-            const inputElement = terminalInstance.inputRef.nativeElement;
+            const inputElement = terminalInstance.inputRef().nativeElement;
             vi.spyOn(inputElement, 'focus').mockImplementation(() => {});
 
             terminalInstance.focus(inputElement);
@@ -464,7 +464,7 @@ describe('Terminal', () => {
 
             terminalElement.nativeElement.click();
 
-            expect(terminalInstance.focus).toHaveBeenCalledWith(terminalInstance.inputRef.nativeElement);
+            expect(terminalInstance.focus).toHaveBeenCalledWith(terminalInstance.inputRef().nativeElement);
         });
 
         it('should handle focus when input ref is null', () => {

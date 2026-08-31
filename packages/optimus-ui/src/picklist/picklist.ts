@@ -4,8 +4,6 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
-    ContentChild,
-    ContentChildren,
     ElementRef,
     EventEmitter,
     inject,
@@ -17,8 +15,10 @@ import {
     Output,
     QueryList,
     TemplateRef,
-    ViewChild,
-    ViewEncapsulation
+    ViewEncapsulation,
+    viewChild,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { find, findIndexInList, isEmpty, setAttribute, uuid } from '@openng/optimus-ui-utils';
@@ -90,8 +90,8 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     [pt]="ptm('pcSourceMoveUpButton')"
                     [unstyled]="unstyled()"
                 >
-                    <svg data-p-icon="angle-up" *ngIf="!moveUpIconTemplate && !_moveUpIconTemplate" [pt]="ptm('pcSourceMoveUpButton')['icon']" pButtonIcon />
-                    <ng-template *ngTemplateOutlet="moveUpIconTemplate || _moveUpIconTemplate"></ng-template>
+                    <svg data-p-icon="angle-up" *ngIf="!moveUpIconTemplate() && !_moveUpIconTemplate" [pt]="ptm('pcSourceMoveUpButton')['icon']" pButtonIcon />
+                    <ng-template *ngTemplateOutlet="moveUpIconTemplate() || _moveUpIconTemplate"></ng-template>
                 </button>
                 <button
                     type="button"
@@ -105,8 +105,8 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     [pt]="ptm('pcSourceMoveTopButton')"
                     [unstyled]="unstyled()"
                 >
-                    <svg data-p-icon="angle-double-up" *ngIf="!moveTopIconTemplate && !_moveTopIconTemplate" pButtonIcon [pt]="ptm('pcSourceMoveTopButton')['icon']" />
-                    <ng-template *ngTemplateOutlet="moveTopIconTemplate || _moveTopIconTemplate"></ng-template>
+                    <svg data-p-icon="angle-double-up" *ngIf="!moveTopIconTemplate() && !_moveTopIconTemplate" pButtonIcon [pt]="ptm('pcSourceMoveTopButton')['icon']" />
+                    <ng-template *ngTemplateOutlet="moveTopIconTemplate() || _moveTopIconTemplate"></ng-template>
                 </button>
                 <button
                     type="button"
@@ -121,8 +121,8 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     [unstyled]="unstyled()"
                     hostName="picklist"
                 >
-                    <svg data-p-icon="angle-down" *ngIf="!moveDownIconTemplate && !_moveDownIconTemplate" pButtonIcon [pt]="ptm('pcSourceMoveDownButton')['icon']" />
-                    <ng-template *ngTemplateOutlet="moveDownIconTemplate || _moveDownIconTemplate"></ng-template>
+                    <svg data-p-icon="angle-down" *ngIf="!moveDownIconTemplate() && !_moveDownIconTemplate" pButtonIcon [pt]="ptm('pcSourceMoveDownButton')['icon']" />
+                    <ng-template *ngTemplateOutlet="moveDownIconTemplate() || _moveDownIconTemplate"></ng-template>
                 </button>
                 <button
                     type="button"
@@ -137,8 +137,8 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     [unstyled]="unstyled()"
                     hostName="picklist"
                 >
-                    <svg data-p-icon="angle-double-down" *ngIf="!moveBottomIconTemplate || _moveBottomIconTemplate" pButtonIcon [pt]="ptm('pcSourceMoveBottomButton')['icon']" />
-                    <ng-template *ngTemplateOutlet="moveBottomIconTemplate || _moveBottomIconTemplate"></ng-template>
+                    <svg data-p-icon="angle-double-down" *ngIf="!moveBottomIconTemplate() || _moveBottomIconTemplate" pButtonIcon [pt]="ptm('pcSourceMoveBottomButton')['icon']" />
+                    <ng-template *ngTemplateOutlet="moveBottomIconTemplate() || _moveBottomIconTemplate"></ng-template>
                 </button>
             </div>
             <div [class]="cx('sourceListContainer')" [attr.data-pc-group-section]="'listcontainer'" [pBind]="ptm('sourceListContainer')">
@@ -177,33 +177,33 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     [attr.data-pc-group-section]="'list'"
                     [unstyled]="unstyled()"
                 >
-                    <ng-container *ngIf="sourceHeaderTemplate || _sourceHeaderTemplate || sourceHeader">
+                    <ng-container *ngIf="sourceHeaderTemplate() || _sourceHeaderTemplate || sourceHeader">
                         <ng-template #header>
-                            <div *ngIf="!sourceHeaderTemplate && !_sourceHeaderTemplate">{{ sourceHeader }}</div>
-                            <ng-template *ngTemplateOutlet="sourceHeaderTemplate || _sourceHeaderTemplate"></ng-template>
+                            <div *ngIf="!sourceHeaderTemplate() && !_sourceHeaderTemplate">{{ sourceHeader }}</div>
+                            <ng-template *ngTemplateOutlet="sourceHeaderTemplate() || _sourceHeaderTemplate"></ng-template>
                         </ng-template>
                     </ng-container>
-                    <ng-container *ngIf="sourceFilterTemplate || _sourceFilterTemplate">
+                    <ng-container *ngIf="sourceFilterTemplate() || _sourceFilterTemplate">
                         <ng-template #filter>
-                            <ng-template *ngTemplateOutlet="sourceFilterTemplate || _sourceFilterTemplate; context: { options: sourceFilterOptions }"></ng-template>
+                            <ng-template *ngTemplateOutlet="sourceFilterTemplate() || _sourceFilterTemplate; context: { options: sourceFilterOptions }"></ng-template>
                         </ng-template>
                     </ng-container>
-                    <ng-container *ngIf="sourceFilterIconTemplate || _sourceFilterIconTemplate">
-                        <ng-container *ngTemplateOutlet="sourceFilterIconTemplate || _sourceFilterIconTemplate"></ng-container>
+                    <ng-container *ngIf="sourceFilterIconTemplate() || _sourceFilterIconTemplate">
+                        <ng-container *ngTemplateOutlet="sourceFilterIconTemplate() || _sourceFilterIconTemplate"></ng-container>
                     </ng-container>
-                    <ng-container *ngIf="itemTemplate || _itemTemplate">
+                    <ng-container *ngIf="itemTemplate() || _itemTemplate">
                         <ng-template #item let-item let-index="index" let-selected="selected" let-disabled="disabled">
-                            <ng-container *ngTemplateOutlet="itemTemplate || _itemTemplate; context: { $implicit: item, index: index, selected: selected, disabled: disabled }"></ng-container>
+                            <ng-container *ngTemplateOutlet="itemTemplate() || _itemTemplate; context: { $implicit: item, index: index, selected: selected, disabled: disabled }"></ng-container>
                         </ng-template>
                     </ng-container>
-                    <ng-container *ngIf="emptyMessageSourceTemplate || _emptyMessageSourceTemplate">
+                    <ng-container *ngIf="emptyMessageSourceTemplate() || _emptyMessageSourceTemplate">
                         <ng-template #empty>
-                            <ng-container *ngTemplateOutlet="emptyMessageSourceTemplate || _emptyMessageSourceTemplate"></ng-container>
+                            <ng-container *ngTemplateOutlet="emptyMessageSourceTemplate() || _emptyMessageSourceTemplate"></ng-container>
                         </ng-template>
                     </ng-container>
-                    <ng-container *ngIf="emptyFilterMessageSourceTemplate || _emptyFilterMessageSourceTemplate">
+                    <ng-container *ngIf="emptyFilterMessageSourceTemplate() || _emptyFilterMessageSourceTemplate">
                         <ng-template #emptyfilter>
-                            <ng-container *ngTemplateOutlet="emptyFilterMessageSourceTemplate || _emptyFilterMessageSourceTemplate"></ng-container>
+                            <ng-container *ngTemplateOutlet="emptyFilterMessageSourceTemplate() || _emptyFilterMessageSourceTemplate"></ng-container>
                         </ng-template>
                     </ng-container>
                 </p-listbox>
@@ -222,11 +222,11 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     hostName="picklist"
                     [unstyled]="unstyled()"
                 >
-                    <ng-container *ngIf="!moveToTargetIconTemplate && !_moveToTargetIconTemplate">
+                    <ng-container *ngIf="!moveToTargetIconTemplate() && !_moveToTargetIconTemplate">
                         <svg data-p-icon="angle-right" *ngIf="!viewChanged" pButtonIcon [pt]="ptm('pcMoveToTargetButton')['icon']" />
                         <svg data-p-icon="angle-down" *ngIf="viewChanged" pButtonIcon [pt]="ptm('pcMoveToTargetButton')['icon']" />
                     </ng-container>
-                    <ng-template *ngTemplateOutlet="moveToTargetIconTemplate || _moveToTargetIconTemplate; context: { $implicit: viewChanged }"></ng-template>
+                    <ng-template *ngTemplateOutlet="moveToTargetIconTemplate() || _moveToTargetIconTemplate; context: { $implicit: viewChanged }"></ng-template>
                 </button>
                 <button
                     type="button"
@@ -240,11 +240,11 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     [pt]="ptm('pcMoveAllToTargetButton')"
                     [unstyled]="unstyled()"
                 >
-                    <ng-container *ngIf="!moveAllToTargetIconTemplate && !_moveAllToTargetIconTemplate">
+                    <ng-container *ngIf="!moveAllToTargetIconTemplate() && !_moveAllToTargetIconTemplate">
                         <svg data-p-icon="angle-double-right" *ngIf="!viewChanged" pButtonIcon [pt]="ptm('pcMoveAllToTargetButton')['icon']" />
                         <svg data-p-icon="angle-double-down" *ngIf="viewChanged" pButtonIcon [pt]="ptm('pcMoveAllToTargetButton')['icon']" />
                     </ng-container>
-                    <ng-template *ngTemplateOutlet="moveAllToTargetIconTemplate || _moveAllToTargetIconTemplate; context: { $implicit: viewChanged }"></ng-template>
+                    <ng-template *ngTemplateOutlet="moveAllToTargetIconTemplate() || _moveAllToTargetIconTemplate; context: { $implicit: viewChanged }"></ng-template>
                 </button>
                 <button
                     type="button"
@@ -259,11 +259,11 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     hostName="picklist"
                     [unstyled]="unstyled()"
                 >
-                    <ng-container *ngIf="!moveToSourceIconTemplate && !_moveToSourceIconTemplate">
+                    <ng-container *ngIf="!moveToSourceIconTemplate() && !_moveToSourceIconTemplate">
                         <svg data-p-icon="angle-left" *ngIf="!viewChanged" pButtonIcon [pt]="ptm('pcMoveToSourceButton')['icon']" />
                         <svg data-p-icon="angle-up" *ngIf="viewChanged" pButtonIcon [pt]="ptm('pcMoveToSourceButton')['icon']" />
                     </ng-container>
-                    <ng-template *ngTemplateOutlet="moveToSourceIconTemplate || _moveToSourceIconTemplate; context: { $implicit: viewChanged }"></ng-template>
+                    <ng-template *ngTemplateOutlet="moveToSourceIconTemplate() || _moveToSourceIconTemplate; context: { $implicit: viewChanged }"></ng-template>
                 </button>
                 <button
                     type="button"
@@ -278,11 +278,11 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     hostName="picklist"
                     [unstyled]="unstyled()"
                 >
-                    <ng-container *ngIf="!moveAllToSourceIconTemplate && !_moveAllToSourceIconTemplate">
+                    <ng-container *ngIf="!moveAllToSourceIconTemplate() && !_moveAllToSourceIconTemplate">
                         <svg data-p-icon="angle-double-left" *ngIf="!viewChanged" pButtonIcon [pt]="ptm('pcMoveAllToSourceButton')['icon']" />
                         <svg data-p-icon="angle-double-up" *ngIf="viewChanged" pButtonIcon [pt]="ptm('pcMoveAllToSourceButton')['icon']" />
                     </ng-container>
-                    <ng-template *ngTemplateOutlet="moveAllToSourceIconTemplate || _moveAllToSourceIconTemplate; context: { $implicit: viewChanged }"></ng-template>
+                    <ng-template *ngTemplateOutlet="moveAllToSourceIconTemplate() || _moveAllToSourceIconTemplate; context: { $implicit: viewChanged }"></ng-template>
                 </button>
             </div>
             <div [class]="cx('targetListContainer')" [attr.data-pc-group-section]="'listcontainer'" [pBind]="ptm('targetListContainer')">
@@ -321,33 +321,33 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     hostName="picklist"
                     [unstyled]="unstyled()"
                 >
-                    <ng-container *ngIf="targetHeaderTemplate || _targetHeaderTemplate || targetHeader">
+                    <ng-container *ngIf="targetHeaderTemplate() || _targetHeaderTemplate || targetHeader">
                         <ng-template #header>
-                            <div *ngIf="!targetHeaderTemplate && !_targetHeaderTemplate">{{ targetHeader }}</div>
-                            <ng-template *ngTemplateOutlet="targetHeaderTemplate || _targetHeaderTemplate"></ng-template>
+                            <div *ngIf="!targetHeaderTemplate() && !_targetHeaderTemplate">{{ targetHeader }}</div>
+                            <ng-template *ngTemplateOutlet="targetHeaderTemplate() || _targetHeaderTemplate"></ng-template>
                         </ng-template>
                     </ng-container>
-                    <ng-container *ngIf="targetFilterTemplate || _targetFilterTemplate">
+                    <ng-container *ngIf="targetFilterTemplate() || _targetFilterTemplate">
                         <ng-template #filter>
-                            <ng-template *ngTemplateOutlet="targetFilterTemplate || _targetFilterTemplate; context: { options: targetFilterOptions }"></ng-template>
+                            <ng-template *ngTemplateOutlet="targetFilterTemplate() || _targetFilterTemplate; context: { options: targetFilterOptions }"></ng-template>
                         </ng-template>
                     </ng-container>
-                    <ng-container *ngIf="targetFilterIconTemplate || _targetFilterIconTemplate">
-                        <ng-container *ngTemplateOutlet="targetFilterIconTemplate || _targetFilterIconTemplate"></ng-container>
+                    <ng-container *ngIf="targetFilterIconTemplate() || _targetFilterIconTemplate">
+                        <ng-container *ngTemplateOutlet="targetFilterIconTemplate() || _targetFilterIconTemplate"></ng-container>
                     </ng-container>
-                    <ng-container *ngIf="itemTemplate || _itemTemplate">
+                    <ng-container *ngIf="itemTemplate() || _itemTemplate">
                         <ng-template #item let-item let-index="index" let-selected="selected" let-disabled="disabled">
-                            <ng-container *ngTemplateOutlet="itemTemplate || _itemTemplate; context: { $implicit: item, index: index, selected: selected, disabled: disabled }"></ng-container>
+                            <ng-container *ngTemplateOutlet="itemTemplate() || _itemTemplate; context: { $implicit: item, index: index, selected: selected, disabled: disabled }"></ng-container>
                         </ng-template>
                     </ng-container>
-                    <ng-container *ngIf="emptyMessageTargetTemplate || _emptyMessageTargetTemplate">
+                    <ng-container *ngIf="emptyMessageTargetTemplate() || _emptyMessageTargetTemplate">
                         <ng-template #empty>
-                            <ng-container *ngTemplateOutlet="emptyMessageTargetTemplate || _emptyMessageTargetTemplate"></ng-container>
+                            <ng-container *ngTemplateOutlet="emptyMessageTargetTemplate() || _emptyMessageTargetTemplate"></ng-container>
                         </ng-template>
                     </ng-container>
-                    <ng-container *ngIf="emptyFilterMessageTargetTemplate || _emptyFilterMessageTargetTemplate">
+                    <ng-container *ngIf="emptyFilterMessageTargetTemplate() || _emptyFilterMessageTargetTemplate">
                         <ng-template #emptyfilter>
-                            <ng-container *ngTemplateOutlet="emptyFilterMessageTargetTemplate || _emptyFilterMessageTargetTemplate"></ng-container>
+                            <ng-container *ngTemplateOutlet="emptyFilterMessageTargetTemplate() || _emptyFilterMessageTargetTemplate"></ng-container>
                         </ng-template>
                     </ng-container>
                 </p-listbox>
@@ -366,8 +366,8 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     hostName="picklist"
                     [unstyled]="unstyled()"
                 >
-                    <svg data-p-icon="angle-up" *ngIf="!moveUpIconTemplate && !_moveUpIconTemplate" pButtonIcon [pt]="ptm('pcTargetMoveUpButton')['icon']" />
-                    <ng-template *ngTemplateOutlet="moveUpIconTemplate || _moveUpIconTemplate"></ng-template>
+                    <svg data-p-icon="angle-up" *ngIf="!moveUpIconTemplate() && !_moveUpIconTemplate" pButtonIcon [pt]="ptm('pcTargetMoveUpButton')['icon']" />
+                    <ng-template *ngTemplateOutlet="moveUpIconTemplate() || _moveUpIconTemplate"></ng-template>
                 </button>
                 <button
                     type="button"
@@ -382,8 +382,8 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     hostName="picklist"
                     [unstyled]="unstyled()"
                 >
-                    <svg data-p-icon="angle-double-up" *ngIf="!moveTopIconTemplate && !_moveTopIconTemplate" pButtonIcon [pt]="ptm('pcTargetMoveTopButton')['icon']" />
-                    <ng-template *ngTemplateOutlet="moveTopIconTemplate || moveTopIconTemplate"></ng-template>
+                    <svg data-p-icon="angle-double-up" *ngIf="!moveTopIconTemplate() && !_moveTopIconTemplate" pButtonIcon [pt]="ptm('pcTargetMoveTopButton')['icon']" />
+                    <ng-template *ngTemplateOutlet="moveTopIconTemplate() || moveTopIconTemplate()"></ng-template>
                 </button>
                 <button
                     type="button"
@@ -398,8 +398,8 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     hostName="picklist"
                     [unstyled]="unstyled()"
                 >
-                    <svg data-p-icon="angle-down" *ngIf="!moveDownIconTemplate && !_moveDownIconTemplate" pButtonIcon [pt]="ptm('pcTargetMoveDownButton')['icon']" />
-                    <ng-template *ngTemplateOutlet="moveDownIconTemplate || _moveDownIconTemplate"></ng-template>
+                    <svg data-p-icon="angle-down" *ngIf="!moveDownIconTemplate() && !_moveDownIconTemplate" pButtonIcon [pt]="ptm('pcTargetMoveDownButton')['icon']" />
+                    <ng-template *ngTemplateOutlet="moveDownIconTemplate() || _moveDownIconTemplate"></ng-template>
                 </button>
                 <button
                     type="button"
@@ -414,8 +414,8 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     hostName="picklist"
                     [unstyled]="unstyled()"
                 >
-                    <svg data-p-icon="angle-double-down" *ngIf="!moveBottomIconTemplate && !_moveBottomIconTemplate" pButtonIcon [pt]="ptm('pcTargetMoveBottomButton')['icon']" />
-                    <ng-template *ngTemplateOutlet="moveBottomIconTemplate || _moveBottomIconTemplate"></ng-template>
+                    <svg data-p-icon="angle-double-down" *ngIf="!moveBottomIconTemplate() && !_moveBottomIconTemplate" pButtonIcon [pt]="ptm('pcTargetMoveBottomButton')['icon']" />
+                    <ng-template *ngTemplateOutlet="moveBottomIconTemplate() || _moveBottomIconTemplate"></ng-template>
                 </button>
             </div>
         </div>
@@ -797,13 +797,13 @@ export class PickList extends BaseComponent {
      */
     @Output() onBlur: EventEmitter<Event> = new EventEmitter<Event>();
 
-    @ViewChild('sourcelist') listViewSourceChild: Listbox;
+    readonly listViewSourceChild = viewChild.required<Listbox>('sourcelist');
 
-    @ViewChild('targetlist') listViewTargetChild: Listbox;
+    readonly listViewTargetChild = viewChild.required<Listbox>('targetlist');
 
-    @ViewChild('sourceFilter') sourceFilterViewChild: Nullable<ElementRef>;
+    readonly sourceFilterViewChild = viewChild<Nullable<ElementRef>>('sourceFilter');
 
-    @ViewChild('targetFilter') targetFilterViewChild: Nullable<ElementRef>;
+    readonly targetFilterViewChild = viewChild<Nullable<ElementRef>>('targetFilter');
 
     getButtonProps(direction: string) {
         switch (direction) {
@@ -949,19 +949,19 @@ export class PickList extends BaseComponent {
      * @see {@link PickListItemTemplateContext}
      * @group Templates
      */
-    @ContentChild('item', { descendants: false }) itemTemplate: TemplateRef<PickListItemTemplateContext>;
+    readonly itemTemplate = contentChild.required<TemplateRef<PickListItemTemplateContext>>('item', { descendants: false });
 
     /**
      * Custom source header template.
      * @group Templates
      */
-    @ContentChild('sourceHeader', { descendants: false }) sourceHeaderTemplate: TemplateRef<void>;
+    readonly sourceHeaderTemplate = contentChild.required<TemplateRef<void>>('sourceHeader', { descendants: false });
 
     /**
      * Custom target header template.
      * @group Templates
      */
-    @ContentChild('targetHeader', { descendants: false }) targetHeaderTemplate: TemplateRef<void>;
+    readonly targetHeaderTemplate = contentChild.required<TemplateRef<void>>('targetHeader', { descendants: false });
 
     /**
      * Custom source filter template.
@@ -969,7 +969,7 @@ export class PickList extends BaseComponent {
      * @see {@link PickListFilterTemplateContext}
      * @group Templates
      */
-    @ContentChild('sourceFilter', { descendants: false }) sourceFilterTemplate: TemplateRef<PickListFilterTemplateContext>;
+    readonly sourceFilterTemplate = contentChild.required<TemplateRef<PickListFilterTemplateContext>>('sourceFilter', { descendants: false });
 
     /**
      * Custom target filter template.
@@ -977,55 +977,55 @@ export class PickList extends BaseComponent {
      * @see {@link PickListFilterTemplateContext}
      * @group Templates
      */
-    @ContentChild('targetFilter', { descendants: false }) targetFilterTemplate: TemplateRef<PickListFilterTemplateContext>;
+    readonly targetFilterTemplate = contentChild.required<TemplateRef<PickListFilterTemplateContext>>('targetFilter', { descendants: false });
 
     /**
      * Custom empty message when source is empty template.
      * @group Templates
      */
-    @ContentChild('emptymessagesource', { descendants: false }) emptyMessageSourceTemplate: TemplateRef<void>;
+    readonly emptyMessageSourceTemplate = contentChild.required<TemplateRef<void>>('emptymessagesource', { descendants: false });
 
     /**
      * Custom empty filter message when source is empty template.
      * @group Templates
      */
-    @ContentChild('emptyfiltermessagesource', { descendants: false }) emptyFilterMessageSourceTemplate: TemplateRef<void>;
+    readonly emptyFilterMessageSourceTemplate = contentChild.required<TemplateRef<void>>('emptyfiltermessagesource', { descendants: false });
 
     /**
      * Custom empty message when target is empty template.
      * @group Templates
      */
-    @ContentChild('emptymessagetarget', { descendants: false }) emptyMessageTargetTemplate: TemplateRef<void>;
+    readonly emptyMessageTargetTemplate = contentChild.required<TemplateRef<void>>('emptymessagetarget', { descendants: false });
 
     /**
      * Custom empty filter message when target is empty template.
      * @group Templates
      */
-    @ContentChild('emptyfiltermessagetarget', { descendants: false }) emptyFilterMessageTargetTemplate: TemplateRef<void>;
+    readonly emptyFilterMessageTargetTemplate = contentChild.required<TemplateRef<void>>('emptyfiltermessagetarget', { descendants: false });
 
     /**
      * Custom move up icon template.
      * @group Templates
      */
-    @ContentChild('moveupicon', { descendants: false }) moveUpIconTemplate: TemplateRef<void>;
+    readonly moveUpIconTemplate = contentChild.required<TemplateRef<void>>('moveupicon', { descendants: false });
 
     /**
      * Custom move top icon template.
      * @group Templates
      */
-    @ContentChild('movetopicon', { descendants: false }) moveTopIconTemplate: TemplateRef<void>;
+    readonly moveTopIconTemplate = contentChild.required<TemplateRef<void>>('movetopicon', { descendants: false });
 
     /**
      * Custom move down icon template.
      * @group Templates
      */
-    @ContentChild('movedownicon', { descendants: false }) moveDownIconTemplate: TemplateRef<void>;
+    readonly moveDownIconTemplate = contentChild.required<TemplateRef<void>>('movedownicon', { descendants: false });
 
     /**
      * Custom move bottom icon template.
      * @group Templates
      */
-    @ContentChild('movebottomicon', { descendants: false }) moveBottomIconTemplate: TemplateRef<void>;
+    readonly moveBottomIconTemplate = contentChild.required<TemplateRef<void>>('movebottomicon', { descendants: false });
 
     /**
      * Custom move to target icon template.
@@ -1033,7 +1033,7 @@ export class PickList extends BaseComponent {
      * @see {@link PickListTransferIconTemplateContext}
      * @group Templates
      */
-    @ContentChild('movetotargeticon', { descendants: false }) moveToTargetIconTemplate: TemplateRef<PickListTransferIconTemplateContext>;
+    readonly moveToTargetIconTemplate = contentChild.required<TemplateRef<PickListTransferIconTemplateContext>>('movetotargeticon', { descendants: false });
 
     /**
      * Custom move all to target icon template.
@@ -1041,7 +1041,7 @@ export class PickList extends BaseComponent {
      * @see {@link PickListTransferIconTemplateContext}
      * @group Templates
      */
-    @ContentChild('movealltotargeticon', { descendants: false }) moveAllToTargetIconTemplate: TemplateRef<PickListTransferIconTemplateContext>;
+    readonly moveAllToTargetIconTemplate = contentChild.required<TemplateRef<PickListTransferIconTemplateContext>>('movealltotargeticon', { descendants: false });
 
     /**
      * Custom move to source icon template.
@@ -1049,7 +1049,7 @@ export class PickList extends BaseComponent {
      * @see {@link PickListTransferIconTemplateContext}
      * @group Templates
      */
-    @ContentChild('movetosourceicon', { descendants: false }) moveToSourceIconTemplate: TemplateRef<PickListTransferIconTemplateContext>;
+    readonly moveToSourceIconTemplate = contentChild.required<TemplateRef<PickListTransferIconTemplateContext>>('movetosourceicon', { descendants: false });
 
     /**
      * Custom move all to source icon template.
@@ -1057,21 +1057,21 @@ export class PickList extends BaseComponent {
      * @see {@link PickListTransferIconTemplateContext}
      * @group Templates
      */
-    @ContentChild('movealltosourceicon', { descendants: false }) moveAllToSourceIconTemplate: TemplateRef<PickListTransferIconTemplateContext>;
+    readonly moveAllToSourceIconTemplate = contentChild.required<TemplateRef<PickListTransferIconTemplateContext>>('movealltosourceicon', { descendants: false });
 
     /**
      * Custom target filter icon template.
      * @group Templates
      */
-    @ContentChild('targetfiltericon', { descendants: false }) targetFilterIconTemplate: TemplateRef<void>;
+    readonly targetFilterIconTemplate = contentChild.required<TemplateRef<void>>('targetfiltericon', { descendants: false });
 
     /**
      * Custom source filter icon template.
      * @group Templates
      */
-    @ContentChild('sourcefiltericon', { descendants: false }) sourceFilterIconTemplate: TemplateRef<void>;
+    readonly sourceFilterIconTemplate = contentChild.required<TemplateRef<void>>('sourcefiltericon', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates!: QueryList<PrimeTemplate>;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _itemTemplate: TemplateRef<PickListItemTemplateContext> | undefined;
 
@@ -1112,7 +1112,7 @@ export class PickList extends BaseComponent {
     _sourceFilterIconTemplate: TemplateRef<void> | undefined;
 
     onAfterContentInit() {
-        (this.templates as QueryList<PrimeTemplate>).forEach((item) => {
+        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
             switch (item.getType()) {
                 case 'item':
                     this._itemTemplate = item.template;
@@ -1291,8 +1291,8 @@ export class PickList extends BaseComponent {
     }
 
     triggerChangeDetection() {
-        this.listViewTargetChild.cd.markForCheck();
-        this.listViewSourceChild.cd.markForCheck();
+        this.listViewTargetChild().cd.markForCheck();
+        this.listViewSourceChild().cd.markForCheck();
     }
 
     moveUp(listElement: any, list: any[], selectedItems: any[], callback: EventEmitter<any>, listType: number) {
@@ -1661,7 +1661,7 @@ export class PickList extends BaseComponent {
     }
 
     getListElement(listType: number) {
-        return listType === this.SOURCE_LIST ? this.listViewSourceChild?.el.nativeElement : this.listViewTargetChild?.el.nativeElement;
+        return listType === this.SOURCE_LIST ? this.listViewSourceChild()?.el.nativeElement : this.listViewTargetChild()?.el.nativeElement;
     }
 
     getListItems(listType: number) {
@@ -1718,13 +1718,13 @@ export class PickList extends BaseComponent {
     resetSourceFilter() {
         this.visibleOptionsSource = null;
         this.filterValueSource = null;
-        this.sourceFilterViewChild && ((<HTMLInputElement>this.sourceFilterViewChild.nativeElement).value = '');
+        sourceFilterViewChild && ((<HTMLInputElement>sourceFilterViewChild.nativeElement).value = '');
     }
 
     resetTargetFilter() {
         this.visibleOptionsTarget = null;
         this.filterValueTarget = null;
-        this.targetFilterViewChild && ((<HTMLInputElement>this.targetFilterViewChild.nativeElement).value = '');
+        targetFilterViewChild && ((<HTMLInputElement>targetFilterViewChild.nativeElement).value = '');
     }
 
     resetFilter() {

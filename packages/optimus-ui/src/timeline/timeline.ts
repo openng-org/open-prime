@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ContentChild, ContentChildren, inject, InjectionToken, Input, NgModule, QueryList, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, InjectionToken, Input, NgModule, QueryList, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
 import { BlockableUI, PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
 import { Bind } from '@openng/optimus-ui/bind';
@@ -21,11 +21,11 @@ const TIMELINE_INSTANCE = new InjectionToken<Timeline>('TIMELINE_INSTANCE');
         @for (event of value; track event; let last = $last) {
             <div [pBind]="ptm('event')" [class]="cx('event')" [attr.data-p]="dataP">
                 <div [pBind]="ptm('eventOpposite')" [class]="cx('eventOpposite')" [attr.data-p]="dataP">
-                    <ng-container *ngTemplateOutlet="oppositeTemplate || _oppositeTemplate; context: { $implicit: event }"></ng-container>
+                    <ng-container *ngTemplateOutlet="oppositeTemplate() || _oppositeTemplate; context: { $implicit: event }"></ng-container>
                 </div>
                 <div [pBind]="ptm('eventSeparator')" [class]="cx('eventSeparator')" [attr.data-p]="dataP">
-                    @if (markerTemplate || _markerTemplate) {
-                        <ng-container *ngTemplateOutlet="markerTemplate || _markerTemplate; context: { $implicit: event }"></ng-container>
+                    @if (markerTemplate() || _markerTemplate) {
+                        <ng-container *ngTemplateOutlet="markerTemplate() || _markerTemplate; context: { $implicit: event }"></ng-container>
                     } @else {
                         <div [pBind]="ptm('eventMarker')" [class]="cx('eventMarker')" [attr.data-p]="dataP"></div>
                     }
@@ -34,7 +34,7 @@ const TIMELINE_INSTANCE = new InjectionToken<Timeline>('TIMELINE_INSTANCE');
                     }
                 </div>
                 <div [pBind]="ptm('eventContent')" [class]="cx('eventContent')" [attr.data-p]="dataP">
-                    <ng-container *ngTemplateOutlet="contentTemplate || _contentTemplate; context: { $implicit: event }"></ng-container>
+                    <ng-container *ngTemplateOutlet="contentTemplate() || _contentTemplate; context: { $implicit: event }"></ng-container>
                 </div>
             </div>
         }
@@ -85,7 +85,7 @@ export class Timeline extends BaseComponent<TimelinePassThrough> implements Bloc
      * @see {@link TimelineItemTemplateContext}
      * @group Templates
      */
-    @ContentChild('content', { descendants: false }) contentTemplate: Nullable<TemplateRef<TimelineItemTemplateContext>>;
+    readonly contentTemplate = contentChild<Nullable<TemplateRef<TimelineItemTemplateContext>>>('content', { descendants: false });
 
     /**
      * Custom opposite item template.
@@ -93,7 +93,7 @@ export class Timeline extends BaseComponent<TimelinePassThrough> implements Bloc
      * @see {@link TimelineItemTemplateContext}
      * @group Templates
      */
-    @ContentChild('opposite', { descendants: false }) oppositeTemplate: Nullable<TemplateRef<TimelineItemTemplateContext>>;
+    readonly oppositeTemplate = contentChild<Nullable<TemplateRef<TimelineItemTemplateContext>>>('opposite', { descendants: false });
 
     /**
      * Custom marker template.
@@ -101,9 +101,9 @@ export class Timeline extends BaseComponent<TimelinePassThrough> implements Bloc
      * @see {@link TimelineItemTemplateContext}
      * @group Templates
      */
-    @ContentChild('marker', { descendants: false }) markerTemplate: Nullable<TemplateRef<TimelineItemTemplateContext>>;
+    readonly markerTemplate = contentChild<Nullable<TemplateRef<TimelineItemTemplateContext>>>('marker', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates: Nullable<QueryList<any>>;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _contentTemplate: TemplateRef<TimelineItemTemplateContext> | undefined;
 
@@ -118,7 +118,7 @@ export class Timeline extends BaseComponent<TimelinePassThrough> implements Bloc
     }
 
     onAfterContentInit() {
-        (this.templates as QueryList<PrimeTemplate>).forEach((item) => {
+        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
             switch (item.getType()) {
                 case 'content':
                     this._contentTemplate = item.template;

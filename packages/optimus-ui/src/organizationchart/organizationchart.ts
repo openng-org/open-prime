@@ -4,8 +4,6 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
-    ContentChild,
-    ContentChildren,
     ElementRef,
     EventEmitter,
     inject,
@@ -15,7 +13,9 @@ import {
     Output,
     QueryList,
     TemplateRef,
-    ViewEncapsulation
+    ViewEncapsulation,
+    contentChildren,
+    contentChild
 } from '@angular/core';
 import { hasClass, isAttributeEquals } from '@openng/optimus-ui-utils';
 import { PrimeTemplate, SharedModule, TreeNode } from '@openng/optimus-ui/api';
@@ -50,7 +50,7 @@ const ORGANIZATIONCHART_INSTANCE = new InjectionToken<OrganizationChart>('ORGANI
                             @if (collapsible) {
                                 @if (!leaf) {
                                     <a tabindex="0" [class]="cx('nodeToggleButton')" (click)="toggleNode($event, node)" (keydown.enter)="toggleNode($event, node)" (keydown.space)="toggleNode($event, node)" [pBind]="getPTOptions('nodeToggleButton')">
-                                        @if (!chart.togglerIconTemplate && !chart._togglerIconTemplate) {
+                                        @if (!chart.togglerIconTemplate() && !chart._togglerIconTemplate) {
                                             @if (node.expanded) {
                                                 <svg data-p-icon="chevron-down" [class]="cx('nodeToggleButtonIcon')" [pBind]="getPTOptions('nodeToggleButtonIcon')" />
                                             }
@@ -58,9 +58,9 @@ const ORGANIZATIONCHART_INSTANCE = new InjectionToken<OrganizationChart>('ORGANI
                                                 <svg data-p-icon="chevron-up" [class]="cx('nodeToggleButtonIcon')" [pBind]="getPTOptions('nodeToggleButtonIcon')" />
                                             }
                                         }
-                                        @if (chart.togglerIconTemplate || chart._togglerIconTemplate) {
+                                        @if (chart.togglerIconTemplate() || chart._togglerIconTemplate) {
                                             <span [class]="cx('nodeToggleButtonIcon')" [pBind]="getPTOptions('nodeToggleButtonIcon')">
-                                                <ng-template *ngTemplateOutlet="chart.togglerIconTemplate || chart._togglerIconTemplate; context: { $implicit: node.expanded }"></ng-template>
+                                                <ng-template *ngTemplateOutlet="chart.togglerIconTemplate() || chart._togglerIconTemplate; context: { $implicit: node.expanded }"></ng-template>
                                             </span>
                                         }
                                     </a>
@@ -284,9 +284,9 @@ export class OrganizationChart extends BaseComponent<OrganizationChartPassThroug
      */
     @Output() onNodeCollapse: EventEmitter<OrganizationChartNodeCollapseEvent> = new EventEmitter<OrganizationChartNodeCollapseEvent>();
 
-    @ContentChildren(PrimeTemplate) templates: Nullable<QueryList<PrimeTemplate>>;
+    readonly templates = contentChildren(PrimeTemplate);
 
-    @ContentChild('togglericon', { descendants: false }) togglerIconTemplate: TemplateRef<any> | undefined;
+    readonly togglerIconTemplate = contentChild<TemplateRef<any>>('togglericon', { descendants: false });
 
     public templateMap: any;
 
@@ -315,11 +315,11 @@ export class OrganizationChart extends BaseComponent<OrganizationChartPassThroug
     }
 
     onAfterContentInit() {
-        if ((this.templates as QueryList<PrimeTemplate>).length) {
+        if ((this.templates() as QueryList<PrimeTemplate>).length) {
             this.templateMap = {};
         }
 
-        (this.templates as QueryList<PrimeTemplate>).forEach((item) => {
+        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
             if (item.getType() === 'togglericon') {
                 this._togglerIconTemplate = item.template;
             } else {

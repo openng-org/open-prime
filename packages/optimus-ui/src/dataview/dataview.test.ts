@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ChangeDetectionStrategy, Component, ViewChild, signal, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, provideZonelessChangeDetection, viewChild } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { DataView } from './dataview';
@@ -1437,7 +1437,7 @@ describe('DataView', () => {
             dynamicFixture = TestBed.createComponent(TestDynamicDataViewComponent);
             dynamicComponent = dynamicFixture.componentInstance;
             await dynamicFixture.whenStable();
-            dynamicDataView = dynamicComponent.dataView;
+            dynamicDataView = dynamicComponent.dataView();
         });
 
         it('should handle dynamic value changes', async () => {
@@ -1677,7 +1677,7 @@ describe('DataView', () => {
     `
 })
 class TestDynamicDataViewComponent {
-    @ViewChild('dataView') dataView!: DataView;
+    readonly dataView = viewChild.required<DataView>('dataView');
 
     value = [
         { id: 1, name: 'Product 1', price: 100 },

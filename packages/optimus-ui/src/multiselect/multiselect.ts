@@ -4,8 +4,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    ContentChild,
-    ContentChildren,
     effect,
     ElementRef,
     EventEmitter,
@@ -22,8 +20,10 @@ import {
     Signal,
     signal,
     TemplateRef,
-    ViewChild,
-    ViewEncapsulation
+    ViewEncapsulation,
+    viewChild,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MotionOptions } from '@openng/optimus-ui-motion';
@@ -231,7 +231,7 @@ export class MultiSelectItem extends BaseComponent {
             [tooltipStyleClass]="tooltipStyleClass"
         >
             <div [pBind]="ptm('label')" [class]="cx('label')" [attr.data-p]="labelDataP">
-                <ng-container *ngIf="!selectedItemsTemplate && !_selectedItemsTemplate">
+                <ng-container *ngIf="!selectedItemsTemplate() && !_selectedItemsTemplate">
                     <ng-container *ngIf="display === 'comma'">{{ label() || 'empty' }}</ng-container>
                     <ng-container *ngIf="display === 'chip'">
                         @if (chipSelectedItems() && chipSelectedItems().length === maxSelectedLabels) {
@@ -239,17 +239,17 @@ export class MultiSelectItem extends BaseComponent {
                         } @else {
                             <div #token *ngFor="let item of chipSelectedItems(); let i = index" [pBind]="ptm('chipItem')" [class]="cx('chipItem')">
                                 <p-chip [pt]="ptm('pcChip')" [unstyled]="unstyled()" [class]="cx('pcChip')" [label]="getLabelByValue(item)" [removable]="!$disabled() && !readonly" (onRemove)="removeOption(item, $event)" [removeIcon]="chipIcon">
-                                    <ng-container *ngIf="chipIconTemplate || _chipIconTemplate || removeTokenIconTemplate || _removeTokenIconTemplate">
+                                    <ng-container *ngIf="chipIconTemplate() || _chipIconTemplate || removeTokenIconTemplate() || _removeTokenIconTemplate">
                                         <ng-template #removeicon>
                                             <ng-container *ngIf="!$disabled() && !readonly">
                                                 <span
                                                     [class]="cx('chipIcon')"
-                                                    *ngIf="chipIconTemplate || _chipIconTemplate || removeTokenIconTemplate || _removeTokenIconTemplate"
+                                                    *ngIf="chipIconTemplate() || _chipIconTemplate || removeTokenIconTemplate() || _removeTokenIconTemplate"
                                                     (click)="removeOption(item, $event)"
                                                     [attr.aria-hidden]="true"
                                                     [pBind]="ptm('chipIcon')"
                                                 >
-                                                    <ng-container *ngTemplateOutlet="chipIconTemplate || _chipIconTemplate || removeTokenIconTemplate || _removeTokenIconTemplate; context: { class: 'p-multiselect-chip-icon' }"></ng-container>
+                                                    <ng-container *ngTemplateOutlet="chipIconTemplate() || _chipIconTemplate || removeTokenIconTemplate() || _removeTokenIconTemplate; context: { class: 'p-multiselect-chip-icon' }"></ng-container>
                                                 </span>
                                             </ng-container>
                                         </ng-template>
@@ -260,35 +260,35 @@ export class MultiSelectItem extends BaseComponent {
                         <ng-container *ngIf="!modelValue() || modelValue().length === 0">{{ placeholder() || 'empty' }}</ng-container>
                     </ng-container>
                 </ng-container>
-                <ng-container *ngIf="selectedItemsTemplate || _selectedItemsTemplate">
-                    <ng-container *ngTemplateOutlet="selectedItemsTemplate || _selectedItemsTemplate; context: { $implicit: selectedOptions, removeChip: removeOption.bind(this) }"></ng-container>
+                <ng-container *ngIf="selectedItemsTemplate() || _selectedItemsTemplate">
+                    <ng-container *ngTemplateOutlet="selectedItemsTemplate() || _selectedItemsTemplate; context: { $implicit: selectedOptions, removeChip: removeOption.bind(this) }"></ng-container>
                     <ng-container *ngIf="!modelValue() || modelValue().length === 0">{{ placeholder() || 'empty' }}</ng-container>
                 </ng-container>
             </div>
         </div>
         <ng-container *ngIf="isVisibleClearIcon">
-            <svg data-p-icon="times" *ngIf="!clearIconTemplate && !_clearIconTemplate" [pBind]="ptm('clearIcon')" [class]="cx('clearIcon')" (click)="clear($event)" [attr.aria-hidden]="true" />
-            <span *ngIf="clearIconTemplate || _clearIconTemplate" [pBind]="ptm('clearIcon')" [class]="cx('clearIcon')" (click)="clear($event)" [attr.aria-hidden]="true">
-                <ng-template *ngTemplateOutlet="clearIconTemplate || _clearIconTemplate"></ng-template>
+            <svg data-p-icon="times" *ngIf="!clearIconTemplate() && !_clearIconTemplate" [pBind]="ptm('clearIcon')" [class]="cx('clearIcon')" (click)="clear($event)" [attr.aria-hidden]="true" />
+            <span *ngIf="clearIconTemplate() || _clearIconTemplate" [pBind]="ptm('clearIcon')" [class]="cx('clearIcon')" (click)="clear($event)" [attr.aria-hidden]="true">
+                <ng-template *ngTemplateOutlet="clearIconTemplate() || _clearIconTemplate"></ng-template>
             </span>
         </ng-container>
         <div [pBind]="ptm('dropdown')" [class]="cx('dropdown')">
             <ng-container *ngIf="loading; else elseBlock">
-                <ng-container *ngIf="loadingIconTemplate || _loadingIconTemplate">
-                    <ng-container *ngTemplateOutlet="loadingIconTemplate || _loadingIconTemplate"></ng-container>
+                <ng-container *ngIf="loadingIconTemplate() || _loadingIconTemplate">
+                    <ng-container *ngTemplateOutlet="loadingIconTemplate() || _loadingIconTemplate"></ng-container>
                 </ng-container>
-                <ng-container *ngIf="!loadingIconTemplate && !_loadingIconTemplate">
+                <ng-container *ngIf="!loadingIconTemplate() && !_loadingIconTemplate">
                     <span *ngIf="loadingIcon" [pBind]="ptm('loadingIcon')" [class]="cn(cx('loadingIcon'), 'pi-spin ' + loadingIcon)" [attr.aria-hidden]="true"></span>
                     <span *ngIf="!loadingIcon" [pBind]="ptm('loadingIcon')" [class]="cn(cx('loadingIcon'), 'pi pi-spinner pi-spin')" [attr.aria-hidden]="true"></span>
                 </ng-container>
             </ng-container>
             <ng-template #elseBlock>
-                <ng-container *ngIf="!dropdownIconTemplate && !_dropdownIconTemplate">
+                <ng-container *ngIf="!dropdownIconTemplate() && !_dropdownIconTemplate">
                     <span *ngIf="dropdownIcon" [pBind]="ptm('dropdownIcon')" [class]="cx('dropdownIcon')" [ngClass]="dropdownIcon" [attr.aria-hidden]="true" [attr.data-p]="dropdownIconDataP"></span>
                     <svg data-p-icon="chevron-down" *ngIf="!dropdownIcon" [pBind]="ptm('dropdownIcon')" [class]="cx('dropdownIcon')" [attr.aria-hidden]="true" [attr.data-p]="dropdownIconDataP" />
                 </ng-container>
-                <span *ngIf="dropdownIconTemplate || _dropdownIconTemplate" [pBind]="ptm('dropdownIcon')" [class]="cx('dropdownIcon')" [attr.aria-hidden]="true">
-                    <ng-template *ngTemplateOutlet="dropdownIconTemplate || _dropdownIconTemplate; context: { dataP: dropdownIconDataP }"></ng-template>
+                <span *ngIf="dropdownIconTemplate() || _dropdownIconTemplate" [pBind]="ptm('dropdownIcon')" [class]="cx('dropdownIcon')" [attr.aria-hidden]="true">
+                    <ng-template *ngTemplateOutlet="dropdownIconTemplate() || _dropdownIconTemplate; context: { dataP: dropdownIconDataP }"></ng-template>
                 </span>
             </ng-template>
         </div>
@@ -319,11 +319,11 @@ export class MultiSelectItem extends BaseComponent {
                         [pBind]="ptm('firstHiddenFocusableEl')"
                     >
                     </span>
-                    <ng-container *ngTemplateOutlet="headerTemplate || _headerTemplate"></ng-container>
+                    <ng-container *ngTemplateOutlet="headerTemplate() || _headerTemplate"></ng-container>
                     <div [pBind]="ptm('header')" [class]="cx('header')" *ngIf="showHeader">
                         <ng-content select="p-header"></ng-content>
-                        <ng-container *ngIf="filterTemplate || _filterTemplate; else builtInFilterElement">
-                            <ng-container *ngTemplateOutlet="filterTemplate || _filterTemplate; context: { options: filterOptions }"></ng-container>
+                        <ng-container *ngIf="filterTemplate() || _filterTemplate; else builtInFilterElement">
+                            <ng-container *ngTemplateOutlet="filterTemplate() || _filterTemplate; context: { options: filterOptions }"></ng-container>
                         </ng-container>
                         <ng-template #builtInFilterElement>
                             <p-checkbox
@@ -340,10 +340,10 @@ export class MultiSelectItem extends BaseComponent {
                                 #headerCheckbox
                             >
                                 <ng-template #icon let-klass="class">
-                                    <svg data-p-icon="check" *ngIf="!headerCheckboxIconTemplate && !_headerCheckboxIconTemplate && allSelected()" [class]="klass" [pBind]="getHeaderCheckboxPTOptions('pcHeaderCheckbox.icon')" />
+                                    <svg data-p-icon="check" *ngIf="!headerCheckboxIconTemplate() && !_headerCheckboxIconTemplate && allSelected()" [class]="klass" [pBind]="getHeaderCheckboxPTOptions('pcHeaderCheckbox.icon')" />
                                     <ng-template
                                         *ngTemplateOutlet="
-                                            headerCheckboxIconTemplate || _headerCheckboxIconTemplate;
+                                            headerCheckboxIconTemplate() || _headerCheckboxIconTemplate;
                                             context: {
                                                 checked: allSelected(),
                                                 partialSelected: partialSelected(),
@@ -377,9 +377,9 @@ export class MultiSelectItem extends BaseComponent {
                                     [unstyled]="unstyled()"
                                 />
                                 <p-inputicon [pt]="ptm('pcFilterIconContainer')" [unstyled]="unstyled()">
-                                    <svg data-p-icon="search" *ngIf="!filterIconTemplate && !_filterIconTemplate" [pBind]="ptm('filterIcon')" />
-                                    <span *ngIf="filterIconTemplate || _filterIconTemplate" [pBind]="ptm('filterIcon')" class="p-multiselect-filter-icon">
-                                        <ng-template *ngTemplateOutlet="filterIconTemplate || _filterIconTemplate"></ng-template>
+                                    <svg data-p-icon="search" *ngIf="!filterIconTemplate() && !_filterIconTemplate" [pBind]="ptm('filterIcon')" />
+                                    <span *ngIf="filterIconTemplate() || _filterIconTemplate" [pBind]="ptm('filterIcon')" class="p-multiselect-filter-icon">
+                                        <ng-template *ngTemplateOutlet="filterIconTemplate() || _filterIconTemplate"></ng-template>
                                     </span>
                                 </p-inputicon>
                             </p-iconfield>
@@ -401,9 +401,9 @@ export class MultiSelectItem extends BaseComponent {
                             <ng-template #content let-items let-scrollerOptions="options">
                                 <ng-container *ngTemplateOutlet="buildInItems; context: { $implicit: items, options: scrollerOptions }"></ng-container>
                             </ng-template>
-                            <ng-container *ngIf="loaderTemplate || _loaderTemplate">
+                            <ng-container *ngIf="loaderTemplate() || _loaderTemplate">
                                 <ng-template #loader let-scrollerOptions="options">
-                                    <ng-container *ngTemplateOutlet="loaderTemplate || _loaderTemplate; context: { options: scrollerOptions }"></ng-container>
+                                    <ng-container *ngTemplateOutlet="loaderTemplate() || _loaderTemplate; context: { options: scrollerOptions }"></ng-container>
                                 </ng-template>
                             </ng-container>
                         </p-scroller>
@@ -416,8 +416,8 @@ export class MultiSelectItem extends BaseComponent {
                                 <ng-template ngFor let-option [ngForOf]="items" let-i="index">
                                     <ng-container *ngIf="isOptionGroup(option)">
                                         <li [pBind]="ptm('optionGroup')" [attr.id]="id + '_' + getOptionIndex(i, scrollerOptions)" [class]="cx('optionGroup')" [ngStyle]="{ height: scrollerOptions.itemSize + 'px' }" role="option">
-                                            <span *ngIf="!groupTemplate && option.optionGroup">{{ getOptionGroupLabel(option.optionGroup) }}</span>
-                                            <ng-container *ngIf="option.optionGroup && groupTemplate" [ngTemplateOutlet]="groupTemplate" [ngTemplateOutletContext]="{ $implicit: option.optionGroup }"></ng-container>
+                                            <span *ngIf="!groupTemplate() && option.optionGroup">{{ getOptionGroupLabel(option.optionGroup) }}</span>
+                                            <ng-container *ngIf="option.optionGroup && groupTemplate()" [ngTemplateOutlet]="groupTemplate()" [ngTemplateOutletContext]="{ $implicit: option.optionGroup }"></ng-container>
                                         </li>
                                     </ng-container>
                                     <ng-container *ngIf="!isOptionGroup(option)">
@@ -430,8 +430,8 @@ export class MultiSelectItem extends BaseComponent {
                                             [selected]="isSelected(option)"
                                             [label]="getOptionLabel(option)"
                                             [disabled]="isOptionDisabled(option)"
-                                            [template]="itemTemplate || _itemTemplate"
-                                            [itemCheckboxIconTemplate]="itemCheckboxIconTemplate || _itemCheckboxIconTemplate"
+                                            [template]="itemTemplate() || _itemTemplate"
+                                            [itemCheckboxIconTemplate]="itemCheckboxIconTemplate() || _itemCheckboxIconTemplate"
                                             [itemSize]="scrollerOptions.itemSize"
                                             [focused]="focusedOptionIndex() === getOptionIndex(i, scrollerOptions)"
                                             [ariaPosInset]="getAriaPosInset(getOptionIndex(i, scrollerOptions))"
@@ -447,25 +447,25 @@ export class MultiSelectItem extends BaseComponent {
                                 </ng-template>
 
                                 <li *ngIf="hasFilter() && isEmpty()" [pBind]="ptm('emptyMessage')" [class]="cx('emptyMessage')" [ngStyle]="{ height: scrollerOptions.itemSize + 'px' }" role="option">
-                                    @if (!emptyFilterTemplate && !_emptyFilterTemplate && !emptyTemplate && !_emptyTemplate) {
+                                    @if (!emptyFilterTemplate() && !_emptyFilterTemplate && !emptyTemplate() && !_emptyTemplate) {
                                         {{ emptyFilterMessageLabel }}
                                     } @else {
-                                        <ng-container *ngTemplateOutlet="emptyFilterTemplate || _emptyFilterTemplate || emptyTemplate || _emptyFilterTemplate"></ng-container>
+                                        <ng-container *ngTemplateOutlet="emptyFilterTemplate() || _emptyFilterTemplate || emptyTemplate() || _emptyFilterTemplate"></ng-container>
                                     }
                                 </li>
                                 <li *ngIf="!hasFilter() && isEmpty()" [pBind]="ptm('emptyMessage')" [class]="cx('emptyMessage')" [ngStyle]="{ height: scrollerOptions.itemSize + 'px' }" role="option">
-                                    @if (!emptyTemplate && !_emptyTemplate) {
+                                    @if (!emptyTemplate() && !_emptyTemplate) {
                                         {{ emptyMessageLabel }}
                                     } @else {
-                                        <ng-container *ngTemplateOutlet="emptyTemplate || _emptyTemplate"></ng-container>
+                                        <ng-container *ngTemplateOutlet="emptyTemplate() || _emptyTemplate"></ng-container>
                                     }
                                 </li>
                             </ul>
                         </ng-template>
                     </div>
-                    <div *ngIf="footerFacet || footerTemplate || _footerTemplate">
+                    <div *ngIf="footerFacet() || footerTemplate() || _footerTemplate">
                         <ng-content select="p-footer"></ng-content>
-                        <ng-container *ngTemplateOutlet="footerTemplate || _footerTemplate"></ng-container>
+                        <ng-container *ngTemplateOutlet="footerTemplate() || _footerTemplate"></ng-container>
                     </div>
 
                     <span
@@ -930,25 +930,25 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
      */
     @Output() onSelectAllChange: EventEmitter<MultiSelectSelectAllChangeEvent> = new EventEmitter<MultiSelectSelectAllChangeEvent>();
 
-    @ViewChild('overlay') overlayViewChild: Nullable<Overlay>;
+    readonly overlayViewChild = viewChild<Nullable<Overlay>>('overlay');
 
-    @ViewChild('filterInput') filterInputChild: Nullable<ElementRef>;
+    readonly filterInputChild = viewChild<Nullable<ElementRef>>('filterInput');
 
-    @ViewChild('focusInput') focusInputViewChild: Nullable<ElementRef>;
+    readonly focusInputViewChild = viewChild<Nullable<ElementRef>>('focusInput');
 
-    @ViewChild('items') itemsViewChild: Nullable<ElementRef>;
+    readonly itemsViewChild = viewChild<Nullable<ElementRef>>('items');
 
-    @ViewChild('scroller') scroller: Nullable<Scroller>;
+    readonly scroller = viewChild<Nullable<Scroller>>('scroller');
 
-    @ViewChild('lastHiddenFocusableEl') lastHiddenFocusableElementOnOverlay: Nullable<ElementRef>;
+    readonly lastHiddenFocusableElementOnOverlay = viewChild<Nullable<ElementRef>>('lastHiddenFocusableEl');
 
-    @ViewChild('firstHiddenFocusableEl') firstHiddenFocusableElementOnOverlay: Nullable<ElementRef>;
+    readonly firstHiddenFocusableElementOnOverlay = viewChild<Nullable<ElementRef>>('firstHiddenFocusableEl');
 
-    @ViewChild('headerCheckbox') headerCheckboxViewChild: Nullable<Checkbox>;
+    readonly headerCheckboxViewChild = viewChild<Nullable<Checkbox>>('headerCheckbox');
 
-    @ContentChild(Footer) footerFacet: any;
+    readonly footerFacet = contentChild(Footer);
 
-    @ContentChild(Header) headerFacet: any;
+    readonly headerFacet = contentChild(Header);
 
     _componentStyle = inject(MultiSelectStyle);
 
@@ -976,105 +976,105 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
      * Custom item template.
      * @group Templates
      */
-    @ContentChild('item', { descendants: false }) itemTemplate: TemplateRef<MultiSelectItemTemplateContext> | undefined;
+    readonly itemTemplate = contentChild<TemplateRef<MultiSelectItemTemplateContext>>('item', { descendants: false });
 
     /**
      * Custom group template.
      * @group Templates
      */
-    @ContentChild('group', { descendants: false }) groupTemplate: TemplateRef<MultiSelectGroupTemplateContext> | undefined;
+    readonly groupTemplate = contentChild<TemplateRef<MultiSelectGroupTemplateContext>>('group', { descendants: false });
 
     /**
      * Custom loader template.
      * @group Templates
      */
-    @ContentChild('loader', { descendants: false }) loaderTemplate: TemplateRef<MultiSelectLoaderTemplateContext> | undefined;
+    readonly loaderTemplate = contentChild<TemplateRef<MultiSelectLoaderTemplateContext>>('loader', { descendants: false });
 
     /**
      * Custom header template.
      * @group Templates
      */
-    @ContentChild('header', { descendants: false }) headerTemplate: TemplateRef<void> | undefined;
+    readonly headerTemplate = contentChild<TemplateRef<void>>('header', { descendants: false });
 
     /**
      * Custom filter template.
      * @group Templates
      */
-    @ContentChild('filter', { descendants: false }) filterTemplate: TemplateRef<MultiSelectFilterTemplateContext> | undefined;
+    readonly filterTemplate = contentChild<TemplateRef<MultiSelectFilterTemplateContext>>('filter', { descendants: false });
 
     /**
      * Custom footer template.
      * @group Templates
      */
-    @ContentChild('footer', { descendants: false }) footerTemplate: TemplateRef<void> | undefined;
+    readonly footerTemplate = contentChild<TemplateRef<void>>('footer', { descendants: false });
 
     /**
      * Custom empty filter template.
      * @group Templates
      */
-    @ContentChild('emptyfilter', { descendants: false }) emptyFilterTemplate: TemplateRef<void> | undefined;
+    readonly emptyFilterTemplate = contentChild<TemplateRef<void>>('emptyfilter', { descendants: false });
 
     /**
      * Custom empty template.
      * @group Templates
      */
-    @ContentChild('empty', { descendants: false }) emptyTemplate: TemplateRef<void> | undefined;
+    readonly emptyTemplate = contentChild<TemplateRef<void>>('empty', { descendants: false });
 
     /**
      * Custom selected items template.
      * @group Templates
      */
-    @ContentChild('selecteditems', { descendants: false }) selectedItemsTemplate: TemplateRef<MultiSelectSelectedItemsTemplateContext> | undefined;
+    readonly selectedItemsTemplate = contentChild<TemplateRef<MultiSelectSelectedItemsTemplateContext>>('selecteditems', { descendants: false });
 
     /**
      * Custom loading icon template.
      * @group Templates
      */
-    @ContentChild('loadingicon', { descendants: false }) loadingIconTemplate: TemplateRef<void> | undefined;
+    readonly loadingIconTemplate = contentChild<TemplateRef<void>>('loadingicon', { descendants: false });
 
     /**
      * Custom filter icon template.
      * @group Templates
      */
-    @ContentChild('filtericon', { descendants: false }) filterIconTemplate: TemplateRef<void> | undefined;
+    readonly filterIconTemplate = contentChild<TemplateRef<void>>('filtericon', { descendants: false });
 
     /**
      * Custom remove token icon template.
      * @group Templates
      */
-    @ContentChild('removetokenicon', { descendants: false }) removeTokenIconTemplate: TemplateRef<MultiSelectChipIconTemplateContext> | undefined;
+    readonly removeTokenIconTemplate = contentChild<TemplateRef<MultiSelectChipIconTemplateContext>>('removetokenicon', { descendants: false });
 
     /**
      * Custom chip icon template.
      * @group Templates
      */
-    @ContentChild('chipicon', { descendants: false }) chipIconTemplate: TemplateRef<MultiSelectChipIconTemplateContext> | undefined;
+    readonly chipIconTemplate = contentChild<TemplateRef<MultiSelectChipIconTemplateContext>>('chipicon', { descendants: false });
 
     /**
      * Custom clear icon template.
      * @group Templates
      */
-    @ContentChild('clearicon', { descendants: false }) clearIconTemplate: TemplateRef<void> | undefined;
+    readonly clearIconTemplate = contentChild<TemplateRef<void>>('clearicon', { descendants: false });
 
     /**
      * Custom dropdown icon template.
      * @group Templates
      */
-    @ContentChild('dropdownicon', { descendants: false }) dropdownIconTemplate: TemplateRef<MultiSelectDropdownIconTemplateContext> | undefined;
+    readonly dropdownIconTemplate = contentChild<TemplateRef<MultiSelectDropdownIconTemplateContext>>('dropdownicon', { descendants: false });
 
     /**
      * Custom item checkbox icon template.
      * @group Templates
      */
-    @ContentChild('itemcheckboxicon', { descendants: false }) itemCheckboxIconTemplate: TemplateRef<MultiSelectItemCheckboxIconTemplateContext> | undefined;
+    readonly itemCheckboxIconTemplate = contentChild<TemplateRef<MultiSelectItemCheckboxIconTemplateContext>>('itemcheckboxicon', { descendants: false });
 
     /**
      * Custom header checkbox icon template.
      * @group Templates
      */
-    @ContentChild('headercheckboxicon', { descendants: false }) headerCheckboxIconTemplate: TemplateRef<MultiSelectHeaderCheckboxIconTemplateContext> | undefined;
+    readonly headerCheckboxIconTemplate = contentChild<TemplateRef<MultiSelectHeaderCheckboxIconTemplateContext>>('headercheckboxicon', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates: Nullable<QueryList<PrimeTemplate>>;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _itemTemplate: TemplateRef<MultiSelectItemTemplateContext> | undefined;
 
@@ -1123,7 +1123,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     }
 
     onAfterContentInit() {
-        (this.templates as QueryList<PrimeTemplate>).forEach((item) => {
+        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
             switch (item.getType()) {
                 case 'item':
                     this._itemTemplate = item.template;
@@ -1361,7 +1361,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         if (this.filtered) {
             this.zone.runOutsideAngular(() => {
                 setTimeout(() => {
-                    this.overlayViewChild?.alignOverlay();
+                    this.overlayViewChild()?.alignOverlay();
                 }, 1);
             });
             this.filtered = false;
@@ -1422,7 +1422,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         this.updateModel(value, originalEvent);
         index !== -1 && this.focusedOptionIndex.set(index);
 
-        isFocus && focus(this.focusInputViewChild?.nativeElement);
+        isFocus && focus(this.focusInputViewChild()?.nativeElement);
 
         this.onChange.emit({
             originalEvent: event,
@@ -1832,7 +1832,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     onTabKey(event: KeyboardEvent, pressedInInputText = false) {
         if (!pressedInInputText) {
             if (this.overlayVisible && this.hasFocusableElements()) {
-                focus(event.shiftKey ? this.lastHiddenFocusableElementOnOverlay?.nativeElement : this.firstHiddenFocusableElementOnOverlay?.nativeElement);
+                focus(event.shiftKey ? this.lastHiddenFocusableElementOnOverlay()?.nativeElement : this.firstHiddenFocusableElementOnOverlay()?.nativeElement);
 
                 event.preventDefault();
             } else {
@@ -1846,11 +1846,13 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     }
 
     onContainerClick(event: any) {
-        if (this.$disabled() || this.loading || this.readonly || event.target?.isSameNode?.(this.focusInputViewChild?.nativeElement)) {
+        const focusInputViewChild = this.focusInputViewChild();
+        if (this.$disabled() || this.loading || this.readonly || event.target?.isSameNode?.(focusInputViewChild?.nativeElement)) {
             return;
         }
 
-        if (!this.overlayViewChild || !this.overlayViewChild.el.nativeElement.contains(event.target)) {
+        const overlayViewChild = this.overlayViewChild();
+        if (!overlayViewChild || !overlayViewChild.el.nativeElement.contains(event.target)) {
             if (this.clickInProgress) {
                 return;
             }
@@ -1863,14 +1865,15 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
 
             this.overlayVisible ? this.hide(true) : this.show(true);
         }
-        this.focusInputViewChild?.nativeElement.focus({ preventScroll: true });
+        focusInputViewChild?.nativeElement.focus({ preventScroll: true });
         this.onClick.emit(event);
         this.cd.detectChanges();
     }
 
     onFirstHiddenFocus(event) {
+        const focusInputViewChild = this.focusInputViewChild();
         const focusableEl =
-            event.relatedTarget === this.focusInputViewChild?.nativeElement ? getFirstFocusableElement(this.overlayViewChild?.overlayViewChild?.nativeElement, ':not([data-p-hidden-focusable="true"])') : this.focusInputViewChild?.nativeElement;
+            event.relatedTarget === focusInputViewChild?.nativeElement ? getFirstFocusableElement(this.overlayViewChild()?.overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])') : focusInputViewChild?.nativeElement;
 
         focus(focusableEl);
     }
@@ -1899,15 +1902,16 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         this.focusedOptionIndex.set(-1);
         this.onFilter.emit({ originalEvent: event, filter: this._filterValue() });
 
-        !this.virtualScrollerDisabled && this.scroller?.scrollToIndex(0);
+        !this.virtualScrollerDisabled && this.scroller()?.scrollToIndex(0);
         setTimeout(() => {
-            this.overlayViewChild?.alignOverlay();
+            this.overlayViewChild()?.alignOverlay();
         });
     }
 
     onLastHiddenFocus(event) {
+        const focusInputViewChild = this.focusInputViewChild();
         const focusableEl =
-            event.relatedTarget === this.focusInputViewChild?.nativeElement ? getLastFocusableElement(this.overlayViewChild?.overlayViewChild?.nativeElement, ':not([data-p-hidden-focusable="true"])') : this.focusInputViewChild?.nativeElement;
+            event.relatedTarget === focusInputViewChild?.nativeElement ? getLastFocusableElement(this.overlayViewChild()?.overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])') : focusInputViewChild?.nativeElement;
 
         focus(focusableEl);
     }
@@ -1964,7 +1968,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         }
 
         this.onChange.emit({ originalEvent: event, value: this.value });
-        DomHandler.focus(this.headerCheckboxViewChild?.inputViewChild?.nativeElement);
+        DomHandler.focus(this.headerCheckboxViewChild()?.inputViewChild()?.nativeElement);
         this.headerCheckboxFocus = true;
 
         event.originalEvent.preventDefault();
@@ -1984,13 +1988,14 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
 
     scrollInView(index = -1) {
         const id = index !== -1 ? `${this.id}_${index}` : this.focusedOptionId;
-        if (this.itemsViewChild && this.itemsViewChild.nativeElement) {
-            const element = findSingle(this.itemsViewChild.nativeElement, `li[id="${id}"]`);
+        const itemsViewChild = this.itemsViewChild();
+        if (itemsViewChild && itemsViewChild.nativeElement) {
+            const element = findSingle(itemsViewChild.nativeElement, `li[id="${id}"]`);
             if (element) {
                 element.scrollIntoView && element.scrollIntoView({ block: 'nearest', inline: 'nearest' });
             } else if (!this.virtualScrollerDisabled) {
                 setTimeout(() => {
-                    this.virtualScroll && this.scroller?.scrollToIndex(index !== -1 ? index : this.focusedOptionIndex());
+                    this.virtualScroll && this.scroller()?.scrollToIndex(index !== -1 ? index : this.focusedOptionIndex());
                 }, 0);
             }
         }
@@ -2019,7 +2024,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         this.focusedOptionIndex.set(focusedOptionIndex);
 
         if (isFocus) {
-            focus(this.focusInputViewChild?.nativeElement);
+            focus(this.focusInputViewChild()?.nativeElement);
         }
 
         this.cd.markForCheck();
@@ -2040,19 +2045,19 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
             unblockBodyScroll();
         }
 
-        isFocus && focus(this.focusInputViewChild?.nativeElement);
+        isFocus && focus(this.focusInputViewChild()?.nativeElement);
         this.cd.markForCheck();
     }
 
     onOverlayBeforeEnter(event: any) {
-        this.itemsWrapper = <any>findSingle(this.overlayViewChild?.overlayViewChild?.nativeElement, this.virtualScroll ? '[data-pc-name="virtualscroller"]' : '[data-pc-section="listcontainer"]');
-        this.virtualScroll && this.scroller?.setContentEl(this.itemsViewChild?.nativeElement);
+        this.itemsWrapper = <any>findSingle(this.overlayViewChild()?.overlayViewChild()?.nativeElement, this.virtualScroll ? '[data-pc-name="virtualscroller"]' : '[data-pc-section="listcontainer"]');
+        this.virtualScroll && this.scroller()?.setContentEl(this.itemsViewChild()?.nativeElement);
 
         if (this.options && this.options.length) {
             if (this.virtualScroll) {
                 const selectedIndex = this.modelValue() ? this.focusedOptionIndex() : -1;
                 if (selectedIndex !== -1) {
-                    this.scroller?.scrollToIndex(selectedIndex);
+                    this.scroller()?.scrollToIndex(selectedIndex);
                 }
             } else {
                 let selectedListItem = findSingle(this.itemsWrapper, '[data-pc-section="option"][data-p-selected="true"]');
@@ -2063,11 +2068,12 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
             }
         }
 
-        if (this.filterInputChild && this.filterInputChild.nativeElement) {
+        const filterInputChild = this.filterInputChild();
+        if (filterInputChild && filterInputChild.nativeElement) {
             this.preventModelTouched = true;
 
             if (this.autofocusFilter) {
-                this.filterInputChild.nativeElement.focus();
+                filterInputChild.nativeElement.focus();
             }
         }
 
@@ -2081,8 +2087,9 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     }
 
     resetFilter() {
-        if (this.filterInputChild && this.filterInputChild.nativeElement) {
-            this.filterInputChild.nativeElement.value = '';
+        const filterInputChild = this.filterInputChild();
+        if (filterInputChild && filterInputChild.nativeElement) {
+            filterInputChild.nativeElement.value = '';
         }
 
         this._filterValue.set(null);
@@ -2210,7 +2217,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     }
 
     hasFocusableElements() {
-        return getFocusableElements(this.overlayViewChild?.overlayViewChild?.nativeElement, ':not([data-p-hidden-focusable="true"])').length > 0;
+        return getFocusableElements(this.overlayViewChild()?.overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])').length > 0;
     }
 
     hasFilter() {

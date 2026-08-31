@@ -31,8 +31,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    ContentChild,
-    ContentChildren,
     Directive,
     effect,
     ElementRef,
@@ -45,10 +43,11 @@ import {
     NgModule,
     output,
     Output,
-    QueryList,
     TemplateRef,
-    ViewChild,
-    ViewEncapsulation
+    ViewEncapsulation,
+    contentChild,
+    contentChildren,
+    viewChild
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { getUserAgent, isClient } from '@openng/optimus-ui-utils';
@@ -730,12 +729,12 @@ export const INPUTMASK_VALUE_ACCESSOR: any = {
             [fluid]="hasFluid"
         />
         @if (value != null && $filled() && showClear && !$disabled()) {
-            @if (!clearIconTemplate && !_clearIconTemplate) {
+            @if (!clearIconTemplate() && !_clearIconTemplate) {
                 <svg data-p-icon="times" [class]="cx('clearIcon')" [pBind]="ptm('clearIcon')" (click)="clear()" />
             }
-            @if (clearIconTemplate || _clearIconTemplate) {
+            @if (clearIconTemplate() || _clearIconTemplate) {
                 <span [class]="cx('clearIcon')" [pBind]="ptm('clearIcon')" (click)="clear()">
-                    <ng-template *ngTemplateOutlet="clearIconTemplate || _clearIconTemplate"></ng-template>
+                    <ng-template *ngTemplateOutlet="clearIconTemplate() || _clearIconTemplate"></ng-template>
                 </span>
             }
         }
@@ -910,11 +909,11 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
      * Custom clear icon template.
      * @group Templates
      */
-    @ContentChild('clearicon', { descendants: false }) clearIconTemplate: Nullable<TemplateRef<void>>;
+    readonly clearIconTemplate = contentChild<Nullable<TemplateRef<void>>>('clearicon', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates!: QueryList<PrimeTemplate>;
+    readonly templates = contentChildren(PrimeTemplate);
 
-    @ViewChild('input', { static: true }) inputViewChild: Nullable<ElementRef>;
+    readonly inputViewChild = viewChild<Nullable<ElementRef>>('input');
 
     value: Nullable<string>;
 
@@ -959,7 +958,7 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
     _clearIconTemplate: TemplateRef<void> | undefined;
 
     onAfterContentInit() {
-        this.templates.forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'clearicon':
                     this._clearIconTemplate = item.template;
@@ -1016,26 +1015,27 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
     caret(first?: number, last?: number): Caret | undefined {
         let range, begin, end;
 
-        if (!this.inputViewChild?.nativeElement.offsetParent || this.inputViewChild.nativeElement !== this.inputViewChild.nativeElement.ownerDocument.activeElement) {
+        const inputViewChild = this.inputViewChild();
+        if (!inputViewChild?.nativeElement.offsetParent || inputViewChild.nativeElement !== inputViewChild.nativeElement.ownerDocument.activeElement) {
             return;
         }
 
         if (typeof first == 'number') {
             begin = first;
             end = typeof last === 'number' ? last : begin;
-            if (this.inputViewChild.nativeElement.setSelectionRange) {
-                this.inputViewChild.nativeElement.setSelectionRange(begin, end);
-            } else if (this.inputViewChild.nativeElement['createTextRange']) {
-                range = this.inputViewChild.nativeElement['createTextRange']();
+            if (inputViewChild.nativeElement.setSelectionRange) {
+                inputViewChild.nativeElement.setSelectionRange(begin, end);
+            } else if (inputViewChild.nativeElement['createTextRange']) {
+                range = inputViewChild.nativeElement['createTextRange']();
                 range.collapse(true);
                 range.moveEnd('character', end);
                 range.moveStart('character', begin);
                 range.select();
             }
         } else {
-            if (this.inputViewChild.nativeElement.setSelectionRange) {
-                begin = this.inputViewChild.nativeElement.selectionStart;
-                end = this.inputViewChild.nativeElement.selectionEnd;
+            if (inputViewChild.nativeElement.setSelectionRange) {
+                begin = inputViewChild.nativeElement.selectionStart;
+                end = inputViewChild.nativeElement.selectionEnd;
             } else if ((this.document as any['selection']) && (this.document as any)['selection'].createRange) {
                 range = (this.document as any['selection']).createRange();
                 begin = 0 - range.duplicate().moveStart('character', -100000);
@@ -1115,7 +1115,7 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
     }
 
     handleAndroidInput(e: Event) {
-        var curVal = this.inputViewChild?.nativeElement.value;
+        var curVal = this.inputViewChild()?.nativeElement.value;
         var pos = this.caret() as Caret;
         if (this.oldVal && this.oldVal.length && this.oldVal.length > curVal.length) {
             // a deletion or backspace happened
@@ -1158,7 +1158,7 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
             this.updateModel(e);
             let event = this.document.createEvent('HTMLEvents');
             event.initEvent('change', true, false);
-            this.inputViewChild?.nativeElement.dispatchEvent(event);
+            this.inputViewChild()?.nativeElement.dispatchEvent(event);
         }
     }
 
@@ -1175,7 +1175,8 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
         if (isPlatformBrowser(this.platformId)) {
             iPhone = /iphone/i.test(getUserAgent());
         }
-        this.oldVal = this.inputViewChild?.nativeElement.value;
+        const inputViewChild = this.inputViewChild();
+        this.oldVal = inputViewChild?.nativeElement.value;
 
         this.onKeydown.emit(e);
 
@@ -1206,7 +1207,7 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
             this.updateModel(e);
         } else if (k === 27) {
             // escape
-            (this.inputViewChild as ElementRef).nativeElement.value = this.focusText;
+            (inputViewChild as ElementRef).nativeElement.value = this.focusText;
             this.caret(0, this.checkVal());
             this.updateModel(e);
 
@@ -1284,14 +1285,16 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
     }
 
     writeBuffer() {
-        if (this.buffer && this.inputViewChild?.nativeElement) {
-            (this.inputViewChild as ElementRef).nativeElement.value = this.buffer.join('');
+        const inputViewChild = this.inputViewChild();
+        if (this.buffer && inputViewChild?.nativeElement) {
+            (inputViewChild as ElementRef).nativeElement.value = this.buffer.join('');
         }
     }
 
     checkVal(allow?: boolean): number {
         //try to place characters where they belong
-        let test = this.inputViewChild?.nativeElement.value,
+        const inputViewChild = this.inputViewChild();
+        let test = inputViewChild?.nativeElement.value,
             lastMatch = -1,
             i,
             c,
@@ -1329,7 +1332,7 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
             if (this.autoClear || this.buffer.join('') === this.defaultBuffer) {
                 // Invalid value. Remove it and replace it with the
                 // mask, which is the default behavior.
-                if (this.inputViewChild?.nativeElement.value) this.inputViewChild.nativeElement.value = '';
+                if (inputViewChild?.nativeElement.value) inputViewChild.nativeElement.value = '';
                 this.clearBuffer(0, this.len as number);
             } else {
                 // Invalid value, but we opt to show the value to the
@@ -1338,7 +1341,7 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
             }
         } else {
             this.writeBuffer();
-            (this.inputViewChild as ElementRef).nativeElement.value = this.inputViewChild?.nativeElement.value.substring(0, lastMatch + 1);
+            (inputViewChild as ElementRef).nativeElement.value = inputViewChild?.nativeElement.value.substring(0, lastMatch + 1);
         }
         return (this.partialPosition ? i : this.firstNonMaskPos) as number;
     }
@@ -1353,12 +1356,14 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
         clearTimeout(this.caretTimeoutId);
         let pos: number;
 
-        this.focusText = this.inputViewChild?.nativeElement.value;
+        const inputViewChild = this.inputViewChild();
+        this.focusText = inputViewChild?.nativeElement.value;
 
-        pos = this.keepBuffer ? this.inputViewChild?.nativeElement.value.length : this.checkVal();
+        pos = this.keepBuffer ? inputViewChild?.nativeElement.value.length : this.checkVal();
 
         this.caretTimeoutId = setTimeout(() => {
-            if (this.inputViewChild?.nativeElement !== this.inputViewChild?.nativeElement.ownerDocument.activeElement) {
+            const inputViewChildValue = this.inputViewChild();
+            if (inputViewChildValue?.nativeElement !== inputViewChildValue?.nativeElement.ownerDocument.activeElement) {
                 return;
             }
             this.writeBuffer();
@@ -1421,11 +1426,11 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
     }
 
     focus() {
-        this.inputViewChild?.nativeElement.focus();
+        this.inputViewChild()?.nativeElement.focus();
     }
 
     clear() {
-        (this.inputViewChild as ElementRef).nativeElement.value = '';
+        (this.inputViewChild() as ElementRef).nativeElement.value = '';
         this.value = null;
         this.onModelChange(this.value);
         this.onClear.emit();
@@ -1441,12 +1446,13 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
         this.value = value;
         setModelValue(this.value);
 
-        if (this.inputViewChild && this.inputViewChild.nativeElement) {
-            if (this.value == undefined || this.value == null) this.inputViewChild.nativeElement.value = '';
-            else this.inputViewChild.nativeElement.value = this.value;
+        const inputViewChild = this.inputViewChild();
+        if (inputViewChild && inputViewChild.nativeElement) {
+            if (this.value == undefined || this.value == null) inputViewChild.nativeElement.value = '';
+            else inputViewChild.nativeElement.value = this.value;
 
             this.checkVal();
-            this.focusText = this.inputViewChild.nativeElement.value;
+            this.focusText = inputViewChild.nativeElement.value;
         }
         this.cd.markForCheck();
     }

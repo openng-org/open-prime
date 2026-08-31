@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ContentChild, ContentChildren, inject, InjectionToken, Input, NgModule, QueryList, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, InjectionToken, Input, NgModule, QueryList, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
 import { BlockableUI, PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
 import { Bind, BindModule } from '@openng/optimus-ui/bind';
@@ -18,19 +18,19 @@ const TOOLBAR_INSTANCE = new InjectionToken<Toolbar>('TOOLBAR_INSTANCE');
     imports: [CommonModule, SharedModule, BindModule],
     template: `
         <ng-content></ng-content>
-        @if (startTemplate || _startTemplate) {
+        @if (startTemplate() || _startTemplate) {
             <div [class]="cx('start')" [pBind]="ptm('start')">
-                <ng-container *ngTemplateOutlet="startTemplate || _startTemplate"></ng-container>
+                <ng-container *ngTemplateOutlet="startTemplate() || _startTemplate"></ng-container>
             </div>
         }
-        @if (centerTemplate || _centerTemplate) {
+        @if (centerTemplate() || _centerTemplate) {
             <div [class]="cx('center')" [pBind]="ptm('center')">
-                <ng-container *ngTemplateOutlet="centerTemplate || _centerTemplate"></ng-container>
+                <ng-container *ngTemplateOutlet="centerTemplate() || _centerTemplate"></ng-container>
             </div>
         }
-        @if (endTemplate || _endTemplate) {
+        @if (endTemplate() || _endTemplate) {
             <div [class]="cx('end')" [pBind]="ptm('end')">
-                <ng-container *ngTemplateOutlet="endTemplate || _endTemplate"></ng-container>
+                <ng-container *ngTemplateOutlet="endTemplate() || _endTemplate"></ng-container>
             </div>
         }
     `,
@@ -75,21 +75,21 @@ export class Toolbar extends BaseComponent<ToolbarPassThrough> implements Blocka
      * Custom start template.
      * @group Templates
      */
-    @ContentChild('start', { descendants: false }) startTemplate: TemplateRef<void> | undefined;
+    readonly startTemplate = contentChild<TemplateRef<void>>('start', { descendants: false });
 
     /**
      * Custom end template.
      * @group Templates
      */
-    @ContentChild('end', { descendants: false }) endTemplate: TemplateRef<void> | undefined;
+    readonly endTemplate = contentChild<TemplateRef<void>>('end', { descendants: false });
 
     /**
      * Custom center template.
      * @group Templates
      */
-    @ContentChild('center', { descendants: false }) centerTemplate: TemplateRef<void> | undefined;
+    readonly centerTemplate = contentChild<TemplateRef<void>>('center', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _startTemplate: TemplateRef<void> | undefined;
 
@@ -98,7 +98,7 @@ export class Toolbar extends BaseComponent<ToolbarPassThrough> implements Blocka
     _centerTemplate: TemplateRef<void> | undefined;
 
     onAfterContentInit() {
-        (this.templates as QueryList<PrimeTemplate>).forEach((item) => {
+        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
             switch (item.getType()) {
                 case 'start':
                 case 'left':

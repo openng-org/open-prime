@@ -236,11 +236,11 @@ describe('RadioButton', () => {
         });
 
         it('should programmatically focus', () => {
-            vi.spyOn(radioInstance.inputViewChild.nativeElement, 'focus').mockImplementation(() => {});
+            vi.spyOn(radioInstance.inputViewChild().nativeElement, 'focus').mockImplementation(() => {});
 
             radioInstance.focus();
 
-            expect(radioInstance.inputViewChild.nativeElement.focus).toHaveBeenCalled();
+            expect(radioInstance.inputViewChild().nativeElement.focus).toHaveBeenCalled();
         });
 
         it('should update checked state when model value changes', async () => {

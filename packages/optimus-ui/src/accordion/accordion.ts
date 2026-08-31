@@ -3,7 +3,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    ContentChild,
     EventEmitter,
     forwardRef,
     HostListener,
@@ -17,7 +16,8 @@ import {
     Output,
     signal,
     TemplateRef,
-    ViewEncapsulation
+    ViewEncapsulation,
+    contentChild
 } from '@angular/core';
 import { MotionOptions } from '@openng/optimus-ui-motion';
 import { findSingle, focus, getAttribute, uuid } from '@openng/optimus-ui-utils';
@@ -135,8 +135,8 @@ export class AccordionPanel extends BaseComponent<AccordionPanelPassThrough> {
     standalone: true,
     template: `
         <ng-content />
-        @if (toggleicon) {
-            <ng-template *ngTemplateOutlet="toggleicon; context: { active: active() }"></ng-template>
+        @if (toggleicon()) {
+            <ng-template *ngTemplateOutlet="toggleicon(); context: { active: active() }"></ng-template>
         } @else {
             @if (active()) {
                 @if (pcAccordion.collapseIcon) {
@@ -206,7 +206,7 @@ export class AccordionHeader extends BaseComponent<AccordionHeaderPassThrough> {
      * @see {@link AccordionToggleIconTemplateContext}
      * @group Templates
      */
-    @ContentChild('toggleicon') toggleicon: TemplateRef<AccordionToggleIconTemplateContext> | undefined;
+    readonly toggleicon = contentChild<TemplateRef<AccordionToggleIconTemplateContext>>('toggleicon');
 
     @HostListener('click', ['$event']) onClick(event?: MouseEvent | KeyboardEvent) {
         if (this.disabled()) {

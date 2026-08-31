@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, provideZonelessChangeDetection, signal, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, provideZonelessChangeDetection, signal, viewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, FormsModule, NgForm, NgModel, ReactiveFormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -941,7 +941,7 @@ describe('MultiSelect', () => {
 
             it('should move focus to the first hidden focusable element and keep the overlay open', async () => {
                 vi.spyOn(component, 'onSelectionChange').mockImplementation(() => {});
-                const firstHiddenFocusableElement = multiSelect.firstHiddenFocusableElementOnOverlay!.nativeElement;
+                const firstHiddenFocusableElement = multiSelect.firstHiddenFocusableElementOnOverlay()!.nativeElement;
                 vi.spyOn(firstHiddenFocusableElement, 'focus').mockImplementation(() => {});
                 multiSelect.focusedOptionIndex.set(2);
 
@@ -955,7 +955,7 @@ describe('MultiSelect', () => {
             });
 
             it('should move focus to the last hidden focusable element on shift+tab', async () => {
-                const lastHiddenFocusableElement = multiSelect.lastHiddenFocusableElementOnOverlay!.nativeElement;
+                const lastHiddenFocusableElement = multiSelect.lastHiddenFocusableElementOnOverlay()!.nativeElement;
                 vi.spyOn(lastHiddenFocusableElement, 'focus').mockImplementation(() => {});
                 multiSelect.focusedOptionIndex.set(2);
 
@@ -1626,12 +1626,12 @@ describe('MultiSelect Content Child Templates', () => {
         await fixture.whenStable();
 
         // After content init should process templates - check if they exist or component is initialized
-        const hasItemTemplate = !!(multiSelect.itemTemplate || multiSelect._itemTemplate);
-        const hasSelectedItemsTemplate = !!(multiSelect.selectedItemsTemplate || multiSelect._selectedItemsTemplate);
-        const hasHeaderTemplate = !!(multiSelect.headerTemplate || multiSelect._headerTemplate);
-        const hasFooterTemplate = !!(multiSelect.footerTemplate || multiSelect._footerTemplate);
-        const hasEmptyTemplate = !!(multiSelect.emptyTemplate || multiSelect._emptyTemplate);
-        const hasEmptyFilterTemplate = !!(multiSelect.emptyFilterTemplate || multiSelect._emptyFilterTemplate);
+        const hasItemTemplate = !!(multiSelect.itemTemplate() || multiSelect._itemTemplate);
+        const hasSelectedItemsTemplate = !!(multiSelect.selectedItemsTemplate() || multiSelect._selectedItemsTemplate);
+        const hasHeaderTemplate = !!(multiSelect.headerTemplate() || multiSelect._headerTemplate);
+        const hasFooterTemplate = !!(multiSelect.footerTemplate() || multiSelect._footerTemplate);
+        const hasEmptyTemplate = !!(multiSelect.emptyTemplate() || multiSelect._emptyTemplate);
+        const hasEmptyFilterTemplate = !!(multiSelect.emptyFilterTemplate() || multiSelect._emptyFilterTemplate);
 
         // At least some templates should be processed, or component should be properly initialized
         expect(hasItemTemplate || hasSelectedItemsTemplate || hasHeaderTemplate || hasFooterTemplate || hasEmptyTemplate || hasEmptyFilterTemplate || multiSelect).toBeDefined();
@@ -1860,8 +1860,9 @@ describe('MultiSelect Virtual Scrolling', () => {
         fixture.detectChanges();
 
         // Virtual scroller should emit lazy load events
-        if (multiSelect.scroller) {
-            multiSelect.scroller.onLazyLoad.emit({
+        const scroller = multiSelect.scroller();
+        if (scroller) {
+            scroller.onLazyLoad.emit({
                 first: 0,
                 last: 10
             });
@@ -1879,8 +1880,9 @@ describe('MultiSelect Virtual Scrolling', () => {
         fixture.detectChanges();
 
         // First check if scroller exists and if scrollInView method exists
-        if (multiSelect.scroller && typeof multiSelect.scroller.scrollToIndex === 'function') {
-            const scrollSpy = vi.spyOn(multiSelect.scroller, 'scrollToIndex').mockImplementation(() => {});
+        const scroller = multiSelect.scroller();
+        if (scroller && typeof scroller.scrollToIndex === 'function') {
+            const scrollSpy = vi.spyOn(scroller, 'scrollToIndex').mockImplementation(() => {});
 
             if (typeof multiSelect.scrollInView === 'function') {
                 // scrollInView uses setTimeout(0) internally, so we need to wait
@@ -1896,7 +1898,7 @@ describe('MultiSelect Virtual Scrolling', () => {
                 }
             } else {
                 // Call scrollToIndex directly if scrollInView doesn't exist
-                multiSelect.scroller.scrollToIndex(500);
+                scroller.scrollToIndex(500);
                 expect(scrollSpy).toHaveBeenCalledWith(500);
             }
         } else if (typeof multiSelect.scrollInView === 'function') {
@@ -1972,12 +1974,12 @@ describe('MultiSelect Virtual Scrolling', () => {
     `
 })
 class TestDynamicDataSourcesMultiSelectComponent {
-    @ViewChild('signalMultiSelect') signalMultiSelect!: MultiSelect;
-    @ViewChild('asyncMultiSelect') asyncMultiSelect!: MultiSelect;
-    @ViewChild('getterMultiSelect') getterMultiSelect!: MultiSelect;
-    @ViewChild('functionMultiSelect') functionMultiSelect!: MultiSelect;
-    @ViewChild('lateLoadMultiSelect') lateLoadMultiSelect!: MultiSelect;
-    @ViewChild('computedMultiSelect') computedMultiSelect!: MultiSelect;
+    readonly signalMultiSelect = viewChild.required<MultiSelect>('signalMultiSelect');
+    readonly asyncMultiSelect = viewChild.required<MultiSelect>('asyncMultiSelect');
+    readonly getterMultiSelect = viewChild.required<MultiSelect>('getterMultiSelect');
+    readonly functionMultiSelect = viewChild.required<MultiSelect>('functionMultiSelect');
+    readonly lateLoadMultiSelect = viewChild.required<MultiSelect>('lateLoadMultiSelect');
+    readonly computedMultiSelect = viewChild.required<MultiSelect>('computedMultiSelect');
 
     // Signals
     citySignal = signal<City[]>([
@@ -2208,13 +2210,13 @@ class TestDynamicDataSourcesMultiSelectComponent {
     `
 })
 class TestComprehensiveFormMultiSelectComponent {
-    @ViewChild('reactiveMultiSelect') reactiveMultiSelect!: MultiSelect;
-    @ViewChild('validatedMultiSelect') validatedMultiSelect!: MultiSelect;
-    @ViewChild('ngModelMultiSelect') ngModelMultiSelect!: MultiSelect;
-    @ViewChild('ngModelValidatedMultiSelect') ngModelValidatedMultiSelect!: MultiSelect;
-    @ViewChild('templateForm') templateForm!: NgForm;
-    @ViewChild('citiesModel') citiesModel!: NgModel;
-    @ViewChild('validatedModel') validatedModel!: NgModel;
+    readonly reactiveMultiSelect = viewChild.required<MultiSelect>('reactiveMultiSelect');
+    readonly validatedMultiSelect = viewChild.required<MultiSelect>('validatedMultiSelect');
+    readonly ngModelMultiSelect = viewChild.required<MultiSelect>('ngModelMultiSelect');
+    readonly ngModelValidatedMultiSelect = viewChild.required<MultiSelect>('ngModelValidatedMultiSelect');
+    readonly templateForm = viewChild.required<NgForm>('templateForm');
+    readonly citiesModel = viewChild.required<NgModel>('citiesModel');
+    readonly validatedModel = viewChild.required<NgModel>('validatedModel');
 
     allCities: City[] = [
         { name: 'New York', code: 'NY' },
@@ -2327,7 +2329,7 @@ class TestComprehensiveFormMultiSelectComponent {
     `
 })
 class TestViewChildMultiSelectComponent {
-    @ViewChild('mainMultiSelect') mainMultiSelect!: MultiSelect;
+    readonly mainMultiSelect = viewChild.required<MultiSelect>('mainMultiSelect');
 
     cities: City[] = [
         { name: 'ViewChild City 1', code: 'VC1' },
@@ -2339,80 +2341,82 @@ class TestViewChildMultiSelectComponent {
 
     // Methods to test ViewChild properties
     getOverlayViewChild() {
-        return this.mainMultiSelect.overlayViewChild;
+        return this.mainMultiSelect().overlayViewChild();
     }
 
     getFilterInputChild() {
-        return this.mainMultiSelect.filterInputChild;
+        return this.mainMultiSelect().filterInputChild();
     }
 
     getFocusInputViewChild() {
-        return this.mainMultiSelect.focusInputViewChild;
+        return this.mainMultiSelect().focusInputViewChild();
     }
 
     getItemsViewChild() {
-        return this.mainMultiSelect.itemsViewChild;
+        return this.mainMultiSelect().itemsViewChild();
     }
 
     getScroller() {
-        return this.mainMultiSelect.scroller;
+        return this.mainMultiSelect().scroller();
     }
 
     getLastHiddenFocusableElement() {
-        return this.mainMultiSelect.lastHiddenFocusableElementOnOverlay;
+        return this.mainMultiSelect().lastHiddenFocusableElementOnOverlay();
     }
 
     getFirstHiddenFocusableElement() {
-        return this.mainMultiSelect.firstHiddenFocusableElementOnOverlay;
+        return this.mainMultiSelect().firstHiddenFocusableElementOnOverlay();
     }
 
     getHeaderCheckbox() {
-        return this.mainMultiSelect.headerCheckboxViewChild;
+        return this.mainMultiSelect().headerCheckboxViewChild();
     }
 
     // Test method access
     callShowMethod() {
-        this.mainMultiSelect.show();
+        this.mainMultiSelect().show();
     }
 
     callHideMethod() {
-        this.mainMultiSelect.hide();
+        this.mainMultiSelect().hide();
     }
 
     callClearMethod() {
-        this.mainMultiSelect.clear(new Event('click'));
+        this.mainMultiSelect().clear(new Event('click'));
     }
 
     callUpdateModelMethod(value: City[]) {
-        this.mainMultiSelect.updateModel(value);
+        this.mainMultiSelect().updateModel(value);
     }
 
     callResetFilterMethod() {
-        this.mainMultiSelect.resetFilter();
+        this.mainMultiSelect().resetFilter();
     }
 
     getModelValue() {
-        return this.mainMultiSelect.modelValue();
+        return this.mainMultiSelect().modelValue();
     }
 
     isMaxSelectionLimitReached() {
-        return this.mainMultiSelect.maxSelectionLimitReached?.() ?? (this.mainMultiSelect.selectionLimit && this.mainMultiSelect.modelValue() && this.mainMultiSelect.modelValue().length >= this.mainMultiSelect.selectionLimit);
+        const mainMultiSelect = this.mainMultiSelect();
+        return mainMultiSelect.maxSelectionLimitReached?.() ?? (mainMultiSelect.selectionLimit && mainMultiSelect.modelValue() && mainMultiSelect.modelValue().length >= mainMultiSelect.selectionLimit);
     }
 
     isEmpty() {
-        return this.mainMultiSelect.isEmpty?.() ?? (!this.mainMultiSelect.modelValue() || (Array.isArray(this.mainMultiSelect.modelValue()) && this.mainMultiSelect.modelValue().length === 0));
+        const mainMultiSelect = this.mainMultiSelect();
+        return mainMultiSelect.isEmpty?.() ?? (!mainMultiSelect.modelValue() || (Array.isArray(mainMultiSelect.modelValue()) && mainMultiSelect.modelValue().length === 0));
     }
 
     getVisibleOptions() {
-        return this.mainMultiSelect.visibleOptions();
+        return this.mainMultiSelect().visibleOptions();
     }
 
     getFocusedOptionIndex() {
-        return this.mainMultiSelect.focusedOptionIndex();
+        return this.mainMultiSelect().focusedOptionIndex();
     }
 
     getFilterValue() {
-        return this.mainMultiSelect._filterValue();
+        return this.mainMultiSelect()._filterValue();
     }
 }
 
@@ -2466,12 +2470,12 @@ class TestViewChildMultiSelectComponent {
     `
 })
 class TestComplexEdgeCasesMultiSelectComponent {
-    @ViewChild('largeDataMultiSelect') largeDataMultiSelect!: MultiSelect;
-    @ViewChild('unicodeMultiSelect') unicodeMultiSelect!: MultiSelect;
-    @ViewChild('xssMultiSelect') xssMultiSelect!: MultiSelect;
-    @ViewChild('memoryMultiSelect') memoryMultiSelect!: MultiSelect;
-    @ViewChild('nullHandlingMultiSelect') nullHandlingMultiSelect!: MultiSelect;
-    @ViewChild('circularMultiSelect') circularMultiSelect!: MultiSelect;
+    readonly largeDataMultiSelect = viewChild.required<MultiSelect>('largeDataMultiSelect');
+    readonly unicodeMultiSelect = viewChild.required<MultiSelect>('unicodeMultiSelect');
+    readonly xssMultiSelect = viewChild.required<MultiSelect>('xssMultiSelect');
+    readonly memoryMultiSelect = viewChild.required<MultiSelect>('memoryMultiSelect');
+    readonly nullHandlingMultiSelect = viewChild.required<MultiSelect>('nullHandlingMultiSelect');
+    readonly circularMultiSelect = viewChild.required<MultiSelect>('circularMultiSelect');
 
     // Large dataset for performance testing
     largeDataset: City[] = [];
@@ -2642,57 +2646,57 @@ describe('MultiSelect Dynamic Data Sources', () => {
 
     describe('Signal-based Data Sources', () => {
         it('should work with signal options', async () => {
-            expect(component.signalMultiSelect.options!.length).toBe(3);
-            expect(component.signalMultiSelect.options![0].name).toBe('Signal City 1');
+            expect(component.signalMultiSelect().options!.length).toBe(3);
+            expect(component.signalMultiSelect().options![0].name).toBe('Signal City 1');
 
             // Test signal updates
             component.updateSignalData();
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(component.signalMultiSelect.options!.length).toBe(2);
-            expect(component.signalMultiSelect.options![0].name).toBe('Updated Signal 1');
+            expect(component.signalMultiSelect().options!.length).toBe(2);
+            expect(component.signalMultiSelect().options![0].name).toBe('Updated Signal 1');
         });
 
         it('should work with signal placeholder', async () => {
-            expect(component.signalMultiSelect.placeholder()).toBe('Select from signal');
+            expect(component.signalMultiSelect().placeholder()).toBe('Select from signal');
 
             component.updatePlaceholder();
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(component.signalMultiSelect.placeholder()).toBe('Updated placeholder');
+            expect(component.signalMultiSelect().placeholder()).toBe('Updated placeholder');
         });
 
         it('should work with signal disabled state', async () => {
-            expect(component.signalMultiSelect.$disabled()).toBe(false);
+            expect(component.signalMultiSelect().$disabled()).toBe(false);
 
             component.toggleDisabled();
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(component.signalMultiSelect.$disabled()).toBe(true);
+            expect(component.signalMultiSelect().$disabled()).toBe(true);
         });
 
         it('should work with signal filter state', async () => {
-            expect(component.signalMultiSelect.filter).toBe(true);
+            expect(component.signalMultiSelect().filter).toBe(true);
 
             component.toggleFilter();
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(component.signalMultiSelect.filter).toBe(false);
+            expect(component.signalMultiSelect().filter).toBe(false);
         });
 
         it('should add items to signal dynamically', async () => {
-            const initialCount = component.signalMultiSelect.options!.length;
+            const initialCount = component.signalMultiSelect().options!.length;
 
             component.addToSignal();
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(component.signalMultiSelect.options!.length).toBe(initialCount + 1);
-            expect(component.signalMultiSelect.options![initialCount].name).toContain('New City');
+            expect(component.signalMultiSelect().options!.length).toBe(initialCount + 1);
+            expect(component.signalMultiSelect().options![initialCount].name).toContain('New City');
         });
     });
 
@@ -2742,8 +2746,9 @@ describe('MultiSelect Dynamic Data Sources', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(component.asyncMultiSelect.options?.length).toBe(2);
-            expect(component.asyncMultiSelect.options?.[0].name).toBe('Observable City 1');
+            const asyncMultiSelect = component.asyncMultiSelect();
+            expect(asyncMultiSelect.options?.length).toBe(2);
+            expect(asyncMultiSelect.options?.[0].name).toBe('Observable City 1');
         });
 
         it('should update when observable data changes', async () => {
@@ -2755,8 +2760,9 @@ describe('MultiSelect Dynamic Data Sources', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(component.asyncMultiSelect.options?.length).toBe(3);
-            expect(component.asyncMultiSelect.options?.[0].name).toBe('Updated Observable 1');
+            const asyncMultiSelect = component.asyncMultiSelect();
+            expect(asyncMultiSelect.options?.length).toBe(3);
+            expect(asyncMultiSelect.options?.[0].name).toBe('Updated Observable 1');
         });
 
         it('should work with observable placeholder via async pipe', async () => {
@@ -2764,7 +2770,7 @@ describe('MultiSelect Dynamic Data Sources', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            const placeholder = component.asyncMultiSelect.placeholder();
+            const placeholder = component.asyncMultiSelect().placeholder();
             // Async pipe may not have resolved yet, so allow for null/undefined
             if (placeholder !== null && placeholder !== undefined) {
                 expect(placeholder).toBe('Select from observable');
@@ -2777,64 +2783,64 @@ describe('MultiSelect Dynamic Data Sources', () => {
 
     describe('Getter-based Data Sources', () => {
         it('should work with getter options', async () => {
-            expect(component.getterMultiSelect.options!.length).toBe(2);
-            expect(component.getterMultiSelect.options![0].name).toBe('Getter City 1');
+            expect(component.getterMultiSelect().options!.length).toBe(2);
+            expect(component.getterMultiSelect().options![0].name).toBe('Getter City 1');
 
             component.updateGetterData();
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(component.getterMultiSelect.options![0].name).toBe('Updated Getter 1');
+            expect(component.getterMultiSelect().options![0].name).toBe('Updated Getter 1');
         });
 
         it('should work with getter placeholder', () => {
-            expect(component.getterMultiSelect.placeholder()).toBe('Select from getter');
+            expect(component.getterMultiSelect().placeholder()).toBe('Select from getter');
         });
 
         it('should work with getter disabled state', async () => {
-            expect(component.getterMultiSelect.$disabled()).toBe(false);
+            expect(component.getterMultiSelect().$disabled()).toBe(false);
 
             component.toggleGetterDisabled();
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(component.getterMultiSelect.$disabled()).toBe(true);
+            expect(component.getterMultiSelect().$disabled()).toBe(true);
         });
     });
 
     describe('Function-based Property Data Sources', () => {
         it('should work with function options', () => {
-            const options = component.functionMultiSelect.options;
+            const options = component.functionMultiSelect().options;
             expect(options!.length).toBe(3);
             expect(options![0].name).toBe('Function City 1');
             expect(options![1].disabled).toBe(true);
         });
 
         it('should work with function optionLabel', () => {
-            expect(component.functionMultiSelect.optionLabel).toBe('name');
+            expect(component.functionMultiSelect().optionLabel).toBe('name');
         });
 
         it('should work with function optionValue', () => {
-            expect(component.functionMultiSelect.optionValue).toBeUndefined();
+            expect(component.functionMultiSelect().optionValue).toBeUndefined();
         });
 
         it('should work with function optionDisabled', () => {
-            expect(component.functionMultiSelect.optionDisabled).toBe('disabled');
+            expect(component.functionMultiSelect().optionDisabled).toBe('disabled');
         });
 
         it('should work with function placeholder', () => {
-            expect(component.functionMultiSelect.placeholder()).toBe('Select from function');
+            expect(component.functionMultiSelect().placeholder()).toBe('Select from function');
         });
 
         it('should work with function filter', () => {
-            expect(component.functionMultiSelect.filter).toBe(true);
+            expect(component.functionMultiSelect().filter).toBe(true);
         });
     });
 
     describe('Late-loaded Data Sources', () => {
         it('should handle initially empty late-loaded data', () => {
-            expect(component.lateLoadMultiSelect.options!.length).toBe(0);
-            expect(component.lateLoadMultiSelect.loading).toBe(true);
+            expect(component.lateLoadMultiSelect().options!.length).toBe(0);
+            expect(component.lateLoadMultiSelect().loading).toBe(true);
         });
 
         it('should populate late-loaded data after timeout', async () => {
@@ -2845,9 +2851,9 @@ describe('MultiSelect Dynamic Data Sources', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(component.lateLoadMultiSelect.options!.length).toBe(3);
-            expect(component.lateLoadMultiSelect.loading).toBe(false);
-            expect(component.lateLoadMultiSelect.options![0].name).toBe('Late Loaded City 1');
+            expect(component.lateLoadMultiSelect().options!.length).toBe(3);
+            expect(component.lateLoadMultiSelect().loading).toBe(false);
+            expect(component.lateLoadMultiSelect().options![0].name).toBe('Late Loaded City 1');
         });
     });
 });
@@ -2882,7 +2888,7 @@ describe('MultiSelect Comprehensive Form Integration', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(component.reactiveMultiSelect.modelValue()).toEqual(cities);
+            expect(component.reactiveMultiSelect().modelValue()).toEqual(cities);
             expect(component.reactiveForm.get('cities')?.value).toEqual(cities);
         });
 
@@ -2892,7 +2898,7 @@ describe('MultiSelect Comprehensive Form Integration', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(component.reactiveMultiSelect.modelValue()).toEqual(cities);
+            expect(component.reactiveMultiSelect().modelValue()).toEqual(cities);
         });
 
         it('should work with FormControl reset', async () => {
@@ -2903,24 +2909,24 @@ describe('MultiSelect Comprehensive Form Integration', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(component.reactiveMultiSelect.modelValue()).toBeNull();
+            expect(component.reactiveMultiSelect().modelValue()).toBeNull();
             expect(component.reactiveForm.get('cities')?.pristine).toBe(true);
         });
 
         it('should work with FormControl disable/enable', async () => {
-            expect(component.reactiveMultiSelect.$disabled()).toBe(false);
+            expect(component.reactiveMultiSelect().$disabled()).toBe(false);
 
             component.disableReactiveControl();
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(component.reactiveMultiSelect.$disabled()).toBe(true);
+            expect(component.reactiveMultiSelect().$disabled()).toBe(true);
 
             component.enableReactiveControl();
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(component.reactiveMultiSelect.$disabled()).toBe(false);
+            expect(component.reactiveMultiSelect().$disabled()).toBe(false);
         });
 
         it('should work with FormControl markAsTouched', async () => {
@@ -3016,13 +3022,13 @@ describe('MultiSelect Comprehensive Form Integration', () => {
 
     describe('Template-driven Forms (NgModel) Integration', () => {
         it('should work with NgModel', async () => {
-            expect(component.ngModelMultiSelect.modelValue()).toEqual([]);
+            expect(component.ngModelMultiSelect().modelValue()).toEqual([]);
 
             component.ngModelValue = [component.allCities[0]];
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(component.ngModelMultiSelect.modelValue()).toEqual([component.allCities[0]]);
+            expect(component.ngModelMultiSelect().modelValue()).toEqual([component.allCities[0]]);
         });
 
         it('should work with NgModel validation', async () => {
@@ -3030,28 +3036,30 @@ describe('MultiSelect Comprehensive Form Integration', () => {
             await fixture.whenStable();
 
             // Should be invalid initially due to required
-            expect(component.citiesModel?.invalid).toBe(true);
-            expect(component.citiesModel?.errors?.['required']).toBe(true);
+            const citiesModel = component.citiesModel();
+            expect(citiesModel?.invalid).toBe(true);
+            expect(citiesModel?.errors?.['required']).toBe(true);
 
             // Add a value
             component.ngModelValue = [component.allCities[0]];
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(component.citiesModel?.valid).toBe(true);
+            expect(citiesModel?.valid).toBe(true);
         });
 
         it('should work with NgModel required validation', async () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(component.citiesModel?.hasError('required')).toBe(true);
+            const citiesModel = component.citiesModel();
+            expect(citiesModel?.hasError('required')).toBe(true);
 
             component.ngModelValue = [component.allCities[0]];
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(component.citiesModel?.hasError('required')).toBe(false);
+            expect(citiesModel?.hasError('required')).toBe(false);
         });
 
         it('should track form validity through template form', async () => {
@@ -3059,7 +3067,8 @@ describe('MultiSelect Comprehensive Form Integration', () => {
             await fixture.whenStable();
 
             // Initially should be invalid due to required fields
-            expect(component.templateForm?.valid).toBe(false);
+            const templateForm = component.templateForm();
+            expect(templateForm?.valid).toBe(false);
 
             // Set both required fields
             component.ngModelValue = [component.allCities[0]];
@@ -3072,12 +3081,12 @@ describe('MultiSelect Comprehensive Form Integration', () => {
             await fixture.whenStable();
 
             // Check if valid or at least not still false due to async validation
-            if (component.templateForm?.valid !== undefined) {
+            if (templateForm?.valid !== undefined) {
                 // Template form validation might be async, check that values are set at least
                 expect(component.ngModelValue.length).toBeGreaterThan(0);
                 expect(component.ngModelValidatedValue.length).toBeGreaterThan(0);
                 // Form validity depends on all controls being valid, just check it exists
-                expect(typeof component.templateForm.valid).toBe('boolean');
+                expect(typeof templateForm.valid).toBe('boolean');
             } else {
                 // Fallback: just check that values are set
                 expect(component.ngModelValue.length).toBeGreaterThan(0);
@@ -3106,7 +3115,7 @@ describe('MultiSelect ViewChild Properties', () => {
 
     it('should expose ViewChild properties correctly', async () => {
         // Test initial ViewChild access
-        expect(component.mainMultiSelect).toBeTruthy();
+        expect(component.mainMultiSelect()).toBeTruthy();
 
         // Show overlay to ensure ViewChild elements are rendered
         component.callShowMethod();
@@ -3136,15 +3145,15 @@ describe('MultiSelect ViewChild Properties', () => {
 
     it('should allow method calls through ViewChild', async () => {
         // Test show method
-        expect(component.mainMultiSelect.overlayVisible).toBeFalsy();
+        expect(component.mainMultiSelect().overlayVisible).toBeFalsy();
         component.callShowMethod();
         await fixture.whenStable();
-        expect(component.mainMultiSelect.overlayVisible).toBe(true);
+        expect(component.mainMultiSelect().overlayVisible).toBe(true);
 
         // Test hide method
         component.callHideMethod();
         await fixture.whenStable();
-        expect(component.mainMultiSelect.overlayVisible).toBe(false);
+        expect(component.mainMultiSelect().overlayVisible).toBe(false);
     });
 
     it('should allow model manipulation through ViewChild', async () => {
@@ -3200,7 +3209,7 @@ describe('MultiSelect ViewChild Properties', () => {
         await fixture.whenStable();
 
         // Set filter value
-        component.mainMultiSelect._filterValue.set('ViewChild City 1');
+        component.mainMultiSelect()._filterValue.set('ViewChild City 1');
         await fixture.whenStable();
 
         expect(component.getFilterValue()).toBe('ViewChild City 1');
@@ -3217,14 +3226,14 @@ describe('MultiSelect ViewChild Properties', () => {
             expect(limitResult).toBe(false);
 
             // Set selection limit
-            component.mainMultiSelect.selectionLimit = 2;
+            component.mainMultiSelect().selectionLimit = 2;
             component.callUpdateModelMethod([component.cities[0], component.cities[1]]);
             await fixture.whenStable();
 
             expect(component.isMaxSelectionLimitReached()).toBe(true);
         } else {
             // Method doesn't exist, test selection limit directly
-            component.mainMultiSelect.selectionLimit = 2;
+            component.mainMultiSelect().selectionLimit = 2;
             component.callUpdateModelMethod([component.cities[0], component.cities[1]]);
             await fixture.whenStable();
 
@@ -3255,9 +3264,9 @@ describe('MultiSelect Complex Edge Cases', () => {
     describe('Performance and Large Datasets', () => {
         it('should handle large datasets efficiently', async () => {
             expect(component.largeDataset.length).toBe(10000);
-            expect(component.largeDataMultiSelect.virtualScroll).toBe(true);
+            expect(component.largeDataMultiSelect().virtualScroll).toBe(true);
 
-            component.largeDataMultiSelect.show();
+            component.largeDataMultiSelect().show();
             await fixture.whenStable();
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
@@ -3306,7 +3315,7 @@ describe('MultiSelect Complex Edge Cases', () => {
         it('should handle Unicode characters correctly', async () => {
             expect(component.unicodeOptions.length).toBe(7);
 
-            component.unicodeMultiSelect.show();
+            component.unicodeMultiSelect().show();
             await fixture.whenStable();
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
@@ -3362,7 +3371,7 @@ describe('MultiSelect Complex Edge Cases', () => {
         });
 
         it('should render XSS content safely in the DOM', async () => {
-            component.xssMultiSelect.show();
+            component.xssMultiSelect().show();
             await fixture.whenStable();
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
@@ -3378,7 +3387,7 @@ describe('MultiSelect Complex Edge Cases', () => {
     describe('Null and Undefined Handling', () => {
         it('should handle null options gracefully', async () => {
             expect(() => {
-                component.nullHandlingMultiSelect.show();
+                component.nullHandlingMultiSelect().show();
             }).not.toThrow();
 
             await fixture.whenStable();
@@ -3411,7 +3420,7 @@ describe('MultiSelect Complex Edge Cases', () => {
 
         it('should not crash with circular object references', async () => {
             expect(() => {
-                component.circularMultiSelect.show();
+                component.circularMultiSelect().show();
             }).not.toThrow();
 
             await fixture.whenStable();

@@ -4,8 +4,6 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
-    ContentChild,
-    ContentChildren,
     EventEmitter,
     inject,
     InjectionToken,
@@ -15,7 +13,9 @@ import {
     QueryList,
     SimpleChanges,
     TemplateRef,
-    ViewEncapsulation
+    ViewEncapsulation,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { PrimeTemplate, SharedModule, TranslationKeys } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
@@ -47,7 +47,7 @@ const CHIP_INSTANCE = new InjectionToken<Chip>('CHIP_INSTANCE');
             <div [pBind]="ptm('label')" [class]="cx('label')">{{ label }}</div>
         }
         @if (removable) {
-            @if (!removeIconTemplate && !_removeIconTemplate) {
+            @if (!removeIconTemplate() && !_removeIconTemplate) {
                 @if (removeIcon) {
                     <span
                         [pBind]="ptm('removeIcon')"
@@ -64,9 +64,9 @@ const CHIP_INSTANCE = new InjectionToken<Chip>('CHIP_INSTANCE');
                     <svg [pBind]="ptm('removeIcon')" data-p-icon="times-circle" [class]="cx('removeIcon')" (click)="close($event)" (keydown)="onKeydown($event)" [attr.tabindex]="disabled ? -1 : 0" [attr.aria-label]="removeAriaLabel" role="button" />
                 }
             }
-            @if (removeIconTemplate || _removeIconTemplate) {
+            @if (removeIconTemplate() || _removeIconTemplate) {
                 <span [pBind]="ptm('removeIcon')" [attr.tabindex]="disabled ? -1 : 0" [class]="cx('removeIcon')" (click)="close($event)" (keydown)="onKeydown($event)" [attr.aria-label]="removeAriaLabel" role="button">
-                    <ng-template *ngTemplateOutlet="removeIconTemplate || _removeIconTemplate"></ng-template>
+                    <ng-template *ngTemplateOutlet="removeIconTemplate() || _removeIconTemplate"></ng-template>
                 </span>
             }
         }
@@ -175,14 +175,14 @@ export class Chip extends BaseComponent<ChipPassThrough> {
      * Custom remove icon template.
      * @group Templates
      */
-    @ContentChild('removeicon', { descendants: false }) removeIconTemplate: TemplateRef<void> | undefined;
+    readonly removeIconTemplate = contentChild<TemplateRef<void>>('removeicon', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _removeIconTemplate: TemplateRef<void> | undefined;
 
     onAfterContentInit() {
-        (this.templates as QueryList<PrimeTemplate>).forEach((item) => {
+        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
             switch (item.getType()) {
                 case 'removeicon':
                     this._removeIconTemplate = item.template;

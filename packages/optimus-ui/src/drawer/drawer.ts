@@ -4,8 +4,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    ContentChild,
-    ContentChildren,
     ElementRef,
     EventEmitter,
     inject,
@@ -15,10 +13,11 @@ import {
     NgModule,
     numberAttribute,
     Output,
-    QueryList,
     TemplateRef,
-    ViewChild,
-    ViewEncapsulation
+    ViewEncapsulation,
+    viewChild,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { MotionEvent, MotionOptions } from '@openng/optimus-ui-motion';
 import { addClass, appendChild, removeClass, setAttribute } from '@openng/optimus-ui-utils';
@@ -67,11 +66,11 @@ const DRAWER_INSTANCE = new InjectionToken<Drawer>('DRAWER_INSTANCE');
                 [attr.data-p]="dataP"
                 [attr.data-p-open]="visible"
             >
-                @if (headlessTemplate || _headlessTemplate) {
-                    <ng-container *ngTemplateOutlet="headlessTemplate || _headlessTemplate"></ng-container>
+                @if (headlessTemplate() || _headlessTemplate) {
+                    <ng-container *ngTemplateOutlet="headlessTemplate() || _headlessTemplate"></ng-container>
                 } @else {
                     <div [pBind]="ptm('header')" [ngClass]="cx('header')" [attr.data-pc-section]="'header'">
-                        <ng-container *ngTemplateOutlet="headerTemplate || _headerTemplate"></ng-container>
+                        <ng-container *ngTemplateOutlet="headerTemplate() || _headerTemplate"></ng-container>
                         @if (header) {
                             <div [pBind]="ptm('title')" [class]="cx('title')">{{ header }}</div>
                         }
@@ -87,10 +86,10 @@ const DRAWER_INSTANCE = new InjectionToken<Drawer>('DRAWER_INSTANCE');
                                 [unstyled]="unstyled()"
                             >
                                 <ng-template #icon>
-                                    @if (!closeIconTemplate && !_closeIconTemplate) {
+                                    @if (!closeIconTemplate() && !_closeIconTemplate) {
                                         <svg data-p-icon="times" [attr.data-pc-section]="'closeicon'" />
                                     }
-                                    <ng-template *ngTemplateOutlet="closeIconTemplate || _closeIconTemplate"></ng-template>
+                                    <ng-template *ngTemplateOutlet="closeIconTemplate() || _closeIconTemplate"></ng-template>
                                 </ng-template>
                             </p-button>
                         }
@@ -98,12 +97,12 @@ const DRAWER_INSTANCE = new InjectionToken<Drawer>('DRAWER_INSTANCE');
 
                     <div [pBind]="ptm('content')" [ngClass]="cx('content')" [attr.data-pc-section]="'content'">
                         <ng-content></ng-content>
-                        <ng-container *ngTemplateOutlet="contentTemplate || _contentTemplate"></ng-container>
+                        <ng-container *ngTemplateOutlet="contentTemplate() || _contentTemplate"></ng-container>
                     </div>
 
-                    @if (footerTemplate || _footerTemplate) {
+                    @if (footerTemplate() || _footerTemplate) {
                         <div [pBind]="ptm('footer')" [ngClass]="cx('footer')" [attr.data-pc-section]="'footer'">
-                            <ng-container *ngTemplateOutlet="footerTemplate || _footerTemplate"></ng-container>
+                            <ng-container *ngTemplateOutlet="footerTemplate() || _footerTemplate"></ng-container>
                         </div>
                     }
                 }
@@ -269,9 +268,9 @@ export class Drawer extends BaseComponent<DrawerPassThrough> {
      */
     @Output() visibleChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    @ViewChild('container') containerViewChild: ElementRef | undefined;
+    readonly containerViewChild = viewChild<ElementRef>('container');
 
-    @ViewChild('closeButton') closeButtonViewChild: ElementRef | undefined;
+    readonly closeButtonViewChild = viewChild<ElementRef>('closeButton');
 
     initialized: boolean | undefined;
 
@@ -302,27 +301,27 @@ export class Drawer extends BaseComponent<DrawerPassThrough> {
      * Custom header template.
      * @group Templates
      */
-    @ContentChild('header', { descendants: false }) headerTemplate: TemplateRef<void> | undefined;
+    readonly headerTemplate = contentChild<TemplateRef<void>>('header', { descendants: false });
     /**
      * Custom footer template.
      * @group Templates
      */
-    @ContentChild('footer', { descendants: false }) footerTemplate: TemplateRef<void> | undefined;
+    readonly footerTemplate = contentChild<TemplateRef<void>>('footer', { descendants: false });
     /**
      * Custom content template.
      * @group Templates
      */
-    @ContentChild('content', { descendants: false }) contentTemplate: TemplateRef<void> | undefined;
+    readonly contentTemplate = contentChild<TemplateRef<void>>('content', { descendants: false });
     /**
      * Custom close icon template.
      * @group Templates
      */
-    @ContentChild('closeicon', { descendants: false }) closeIconTemplate: TemplateRef<void> | undefined;
+    readonly closeIconTemplate = contentChild<TemplateRef<void>>('closeicon', { descendants: false });
     /**
      * Custom headless template to replace the entire drawer content.
      * @group Templates
      */
-    @ContentChild('headless', { descendants: false }) headlessTemplate: TemplateRef<void> | undefined;
+    readonly headlessTemplate = contentChild<TemplateRef<void>>('headless', { descendants: false });
 
     $appendTo = computed(() => this.appendTo() || this.config.overlayAppendTo());
 
@@ -336,10 +335,10 @@ export class Drawer extends BaseComponent<DrawerPassThrough> {
 
     _headlessTemplate: TemplateRef<void> | undefined;
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     onAfterContentInit() {
-        this.templates?.forEach((item) => {
+        this.templates()?.forEach((item) => {
             switch (item.getType()) {
                 case 'content':
                     this._contentTemplate = item.template;

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ViewChild, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, viewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -1780,7 +1780,7 @@ describe('TreeTable', () => {
             dynamicFixture.changeDetectorRef.markForCheck();
             await dynamicFixture.whenStable();
             dynamicFixture.detectChanges();
-            dynamicTreetable = dynamicComponent.treetable;
+            dynamicTreetable = dynamicComponent.treetable();
         });
 
         describe('Observable Data Updates', () => {
@@ -3030,7 +3030,7 @@ describe('TreeTable', () => {
     `
 })
 class TestBasicTreeTableComponent {
-    @ViewChild('treetable') treetable!: TreeTable;
+    readonly treetable = viewChild.required<TreeTable>('treetable');
 
     // Input Properties
     columns: any[] = [
@@ -3178,7 +3178,7 @@ class TestTemplatesTreeTableComponent {
     template: ` <p-treetable #treetable [value]="value" [columns]="columns"> </p-treetable> `
 })
 class TestDynamicTreeTableComponent {
-    @ViewChild('treetable') treetable!: TreeTable;
+    readonly treetable = viewChild.required<TreeTable>('treetable');
 
     value: TreeNode[] = [
         {
@@ -3202,51 +3202,51 @@ class TestDynamicTreeTableComponent {
     }
 
     updateAutoLayout(enabled: boolean) {
-        this.treetable.autoLayout = enabled;
+        this.treetable().autoLayout = enabled;
     }
 
     updatePaginator(enabled: boolean) {
-        this.treetable.paginator = enabled;
+        this.treetable().paginator = enabled;
     }
 
     updateRows(rows: number) {
-        this.treetable.rows = rows;
+        this.treetable().rows = rows;
     }
 
     updateFirst(first: number) {
-        this.treetable.first = first;
+        this.treetable().first = first;
     }
 
     updateLazy(enabled: boolean) {
-        this.treetable.lazy = enabled;
+        this.treetable().lazy = enabled;
     }
 
     updateLoading(loading: boolean) {
-        this.treetable.loading = loading;
+        this.treetable().loading = loading;
     }
 
     updateScrollable(enabled: boolean) {
-        this.treetable.scrollable = enabled;
+        this.treetable().scrollable = enabled;
     }
 
     updateVirtualScroll(enabled: boolean) {
-        this.treetable.virtualScroll = enabled;
+        this.treetable().virtualScroll = enabled;
     }
 
     updateSelectionMode(mode: string) {
-        this.treetable.selectionMode = mode;
+        this.treetable().selectionMode = mode;
     }
 
     updateSortMode(mode: 'single' | 'multiple') {
-        this.treetable.sortMode = mode;
+        this.treetable().sortMode = mode;
     }
 
     updateFilterMode(mode: string) {
-        this.treetable.filterMode = mode;
+        this.treetable().filterMode = mode;
     }
 
     updateShowGridlines(show: boolean) {
-        this.treetable.showGridlines = show;
+        this.treetable().showGridlines = show;
     }
 }
 describe('TreeTable PT', () => {

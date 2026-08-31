@@ -294,9 +294,10 @@ describe('ScrollPanel', () => {
 
         it('should programmatically scroll to top position', async () => {
             // Mock scrollTop behavior since test environment doesn't scroll
-            if (scrollPanel.contentViewChild) {
-                Object.defineProperty(scrollPanel.contentViewChild.nativeElement, 'scrollHeight', { value: 600, writable: true });
-                Object.defineProperty(scrollPanel.contentViewChild.nativeElement, 'clientHeight', { value: 200, writable: true });
+            const contentViewChild = scrollPanel.contentViewChild();
+            if (contentViewChild) {
+                Object.defineProperty(contentViewChild.nativeElement, 'scrollHeight', { value: 600, writable: true });
+                Object.defineProperty(contentViewChild.nativeElement, 'clientHeight', { value: 200, writable: true });
             }
 
             scrollPanel.scrollTop(100);
@@ -304,7 +305,7 @@ describe('ScrollPanel', () => {
             await fixture.whenStable();
 
             // Verify the method was called correctly - scroll behavior might not work in test
-            expect(scrollPanel.contentViewChild).toBeTruthy();
+            expect(contentViewChild).toBeTruthy();
         });
 
         it('should constrain scroll position within bounds', async () => {
@@ -312,14 +313,15 @@ describe('ScrollPanel', () => {
             scrollPanel.scrollTop(-50);
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
-            expect(scrollPanel.contentViewChild?.nativeElement.scrollTop).toBe(0);
+            const contentViewChild = scrollPanel.contentViewChild();
+            expect(contentViewChild?.nativeElement.scrollTop).toBe(0);
 
             // Test excessive scroll position (should be limited to max scrollable height)
             scrollPanel.scrollTop(99999);
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
-            const maxScrollTop = scrollPanel.contentViewChild!.nativeElement.scrollHeight - scrollPanel.contentViewChild!.nativeElement.clientHeight;
-            expect(scrollPanel.contentViewChild!.nativeElement.scrollTop).toBe(maxScrollTop);
+            const maxScrollTop = contentViewChild!.nativeElement.scrollHeight - contentViewChild!.nativeElement.clientHeight;
+            expect(contentViewChild!.nativeElement.scrollTop).toBe(maxScrollTop);
         });
     });
 
@@ -712,9 +714,9 @@ describe('ScrollPanel', () => {
 
         it('should handle missing ViewChild elements gracefully', () => {
             // Test that ViewChild elements exist after component initialization
-            expect(scrollPanel.contentViewChild).toBeTruthy();
-            expect(scrollPanel.xBarViewChild).toBeTruthy();
-            expect(scrollPanel.yBarViewChild).toBeTruthy();
+            expect(scrollPanel.contentViewChild()).toBeTruthy();
+            expect(scrollPanel.xBarViewChild()).toBeTruthy();
+            expect(scrollPanel.yBarViewChild()).toBeTruthy();
 
             // moveBar should work with valid ViewChild elements
             expect(() => scrollPanel.moveBar()).not.toThrow();
@@ -834,11 +836,12 @@ describe('ScrollPanel', () => {
 
         it('should handle zero dimensions gracefully', async () => {
             // Mock content with zero dimensions
-            if (scrollPanel.contentViewChild) {
-                Object.defineProperty(scrollPanel.contentViewChild.nativeElement, 'scrollWidth', { value: 0, writable: true });
-                Object.defineProperty(scrollPanel.contentViewChild.nativeElement, 'scrollHeight', { value: 0, writable: true });
-                Object.defineProperty(scrollPanel.contentViewChild.nativeElement, 'clientWidth', { value: 0, writable: true });
-                Object.defineProperty(scrollPanel.contentViewChild.nativeElement, 'clientHeight', { value: 0, writable: true });
+            const contentViewChild = scrollPanel.contentViewChild();
+            if (contentViewChild) {
+                Object.defineProperty(contentViewChild.nativeElement, 'scrollWidth', { value: 0, writable: true });
+                Object.defineProperty(contentViewChild.nativeElement, 'scrollHeight', { value: 0, writable: true });
+                Object.defineProperty(contentViewChild.nativeElement, 'clientWidth', { value: 0, writable: true });
+                Object.defineProperty(contentViewChild.nativeElement, 'clientHeight', { value: 0, writable: true });
             }
 
             await expect(async () => {

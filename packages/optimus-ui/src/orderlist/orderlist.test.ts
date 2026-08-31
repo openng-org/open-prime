@@ -1765,16 +1765,16 @@ describe('OrderList', () => {
                 await contentChildFixture.whenStable();
 
                 const hasTemplates =
-                    contentChildOrderList.itemTemplate ||
-                    contentChildOrderList.headerTemplate ||
-                    contentChildOrderList.emptyMessageTemplate ||
-                    contentChildOrderList.emptyFilterMessageTemplate ||
-                    contentChildOrderList.filterTemplate ||
-                    contentChildOrderList.moveUpIconTemplate ||
-                    contentChildOrderList.moveTopIconTemplate ||
-                    contentChildOrderList.moveDownIconTemplate ||
-                    contentChildOrderList.moveBottomIconTemplate ||
-                    contentChildOrderList.filterIconTemplate;
+                    contentChildOrderList.itemTemplate() ||
+                    contentChildOrderList.headerTemplate() ||
+                    contentChildOrderList.emptyMessageTemplate() ||
+                    contentChildOrderList.emptyFilterMessageTemplate() ||
+                    contentChildOrderList.filterTemplate() ||
+                    contentChildOrderList.moveUpIconTemplate() ||
+                    contentChildOrderList.moveTopIconTemplate() ||
+                    contentChildOrderList.moveDownIconTemplate() ||
+                    contentChildOrderList.moveBottomIconTemplate() ||
+                    contentChildOrderList.filterIconTemplate();
 
                 expect(hasTemplates).toBeTruthy();
             });

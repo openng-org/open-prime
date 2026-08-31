@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, Component, ContentChild, ContentChildren, inject, InjectionToken, Input, NgModule, QueryList, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, Component, inject, InjectionToken, Input, NgModule, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
 import { Bind } from '@openng/optimus-ui/bind';
@@ -19,14 +19,14 @@ const TAG_INSTANCE = new InjectionToken<Tag>('TAG_INSTANCE');
     imports: [CommonModule, SharedModule, Bind],
     template: `
         <ng-content></ng-content>
-        @if (!iconTemplate && !_iconTemplate) {
+        @if (!iconTemplate() && !_iconTemplate) {
             @if (icon) {
                 <span [class]="cx('icon')" [ngClass]="icon" [pBind]="ptm('icon')"></span>
             }
         }
-        @if (iconTemplate || _iconTemplate) {
+        @if (iconTemplate() || _iconTemplate) {
             <span [class]="cx('icon')" [pBind]="ptm('icon')">
-                <ng-template *ngTemplateOutlet="iconTemplate || _iconTemplate"></ng-template>
+                <ng-template *ngTemplateOutlet="iconTemplate() || _iconTemplate"></ng-template>
             </span>
         }
         <span [class]="cx('label')" [pBind]="ptm('label')">{{ value }}</span>
@@ -81,16 +81,16 @@ export class Tag extends BaseComponent<TagPassThrough> implements AfterContentIn
      * Custom icon template.
      * @group Templates
      */
-    @ContentChild('icon', { descendants: false }) iconTemplate: TemplateRef<void> | undefined;
+    readonly iconTemplate = contentChild<TemplateRef<void>>('icon', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _iconTemplate: TemplateRef<void> | undefined;
 
     _componentStyle = inject(TagStyle);
 
     onAfterContentInit() {
-        this.templates?.forEach((item) => {
+        this.templates()?.forEach((item) => {
             switch (item.getType()) {
                 case 'icon':
                     this._iconTemplate = item.template;

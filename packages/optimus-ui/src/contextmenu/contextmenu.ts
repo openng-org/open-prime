@@ -5,8 +5,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    ContentChild,
-    ContentChildren,
     effect,
     ElementRef,
     EventEmitter,
@@ -17,13 +15,14 @@ import {
     NgModule,
     numberAttribute,
     Output,
-    QueryList,
     Renderer2,
     signal,
     TemplateRef,
-    ViewChild,
     ViewEncapsulation,
-    ViewRef
+    ViewRef,
+    viewChild,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MotionEvent, MotionOptions } from '@openng/optimus-ui-motion';
@@ -164,12 +163,12 @@ const CONTEXTMENUSUB_INSTANCE = new InjectionToken<ContextMenuSub>('CONTEXTMENUS
                                     <ng-container *ngIf="isItemGroup(processedItem)">
                                         <svg
                                             data-p-icon="angle-right"
-                                            *ngIf="!contextMenu.submenuIconTemplate && !contextMenu._submenuIconTemplate"
+                                            *ngIf="!contextMenu.submenuIconTemplate() && !contextMenu._submenuIconTemplate"
                                             [class]="cx('submenuIcon')"
                                             [pBind]="getPTOptions(processedItem, index, 'submenuIcon')"
                                             [attr.aria-hidden]="true"
                                         />
-                                        <ng-template *ngTemplateOutlet="contextMenu.submenuIconTemplate || contextMenu._submenuIconTemplate; context: { class: 'p-contextmenu-submenu-icon' }" [attr.aria-hidden]="true"></ng-template>
+                                        <ng-template *ngTemplateOutlet="contextMenu.submenuIconTemplate() || contextMenu._submenuIconTemplate; context: { class: 'p-contextmenu-submenu-icon' }" [attr.aria-hidden]="true"></ng-template>
                                     </ng-container>
                                 </a>
                                 <a
@@ -221,12 +220,12 @@ const CONTEXTMENUSUB_INSTANCE = new InjectionToken<ContextMenuSub>('CONTEXTMENUS
                                     <ng-container *ngIf="isItemGroup(processedItem)">
                                         <svg
                                             data-p-icon="angle-right"
-                                            *ngIf="!contextMenu.submenuIconTemplate && !contextMenu._submenuIconTemplate"
+                                            *ngIf="!contextMenu.submenuIconTemplate() && !contextMenu._submenuIconTemplate"
                                             [class]="cx('submenuIcon')"
                                             [pBind]="getPTOptions(processedItem, index, 'submenuIcon')"
                                             [attr.aria-hidden]="true"
                                         />
-                                        <ng-template *ngTemplateOutlet="contextMenu.submenuIconTemplate || contextMenu._submenuIconTemplate; context: { class: 'p-contextmenu-submenu-icon' }" [attr.aria-hidden]="true"></ng-template>
+                                        <ng-template *ngTemplateOutlet="contextMenu.submenuIconTemplate() || contextMenu._submenuIconTemplate; context: { class: 'p-contextmenu-submenu-icon' }" [attr.aria-hidden]="true"></ng-template>
                                     </ng-container>
                                 </a>
                             </ng-container>
@@ -312,7 +311,7 @@ export class ContextMenuSub extends BaseComponent<ContextMenuPassThrough> implem
 
     @Output() menuKeydown: EventEmitter<any> = new EventEmitter();
 
-    @ViewChild('sublist') sublistViewChild: ElementRef;
+    readonly sublistViewChild = viewChild.required<ElementRef>('sublist');
 
     render = signal<boolean>(false);
 
@@ -462,7 +461,7 @@ export class ContextMenuSub extends BaseComponent<ContextMenuPassThrough> implem
                     #rootmenu
                     [root]="true"
                     [items]="processedItems"
-                    [itemTemplate]="itemTemplate || _itemTemplate"
+                    [itemTemplate]="itemTemplate() || _itemTemplate"
                     [menuId]="id"
                     [ariaLabel]="ariaLabel"
                     [ariaLabelledBy]="ariaLabelledBy"
@@ -592,7 +591,7 @@ export class ContextMenu extends BaseComponent<ContextMenuPassThrough> {
      */
     @Output() onHide: EventEmitter<null> = new EventEmitter<null>();
 
-    @ViewChild('rootmenu') rootmenu: ContextMenuSub | undefined;
+    readonly rootmenu = viewChild<ContextMenuSub>('rootmenu');
 
     container: HTMLElement | null | undefined;
 
@@ -737,22 +736,22 @@ export class ContextMenu extends BaseComponent<ContextMenuPassThrough> {
      * Custom item template.
      * @group Templates
      */
-    @ContentChild('item', { descendants: false }) itemTemplate: TemplateRef<ContextMenuItemTemplateContext> | undefined;
+    readonly itemTemplate = contentChild<TemplateRef<ContextMenuItemTemplateContext>>('item', { descendants: false });
 
     /**
      * Custom submenu icon template.
      * @group Templates
      */
-    @ContentChild('submenuicon', { descendants: false }) submenuIconTemplate: TemplateRef<ContextMenuSubmenuIconTemplateContext> | undefined;
+    readonly submenuIconTemplate = contentChild<TemplateRef<ContextMenuSubmenuIconTemplateContext>>('submenuicon', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _submenuIconTemplate: TemplateRef<ContextMenuSubmenuIconTemplateContext> | undefined;
 
     _itemTemplate: TemplateRef<ContextMenuItemTemplateContext> | undefined;
 
     onAfterContentInit() {
-        this.templates?.forEach((item) => {
+        this.templates()?.forEach((item) => {
             switch (item.getType()) {
                 case 'submenuicon':
                     this._submenuIconTemplate = item.template;
@@ -884,7 +883,7 @@ export class ContextMenu extends BaseComponent<ContextMenuPassThrough> {
             this.activeItemPath.set(this.activeItemPath().filter((p) => key !== p.key && key.startsWith(p.key)));
             this.focusedItemInfo.set({ index, level, parentKey, item });
 
-            focus(this.rootmenu?.sublistViewChild?.nativeElement);
+            focus(this.rootmenu()?.sublistViewChild()?.nativeElement);
         } else {
             grouped ? this.onItemChange(event) : this.hide();
         }
@@ -1048,7 +1047,7 @@ export class ContextMenu extends BaseComponent<ContextMenuPassThrough> {
 
     onEnterKey(event: KeyboardEvent) {
         if (this.focusedItemInfo().index !== -1) {
-            const element = <any>findSingle(this.rootmenu?.el?.nativeElement, `li[id="${`${this.focusedItemId}`}"]`);
+            const element = <any>findSingle(this.rootmenu()?.el?.nativeElement, `li[id="${`${this.focusedItemId}`}"]`);
             const anchorElement = element && (<any>findSingle(element, '[data-pc-section="itemlink"]') || findSingle(element, 'a,button'));
 
             anchorElement ? anchorElement.click() : element && element.click();
@@ -1078,7 +1077,7 @@ export class ContextMenu extends BaseComponent<ContextMenuPassThrough> {
             this.submenuVisible.set(true);
         }
         this.focusedItemInfo.set({ index, level, parentKey, item: processedItem.item });
-        isFocus && focus(this.rootmenu?.sublistViewChild?.nativeElement);
+        isFocus && focus(this.rootmenu()?.sublistViewChild()?.nativeElement);
 
         if (type === 'hover' && this.queryMatches()) {
             return;
@@ -1110,7 +1109,7 @@ export class ContextMenu extends BaseComponent<ContextMenuPassThrough> {
 
     onAfterEnter() {
         this.bindGlobalListeners();
-        focus(this.rootmenu?.sublistViewChild?.nativeElement);
+        focus(this.rootmenu()?.sublistViewChild()?.nativeElement);
     }
 
     onAfterLeave() {
@@ -1182,7 +1181,7 @@ export class ContextMenu extends BaseComponent<ContextMenuPassThrough> {
     show(event: any) {
         this.activeItemPath.set([]);
         this.focusedItemInfo.set({ index: -1, level: 0, parentKey: '', item: null });
-        focus(this.rootmenu?.sublistViewChild?.nativeElement);
+        focus(this.rootmenu()?.sublistViewChild()?.nativeElement);
 
         this.pageX = event.pageX;
         this.pageY = event.pageY;
@@ -1316,7 +1315,7 @@ export class ContextMenu extends BaseComponent<ContextMenuPassThrough> {
 
     scrollInView(index: number = -1) {
         const id = index !== -1 ? `${this.id}_${index}` : this.focusedItemId;
-        const element = findSingle(this.rootmenu?.el?.nativeElement, `li[id="${id}"]`);
+        const element = findSingle(this.rootmenu()?.el?.nativeElement, `li[id="${id}"]`);
 
         if (element) {
             element.scrollIntoView && element.scrollIntoView({ block: 'nearest', inline: 'nearest' });

@@ -3,8 +3,6 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
-    ContentChild,
-    ContentChildren,
     ElementRef,
     EventEmitter,
     inject,
@@ -13,11 +11,12 @@ import {
     NgZone,
     numberAttribute,
     Output,
-    QueryList,
     SimpleChanges,
     TemplateRef,
-    ViewChild,
-    ViewEncapsulation
+    ViewEncapsulation,
+    viewChild,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { addClass, find, findSingle, getAttribute, removeClass, setAttribute, uuid } from '@openng/optimus-ui-utils';
 import { Footer, Header, PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
@@ -37,9 +36,9 @@ import { CarouselStyle } from './style/carouselstyle';
     standalone: true,
     imports: [CommonModule, ChevronRightIcon, ButtonModule, ChevronLeftIcon, ChevronDownIcon, ChevronUpIcon, SharedModule, BindModule],
     template: `
-        <div [class]="cx('header')" *ngIf="headerFacet || headerTemplate" [pBind]="ptm('header')">
+        <div [class]="cx('header')" *ngIf="headerFacet() || headerTemplate()" [pBind]="ptm('header')">
             <ng-content select="p-header"></ng-content>
-            <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
+            <ng-container *ngTemplateOutlet="headerTemplate()"></ng-container>
         </div>
         <div [class]="contentClass" [ngClass]="cx('contentContainer')" [pBind]="ptm('contentContainer')">
             <div [class]="cx('content')" [attr.aria-live]="allowAutoplay ? 'polite' : 'off'" [pBind]="ptm('content')">
@@ -55,12 +54,12 @@ import { CarouselStyle } from './style/carouselstyle';
                     attr.data-pc-group-section="navigator"
                 >
                     <ng-template #icon>
-                        <ng-container *ngIf="!previousIconTemplate && !_previousIconTemplate && !prevButtonProps?.icon">
+                        <ng-container *ngIf="!previousIconTemplate() && !_previousIconTemplate && !prevButtonProps?.icon">
                             <svg data-p-icon="chevron-left" *ngIf="!isVertical()" />
                             <svg data-p-icon="chevron-up" *ngIf="isVertical()" />
                         </ng-container>
-                        <ng-container *ngIf="(previousIconTemplate || _previousIconTemplate) && !prevButtonProps?.icon">
-                            <ng-template *ngTemplateOutlet="previousIconTemplate || _previousIconTemplate"></ng-template>
+                        <ng-container *ngIf="(previousIconTemplate() || _previousIconTemplate) && !prevButtonProps?.icon">
+                            <ng-template *ngTemplateOutlet="previousIconTemplate() || _previousIconTemplate"></ng-template>
                         </ng-container>
                     </ng-template>
                 </p-button>
@@ -77,7 +76,7 @@ import { CarouselStyle } from './style/carouselstyle';
                             [attr.data-p-carousel-item-end]="clonedItemsForStarting && clonedItemsForStarting.length - 1 === index"
                             [pBind]="ptm('itemClone')"
                         >
-                            <ng-container *ngTemplateOutlet="itemTemplate || _itemTemplate; context: { $implicit: item }"></ng-container>
+                            <ng-container *ngTemplateOutlet="itemTemplate() || _itemTemplate; context: { $implicit: item }"></ng-container>
                         </div>
                         <div
                             *ngFor="let item of value; let index = index"
@@ -91,7 +90,7 @@ import { CarouselStyle } from './style/carouselstyle';
                             [attr.data-p-carousel-item-end]="lastIndex() === index"
                             [pBind]="getItemPTOptions('item', index)"
                         >
-                            <ng-container *ngTemplateOutlet="itemTemplate || _itemTemplate; context: { $implicit: item }"></ng-container>
+                            <ng-container *ngTemplateOutlet="itemTemplate() || _itemTemplate; context: { $implicit: item }"></ng-container>
                         </div>
                         <div
                             *ngFor="let item of clonedItemsForFinishing; let index = index"
@@ -101,7 +100,7 @@ import { CarouselStyle } from './style/carouselstyle';
                             [attr.data-p-carousel-item-end]="false"
                             [pBind]="ptm('itemClone')"
                         >
-                            <ng-container *ngTemplateOutlet="itemTemplate || _itemTemplate; context: { $implicit: item }"></ng-container>
+                            <ng-container *ngTemplateOutlet="itemTemplate() || _itemTemplate; context: { $implicit: item }"></ng-container>
                         </div>
                     </div>
                 </div>
@@ -118,12 +117,12 @@ import { CarouselStyle } from './style/carouselstyle';
                     attr.data-pc-group-section="navigator"
                 >
                     <ng-template #icon>
-                        <ng-container *ngIf="!nextIconTemplate && !_nextIconTemplate && !nextButtonProps?.icon">
+                        <ng-container *ngIf="!nextIconTemplate() && !_nextIconTemplate && !nextButtonProps?.icon">
                             <svg data-p-icon="chevron-right" *ngIf="!isVertical()" />
                             <svg data-p-icon="chevron-down" *ngIf="isVertical()" />
                         </ng-container>
-                        <span *ngIf="nextIconTemplate || (_nextIconTemplate && !nextButtonProps?.icon)">
-                            <ng-template *ngTemplateOutlet="nextIconTemplate || _nextIconTemplate"></ng-template>
+                        <span *ngIf="nextIconTemplate() || (_nextIconTemplate && !nextButtonProps?.icon)">
+                            <ng-template *ngTemplateOutlet="nextIconTemplate() || _nextIconTemplate"></ng-template>
                         </span>
                     </ng-template>
                 </p-button>
@@ -143,9 +142,9 @@ import { CarouselStyle } from './style/carouselstyle';
                 </li>
             </ul>
         </div>
-        <div [class]="cx('footer')" *ngIf="footerFacet || footerTemplate || _footerTemplate" [pBind]="ptm('footer')">
+        <div [class]="cx('footer')" *ngIf="footerFacet() || footerTemplate() || _footerTemplate" [pBind]="ptm('footer')">
             <ng-content select="p-footer"></ng-content>
-            <ng-container *ngTemplateOutlet="footerTemplate || _footerTemplate"></ng-container>
+            <ng-container *ngTemplateOutlet="footerTemplate() || _footerTemplate"></ng-container>
         </div>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -327,13 +326,13 @@ export class Carousel extends BaseComponent {
      */
     @Output() onPage: EventEmitter<CarouselPageEvent> = new EventEmitter<CarouselPageEvent>();
 
-    @ViewChild('itemsContainer') itemsContainer: ElementRef | undefined;
+    readonly itemsContainer = viewChild<ElementRef>('itemsContainer');
 
-    @ViewChild('indicatorContent') indicatorContent: ElementRef | undefined;
+    readonly indicatorContent = viewChild<ElementRef>('indicatorContent');
 
-    @ContentChild(Header) headerFacet: QueryList<Header> | undefined;
+    readonly headerFacet = contentChild(Header);
 
-    @ContentChild(Footer) footerFacet: QueryList<Footer> | undefined;
+    readonly footerFacet = contentChild(Footer);
 
     _numVisible: number = 1;
 
@@ -391,31 +390,31 @@ export class Carousel extends BaseComponent {
      * Custom item template.
      * @group Templates
      */
-    @ContentChild('item', { descendants: false }) itemTemplate: TemplateRef<CarouselItemTemplateContext> | undefined;
+    readonly itemTemplate = contentChild<TemplateRef<CarouselItemTemplateContext>>('item', { descendants: false });
 
     /**
      * Custom header template.
      * @group Templates
      */
-    @ContentChild('header', { descendants: false }) headerTemplate: TemplateRef<void> | undefined;
+    readonly headerTemplate = contentChild<TemplateRef<void>>('header', { descendants: false });
 
     /**
      * Custom footer template.
      * @group Templates
      */
-    @ContentChild('footer', { descendants: false }) footerTemplate: TemplateRef<void> | undefined;
+    readonly footerTemplate = contentChild<TemplateRef<void>>('footer', { descendants: false });
 
     /**
      * Custom previous icon template.
      * @group Templates
      */
-    @ContentChild('previousicon', { descendants: false }) previousIconTemplate: TemplateRef<void> | undefined;
+    readonly previousIconTemplate = contentChild<TemplateRef<void>>('previousicon', { descendants: false });
 
     /**
      * Custom next icon template.
      * @group Templates
      */
-    @ContentChild('nexticon', { descendants: false }) nextIconTemplate: TemplateRef<void> | undefined;
+    readonly nextIconTemplate = contentChild<TemplateRef<void>>('nexticon', { descendants: false });
 
     _itemTemplate: TemplateRef<CarouselItemTemplateContext> | undefined;
 
@@ -469,7 +468,7 @@ export class Carousel extends BaseComponent {
         this.cd.markForCheck();
     }
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     onAfterContentInit() {
         this.id = uuid('pn_id_');
@@ -493,7 +492,7 @@ export class Carousel extends BaseComponent {
             }
         }
 
-        this.templates?.forEach((item) => {
+        this.templates()?.forEach((item) => {
             switch (item.getType()) {
                 case 'item':
                     this._itemTemplate = item.template;
@@ -529,7 +528,8 @@ export class Carousel extends BaseComponent {
             const isCircular = this.isCircular();
             let totalShiftedItems = this.totalShiftedItems;
 
-            if (this.value && this.itemsContainer && (this.prevState.numScroll !== this._numScroll || this.prevState.numVisible !== this._numVisible || this.prevState.value.length !== this.value.length)) {
+            const itemsContainer = this.itemsContainer();
+            if (this.value && itemsContainer && (this.prevState.numScroll !== this._numScroll || this.prevState.numVisible !== this._numVisible || this.prevState.value.length !== this.value.length)) {
                 if (this.autoplayInterval) {
                     this.stopAutoplay(false);
                 }
@@ -566,8 +566,8 @@ export class Carousel extends BaseComponent {
                 this.prevState.numVisible = this._numVisible;
                 this.prevState.value = [...(this._value as any[])];
 
-                if (this.totalDots() > 0 && this.itemsContainer.nativeElement) {
-                    this.itemsContainer.nativeElement.style.transform = this.isVertical() ? `translate3d(0, ${totalShiftedItems * (100 / this._numVisible)}%, 0)` : `translate3d(${totalShiftedItems * (100 / this._numVisible)}%, 0, 0)`;
+                if (this.totalDots() > 0 && itemsContainer.nativeElement) {
+                    itemsContainer.nativeElement.style.transform = this.isVertical() ? `translate3d(0, ${totalShiftedItems * (100 / this._numVisible)}%, 0)` : `translate3d(${totalShiftedItems * (100 / this._numVisible)}%, 0, 0)`;
                 }
 
                 this.isCreated = true;
@@ -791,7 +791,7 @@ export class Carousel extends BaseComponent {
     }
 
     onRightKey() {
-        const indicators = [...find(this.indicatorContent?.nativeElement, '[data-pc-section="indicator"]')];
+        const indicators = [...find(this.indicatorContent()?.nativeElement, '[data-pc-section="indicator"]')];
         const activeIndex = this.findFocusedIndicatorIndex();
 
         this.changedFocusedIndicator(activeIndex, activeIndex + 1 === indicators.length ? indicators.length - 1 : activeIndex + 1);
@@ -810,17 +810,18 @@ export class Carousel extends BaseComponent {
     }
 
     onEndKey() {
-        const indicators = [...find(this.indicatorContent?.nativeElement, '[data-pc-section="indicator"]')];
+        const indicators = [...find(this.indicatorContent()?.nativeElement, '[data-pc-section="indicator"]')];
         const activeIndex = this.findFocusedIndicatorIndex();
 
         this.changedFocusedIndicator(activeIndex, indicators.length - 1);
     }
 
     onTabKey() {
-        const indicators = <any>[...find(this.indicatorContent?.nativeElement, '[data-pc-section="indicator"]')];
+        const indicatorContent = this.indicatorContent();
+        const indicators = <any>[...find(indicatorContent?.nativeElement, '[data-pc-section="indicator"]')];
         const highlightedIndex = indicators.findIndex((ind) => getAttribute(ind, 'data-p-highlight') === true);
 
-        const activeIndicator = <any>findSingle(this.indicatorContent?.nativeElement, '[data-pc-section="indicator"] > button[tabindex="0"]');
+        const activeIndicator = <any>findSingle(indicatorContent?.nativeElement, '[data-pc-section="indicator"] > button[tabindex="0"]');
         const activeIndex = indicators.findIndex((ind) => ind === activeIndicator.parentElement);
 
         indicators[activeIndex].children[0].tabIndex = '-1';
@@ -828,14 +829,15 @@ export class Carousel extends BaseComponent {
     }
 
     findFocusedIndicatorIndex() {
-        const indicators = [...find(this.indicatorContent?.nativeElement, '[data-pc-section="indicator"]')];
-        const activeIndicator = findSingle(this.indicatorContent?.nativeElement, '[data-pc-section="indicator"] > button[tabindex="0"]');
+        const indicatorContent = this.indicatorContent();
+        const indicators = [...find(indicatorContent?.nativeElement, '[data-pc-section="indicator"]')];
+        const activeIndicator = findSingle(indicatorContent?.nativeElement, '[data-pc-section="indicator"] > button[tabindex="0"]');
 
         return indicators.findIndex((ind) => ind === activeIndicator?.parentElement);
     }
 
     changedFocusedIndicator(prevInd, nextInd) {
-        const indicators = <any>[...find(this.indicatorContent?.nativeElement, '[data-pc-section="indicator"]')];
+        const indicators = <any>[...find(this.indicatorContent()?.nativeElement, '[data-pc-section="indicator"]')];
 
         indicators[prevInd].children[0].tabIndex = '-1';
         indicators[nextInd].children[0].tabIndex = '0';
@@ -876,10 +878,11 @@ export class Carousel extends BaseComponent {
             this.isRemainingItemsAdded = true;
         }
 
-        if (this.itemsContainer) {
-            !this.$unstyled() && removeClass(this.itemsContainer.nativeElement, 'p-items-hidden');
-            this.itemsContainer.nativeElement.style.transform = this.isVertical() ? `translate3d(0, ${totalShiftedItems * (100 / this._numVisible)}%, 0)` : `translate3d(${totalShiftedItems * (100 / this._numVisible)}%, 0, 0)`;
-            this.itemsContainer.nativeElement.style.transition = 'transform 500ms ease 0s';
+        const itemsContainer = this.itemsContainer();
+        if (itemsContainer) {
+            !this.$unstyled() && removeClass(itemsContainer.nativeElement, 'p-items-hidden');
+            itemsContainer.nativeElement.style.transform = this.isVertical() ? `translate3d(0, ${totalShiftedItems * (100 / this._numVisible)}%, 0)` : `translate3d(${totalShiftedItems * (100 / this._numVisible)}%, 0, 0)`;
+            itemsContainer.nativeElement.style.transition = 'transform 500ms ease 0s';
         }
 
         this.totalShiftedItems = totalShiftedItems;
@@ -920,12 +923,13 @@ export class Carousel extends BaseComponent {
     }
 
     onTransitionEnd() {
-        if (this.itemsContainer) {
-            !this.$unstyled() && addClass(this.itemsContainer.nativeElement, 'p-items-hidden');
-            this.itemsContainer.nativeElement.style.transition = '';
+        const itemsContainer = this.itemsContainer();
+        if (itemsContainer) {
+            !this.$unstyled() && addClass(itemsContainer.nativeElement, 'p-items-hidden');
+            itemsContainer.nativeElement.style.transition = '';
 
             if ((this.page === 0 || this.page === this.totalDots() - 1) && this.isCircular()) {
-                this.itemsContainer.nativeElement.style.transform = this.isVertical() ? `translate3d(0, ${this.totalShiftedItems * (100 / this._numVisible)}%, 0)` : `translate3d(${this.totalShiftedItems * (100 / this._numVisible)}%, 0, 0)`;
+                itemsContainer.nativeElement.style.transform = this.isVertical() ? `translate3d(0, ${this.totalShiftedItems * (100 / this._numVisible)}%, 0)` : `translate3d(${this.totalShiftedItems * (100 / this._numVisible)}%, 0, 0)`;
             }
         }
     }

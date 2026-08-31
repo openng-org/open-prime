@@ -3,8 +3,6 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
-    ContentChild,
-    ContentChildren,
     ElementRef,
     EventEmitter,
     forwardRef,
@@ -15,11 +13,12 @@ import {
     NgModule,
     numberAttribute,
     Output,
-    QueryList,
     SimpleChanges,
     TemplateRef,
-    ViewChild,
-    ViewEncapsulation
+    ViewEncapsulation,
+    contentChild,
+    contentChildren,
+    viewChild
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { getSelection } from '@openng/optimus-ui-utils';
@@ -97,12 +96,12 @@ export const INPUTNUMBER_VALUE_ACCESSOR: any = {
             [attr.data-p]="dataP"
         />
         @if (buttonLayout != 'vertical' && showClear && value) {
-            @if (!clearIconTemplate && !_clearIconTemplate) {
+            @if (!clearIconTemplate() && !_clearIconTemplate) {
                 <svg data-p-icon="times" [pBind]="ptm('clearIcon')" [class]="cx('clearIcon')" (click)="clear()" />
             }
-            @if (clearIconTemplate || _clearIconTemplate) {
+            @if (clearIconTemplate() || _clearIconTemplate) {
                 <span [pBind]="ptm('clearIcon')" (click)="clear()" [class]="cx('clearIcon')">
-                    <ng-template *ngTemplateOutlet="clearIconTemplate || _clearIconTemplate"></ng-template>
+                    <ng-template *ngTemplateOutlet="clearIconTemplate() || _clearIconTemplate"></ng-template>
                 </span>
             }
         }
@@ -126,10 +125,10 @@ export const INPUTNUMBER_VALUE_ACCESSOR: any = {
                         <span [pBind]="ptm('incrementButtonIcon')" [ngClass]="incrementButtonIcon"></span>
                     }
                     @if (!incrementButtonIcon) {
-                        @if (!incrementButtonIconTemplate && !_incrementButtonIconTemplate) {
+                        @if (!incrementButtonIconTemplate() && !_incrementButtonIconTemplate) {
                             <svg data-p-icon="angle-up" [pBind]="ptm('incrementButtonIcon')" />
                         }
-                        <ng-template *ngTemplateOutlet="incrementButtonIconTemplate || _incrementButtonIconTemplate"></ng-template>
+                        <ng-template *ngTemplateOutlet="incrementButtonIconTemplate() || _incrementButtonIconTemplate"></ng-template>
                     }
                 </button>
                 <button
@@ -150,10 +149,10 @@ export const INPUTNUMBER_VALUE_ACCESSOR: any = {
                         <span [pBind]="ptm('decrementButtonIcon')" [ngClass]="decrementButtonIcon"></span>
                     }
                     @if (!decrementButtonIcon) {
-                        @if (!decrementButtonIconTemplate && !_decrementButtonIconTemplate) {
+                        @if (!decrementButtonIconTemplate() && !_decrementButtonIconTemplate) {
                             <svg data-p-icon="angle-down" [pBind]="ptm('decrementButtonIcon')" />
                         }
-                        <ng-template *ngTemplateOutlet="decrementButtonIconTemplate || _decrementButtonIconTemplate"></ng-template>
+                        <ng-template *ngTemplateOutlet="decrementButtonIconTemplate() || _decrementButtonIconTemplate"></ng-template>
                     }
                 </button>
             </span>
@@ -177,10 +176,10 @@ export const INPUTNUMBER_VALUE_ACCESSOR: any = {
                     <span [pBind]="ptm('incrementButtonIcon')" [ngClass]="incrementButtonIcon"></span>
                 }
                 @if (!incrementButtonIcon) {
-                    @if (!incrementButtonIconTemplate && !_incrementButtonIconTemplate) {
+                    @if (!incrementButtonIconTemplate() && !_incrementButtonIconTemplate) {
                         <svg data-p-icon="angle-up" [pBind]="ptm('incrementButtonIcon')" />
                     }
-                    <ng-template *ngTemplateOutlet="incrementButtonIconTemplate || _incrementButtonIconTemplate"></ng-template>
+                    <ng-template *ngTemplateOutlet="incrementButtonIconTemplate() || _incrementButtonIconTemplate"></ng-template>
                 }
             </button>
         }
@@ -203,10 +202,10 @@ export const INPUTNUMBER_VALUE_ACCESSOR: any = {
                     <span [pBind]="ptm('decrementButtonIcon')" [ngClass]="decrementButtonIcon"></span>
                 }
                 @if (!decrementButtonIcon) {
-                    @if (!decrementButtonIconTemplate && !_decrementButtonIconTemplate) {
+                    @if (!decrementButtonIconTemplate() && !_decrementButtonIconTemplate) {
                         <svg data-p-icon="angle-down" [pBind]="ptm('decrementButtonIcon')" />
                     }
-                    <ng-template *ngTemplateOutlet="decrementButtonIconTemplate || _decrementButtonIconTemplate"></ng-template>
+                    <ng-template *ngTemplateOutlet="decrementButtonIconTemplate() || _decrementButtonIconTemplate"></ng-template>
                 }
             </button>
         }
@@ -435,22 +434,22 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
      * Custom clear icon template.
      * @group Templates
      */
-    @ContentChild('clearicon', { descendants: false }) clearIconTemplate: Nullable<TemplateRef<void>>;
+    readonly clearIconTemplate = contentChild<Nullable<TemplateRef<void>>>('clearicon', { descendants: false });
     /**
      * Custom increment button icon template.
      * @group Templates
      */
-    @ContentChild('incrementbuttonicon', { descendants: false }) incrementButtonIconTemplate: Nullable<TemplateRef<void>>;
+    readonly incrementButtonIconTemplate = contentChild<Nullable<TemplateRef<void>>>('incrementbuttonicon', { descendants: false });
 
     /**
      * Custom decrement button icon template.
      * @group Templates
      */
-    @ContentChild('decrementbuttonicon', { descendants: false }) decrementButtonIconTemplate: Nullable<TemplateRef<void>>;
+    readonly decrementButtonIconTemplate = contentChild<Nullable<TemplateRef<void>>>('decrementbuttonicon', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates!: QueryList<PrimeTemplate>;
+    readonly templates = contentChildren(PrimeTemplate);
 
-    @ViewChild('input') input!: ElementRef<HTMLInputElement>;
+    readonly input = viewChild.required<ElementRef<HTMLInputElement>>('input');
 
     _clearIconTemplate: TemplateRef<void> | undefined;
 
@@ -514,7 +513,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     }
 
     onAfterContentInit() {
-        this.templates.forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'clearicon':
                     this._clearIconTemplate = item.template;
@@ -730,7 +729,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
 
     spin(event: Event, dir: number) {
         let step = (this.step() ?? 1) * dir;
-        let currentValue = this.parseValue(this.input?.nativeElement.value) || 0;
+        let currentValue = this.parseValue(this.input()?.nativeElement.value) || 0;
         let newValue = this.validateValue((currentValue as number) + step);
         const max = this.maxlength();
         if (max && max < this.formatValue(newValue).length) {
@@ -756,7 +755,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
         }
 
         if (!this.$disabled()) {
-            this.input?.nativeElement.focus();
+            this.input()?.nativeElement.focus();
             this.repeat(event, null, 1);
             event.preventDefault();
         }
@@ -792,7 +791,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
             return;
         }
         if (!this.$disabled()) {
-            this.input?.nativeElement.focus();
+            this.input()?.nativeElement.focus();
             this.repeat(event, null, -1);
             event.preventDefault();
         }
@@ -853,6 +852,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
             event.preventDefault();
         }
 
+        const input = this.input();
         switch (event.key) {
             case 'ArrowUp':
                 this.spin(event, 1);
@@ -868,7 +868,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
                 for (let index = selectionStart; index <= inputValue.length; index++) {
                     const previousCharIndex = index === 0 ? 0 : index - 1;
                     if (this.isNumeralChar(inputValue.charAt(previousCharIndex))) {
-                        this.input.nativeElement.setSelectionRange(index, index);
+                        this.input().nativeElement.setSelectionRange(index, index);
                         break;
                     }
                 }
@@ -877,7 +877,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
             case 'ArrowRight':
                 for (let index = selectionEnd; index >= 0; index--) {
                     if (this.isNumeralChar(inputValue.charAt(index))) {
-                        this.input.nativeElement.setSelectionRange(index, index);
+                        this.input().nativeElement.setSelectionRange(index, index);
                         break;
                     }
                 }
@@ -885,9 +885,9 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
 
             case 'Tab':
             case 'Enter':
-                newValueStr = this.validateValue(this.parseValue(this.input.nativeElement.value));
-                this.input.nativeElement.value = this.formatValue(newValueStr);
-                this.input.nativeElement.setAttribute('aria-valuenow', newValueStr);
+                newValueStr = this.validateValue(this.parseValue(this.input().nativeElement.value));
+                input.nativeElement.value = this.formatValue(newValueStr);
+                input.nativeElement.setAttribute('aria-valuenow', newValueStr);
                 this.updateModel(event, newValueStr);
                 break;
 
@@ -912,7 +912,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
                             this._decimal.lastIndex = 0;
 
                             if (decimalLength) {
-                                this.input?.nativeElement.setSelectionRange(selectionStart - 1, selectionStart - 1);
+                                this.input()?.nativeElement.setSelectionRange(selectionStart - 1, selectionStart - 1);
                             } else {
                                 newValueStr = inputValue.slice(0, selectionStart - 1) + inputValue.slice(selectionStart);
                             }
@@ -958,7 +958,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
                             this._decimal.lastIndex = 0;
 
                             if (decimalLength) {
-                                this.input?.nativeElement.setSelectionRange(selectionStart + 1, selectionStart + 1);
+                                this.input()?.nativeElement.setSelectionRange(selectionStart + 1, selectionStart + 1);
                             } else {
                                 newValueStr = inputValue.slice(0, selectionStart) + inputValue.slice(selectionStart + 1);
                             }
@@ -1021,7 +1021,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
             char = this._decimalChar;
             code = char.charCodeAt(0);
         }
-        const { value, selectionStart, selectionEnd } = this.input.nativeElement;
+        const { value, selectionStart, selectionEnd } = this.input().nativeElement;
         const newValue = this.parseValue(value + char);
         const newValueStr = newValue != null ? newValue.toString() : '';
         const selectedValue = value.substring(selectionStart as number, selectionEnd as number);
@@ -1127,9 +1127,10 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
             return;
         }
 
-        let selectionStart: any = this.input?.nativeElement.selectionStart;
-        let selectionEnd: any = this.input?.nativeElement.selectionEnd;
-        let inputValue = this.input?.nativeElement.value.trim();
+        const input = this.input();
+        let selectionStart: any = input?.nativeElement.selectionStart;
+        let selectionEnd: any = input?.nativeElement.selectionEnd;
+        let inputValue = input?.nativeElement.value.trim();
         const { decimalCharIndex, minusCharIndex, suffixCharIndex, currencyCharIndex } = this.getCharIndexes(inputValue);
         let newValueStr;
 
@@ -1200,9 +1201,10 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     }
 
     initCursor() {
-        let selectionStart: any = this.input?.nativeElement.selectionStart;
-        let selectionEnd: any = this.input?.nativeElement.selectionEnd;
-        let inputValue = this.input?.nativeElement.value;
+        const input = this.input();
+        let selectionStart: any = input?.nativeElement.selectionStart;
+        let selectionEnd: any = input?.nativeElement.selectionEnd;
+        let inputValue = input?.nativeElement.value;
         let valueLength = inputValue.length;
         let index: any = null;
 
@@ -1234,7 +1236,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
         }
 
         if (index !== null) {
-            this.input?.nativeElement.setSelectionRange(index + 1, index + 1);
+            input?.nativeElement.setSelectionRange(index + 1, index + 1);
         } else {
             i = selectionStart;
             while (i < valueLength) {
@@ -1248,7 +1250,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
             }
 
             if (index !== null) {
-                this.input?.nativeElement.setSelectionRange(index, index);
+                input?.nativeElement.setSelectionRange(index, index);
             }
         }
 
@@ -1256,7 +1258,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     }
 
     onInputClick() {
-        const currentValue = this.input?.nativeElement.value;
+        const currentValue = this.input()?.nativeElement.value;
 
         if (!this.readonly && currentValue !== getSelection()) {
             this.initCursor();
@@ -1280,7 +1282,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     }
 
     updateValue(event: Event, valueStr: Nullable<string>, insertedValueStr: Nullable<string>, operation: Nullable<string>) {
-        let currentValue = this.input?.nativeElement.value;
+        let currentValue = this.input()?.nativeElement.value;
         let newValue: any = null;
 
         if (valueStr != null) {
@@ -1294,8 +1296,8 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
 
     handleOnInput(event: Event, currentValue: string, newValue: any) {
         if (this.isValueChanged(currentValue, newValue)) {
-            (this.input as ElementRef).nativeElement.value = this.formatValue(newValue);
-            this.input?.nativeElement.setAttribute('aria-valuenow', newValue);
+            (this.input() as ElementRef).nativeElement.value = this.formatValue(newValue);
+            this.input()?.nativeElement.setAttribute('aria-valuenow', newValue);
             this.updateModel(event, newValue);
             this.onInput.emit({ originalEvent: event, value: newValue, formattedValue: currentValue });
         }
@@ -1335,7 +1337,8 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     updateInput(value: any, insertedValueStr: Nullable<string>, operation: Nullable<string>, valueStr: Nullable<string>) {
         insertedValueStr = insertedValueStr || '';
 
-        let inputValue = this.input?.nativeElement.value;
+        const input = this.input();
+        let inputValue = input?.nativeElement.value;
         let newValue = this.formatValue(value);
         let currentLength = inputValue.length;
 
@@ -1344,14 +1347,14 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
         }
 
         if (currentLength === 0) {
-            this.input.nativeElement.value = newValue;
-            this.input.nativeElement.setSelectionRange(0, 0);
+            input.nativeElement.value = newValue;
+            input.nativeElement.setSelectionRange(0, 0);
             const index = this.initCursor();
             const selectionEnd = index + insertedValueStr.length;
-            this.input.nativeElement.setSelectionRange(selectionEnd, selectionEnd);
+            input.nativeElement.setSelectionRange(selectionEnd, selectionEnd);
         } else {
-            let selectionStart: any = this.input.nativeElement.selectionStart;
-            let selectionEnd: any = this.input.nativeElement.selectionEnd;
+            let selectionStart: any = input.nativeElement.selectionStart;
+            let selectionEnd: any = input.nativeElement.selectionEnd;
             const maxlength = this.maxlength();
             if (maxlength && newValue.length > maxlength) {
                 newValue = newValue.slice(0, maxlength);
@@ -1363,7 +1366,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
                 return;
             }
 
-            this.input.nativeElement.value = newValue;
+            input.nativeElement.value = newValue;
             let newLength = newValue.length;
 
             if (operation === 'range-insert') {
@@ -1378,11 +1381,11 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
                 tRegex.test(newValue.slice(sRegex.lastIndex));
 
                 selectionEnd = sRegex.lastIndex + tRegex.lastIndex;
-                this.input.nativeElement.setSelectionRange(selectionEnd, selectionEnd);
+                input.nativeElement.setSelectionRange(selectionEnd, selectionEnd);
             } else if (newLength === currentLength) {
-                if (operation === 'insert' || operation === 'delete-back-single') this.input.nativeElement.setSelectionRange(selectionEnd + 1, selectionEnd + 1);
-                else if (operation === 'delete-single') this.input.nativeElement.setSelectionRange(selectionEnd - 1, selectionEnd - 1);
-                else if (operation === 'delete-range' || operation === 'spin') this.input.nativeElement.setSelectionRange(selectionEnd, selectionEnd);
+                if (operation === 'insert' || operation === 'delete-back-single') input.nativeElement.setSelectionRange(selectionEnd + 1, selectionEnd + 1);
+                else if (operation === 'delete-single') input.nativeElement.setSelectionRange(selectionEnd - 1, selectionEnd - 1);
+                else if (operation === 'delete-range' || operation === 'spin') input.nativeElement.setSelectionRange(selectionEnd, selectionEnd);
             } else if (operation === 'delete-back-single') {
                 let prevChar = inputValue.charAt(selectionEnd - 1);
                 let nextChar = inputValue.charAt(selectionEnd);
@@ -1396,19 +1399,19 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
                 }
 
                 this._group.lastIndex = 0;
-                this.input.nativeElement.setSelectionRange(selectionEnd, selectionEnd);
+                input.nativeElement.setSelectionRange(selectionEnd, selectionEnd);
             } else if (inputValue === '-' && operation === 'insert') {
-                this.input.nativeElement.setSelectionRange(0, 0);
+                input.nativeElement.setSelectionRange(0, 0);
                 const index = this.initCursor();
                 const selectionEnd = index + insertedValueStr.length + 1;
-                this.input.nativeElement.setSelectionRange(selectionEnd, selectionEnd);
+                input.nativeElement.setSelectionRange(selectionEnd, selectionEnd);
             } else {
                 selectionEnd = selectionEnd + (newLength - currentLength);
-                this.input.nativeElement.setSelectionRange(selectionEnd, selectionEnd);
+                input.nativeElement.setSelectionRange(selectionEnd, selectionEnd);
             }
         }
 
-        this.input.nativeElement.setAttribute('aria-valuenow', value);
+        input.nativeElement.setAttribute('aria-valuenow', value);
     }
 
     concatValues(val1: string, val2: string) {
@@ -1449,10 +1452,10 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     onInputBlur(event: Event) {
         this.focused = false;
 
-        const newValueNumber = this.validateValue(this.parseValue(this.input.nativeElement.value));
+        const newValueNumber = this.validateValue(this.parseValue(this.input().nativeElement.value));
         const newValueString: any = newValueNumber?.toString();
-        this.input.nativeElement.value = this.formatValue(newValueString);
-        this.input.nativeElement.setAttribute('aria-valuenow', newValueString);
+        input.nativeElement.value = this.formatValue(newValueString);
+        input.nativeElement.setAttribute('aria-valuenow', newValueString);
         this.updateModel(event, newValueNumber);
         this.onModelTouched();
         this.onBlur.emit(event);

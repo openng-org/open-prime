@@ -4,8 +4,6 @@ import {
     Component,
     computed,
     contentChild,
-    ContentChild,
-    ContentChildren,
     contentChildren,
     effect,
     forwardRef,
@@ -17,7 +15,6 @@ import {
     model,
     ModelSignal,
     NgModule,
-    QueryList,
     signal,
     TemplateRef,
     ViewEncapsulation
@@ -198,7 +195,7 @@ export class StepItem extends BaseComponent<StepItemPassThrough> {
     standalone: true,
     imports: [CommonModule, StepperSeparator, SharedModule, BindModule],
     template: `
-        @if (!content && !_contentTemplate) {
+        @if (!content() && !_contentTemplate) {
             <button
                 [attr.id]="id()"
                 [class]="cx('header')"
@@ -219,7 +216,7 @@ export class StepItem extends BaseComponent<StepItemPassThrough> {
                 <p-stepper-separator />
             }
         } @else {
-            <ng-container *ngTemplateOutlet="content || _contentTemplate; context: { activateCallback: onStepClick.bind(this), value: value(), active: active() }"></ng-container>
+            <ng-container *ngTemplateOutlet="content() || _contentTemplate; context: { activateCallback: onStepClick.bind(this), value: value(), active: active() }"></ng-container>
             @if (isSeparatorVisible()) {
                 <p-stepper-separator />
             }
@@ -290,16 +287,16 @@ export class Step extends BaseComponent<StepPassThrough> {
      * @type {TemplateRef<StepContentTemplateContext>}
      * @group Templates
      */
-    @ContentChild('content', { descendants: false }) content: TemplateRef<StepContentTemplateContext>;
+    readonly content = contentChild.required<TemplateRef<StepContentTemplateContext>>('content', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _contentTemplate: TemplateRef<any> | undefined;
 
     _componentStyle = inject(StepStyle);
 
     onAfterContentInit() {
-        this.templates?.forEach((item) => {
+        this.templates()?.forEach((item) => {
             switch (item.getType()) {
                 case 'content':
                     this._contentTemplate = item.template;
@@ -328,7 +325,7 @@ export class Step extends BaseComponent<StepPassThrough> {
                     <p-stepper-separator />
                 }
                 <div [class]="cx('content')" [pBind]="ptm('content')">
-                    <ng-container *ngTemplateOutlet="contentTemplate || _contentTemplate; context: { activateCallback: updateValue.bind(this), value: value(), active: active() }"></ng-container>
+                    <ng-container *ngTemplateOutlet="contentTemplate() || _contentTemplate; context: { activateCallback: updateValue.bind(this), value: value(), active: active() }"></ng-container>
                 </div>
             </div>
         </p-motion>
@@ -398,16 +395,16 @@ export class StepPanel extends BaseComponent<StepPanelPassThrough> {
      * @see {@link StepPanelContentTemplateContext}
      * @group Templates
      */
-    @ContentChild('content') contentTemplate: TemplateRef<StepPanelContentTemplateContext>;
+    readonly contentTemplate = contentChild.required<TemplateRef<StepPanelContentTemplateContext>>('content');
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _contentTemplate: TemplateRef<any> | undefined;
 
     _componentStyle = inject(StepPanelStyle);
 
     onAfterContentInit() {
-        this.templates?.forEach((item) => {
+        this.templates()?.forEach((item) => {
             switch (item.getType()) {
                 case 'content':
                     this._contentTemplate = item.template;

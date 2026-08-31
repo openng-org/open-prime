@@ -1840,18 +1840,18 @@ describe('Select - #template Reference Content Projection', () => {
     });
 
     it('should capture ContentChild template references', () => {
-        expect(selectInstance.itemTemplate).toBeDefined();
-        expect(selectInstance.selectedItemTemplate).toBeDefined();
-        expect(selectInstance.headerTemplate).toBeDefined();
-        expect(selectInstance.footerTemplate).toBeDefined();
-        expect(selectInstance.emptyTemplate).toBeDefined();
-        expect(selectInstance.emptyFilterTemplate).toBeDefined();
-        expect(selectInstance.filterTemplate).toBeDefined();
-        expect(selectInstance.loaderTemplate).toBeDefined();
-        expect(selectInstance.dropdownIconTemplate).toBeDefined();
-        expect(selectInstance.clearIconTemplate).toBeDefined();
-        expect(selectInstance.filterIconTemplate).toBeDefined();
-        expect(selectInstance.loadingIconTemplate).toBeDefined();
+        expect(selectInstance.itemTemplate()).toBeDefined();
+        expect(selectInstance.selectedItemTemplate()).toBeDefined();
+        expect(selectInstance.headerTemplate()).toBeDefined();
+        expect(selectInstance.footerTemplate()).toBeDefined();
+        expect(selectInstance.emptyTemplate()).toBeDefined();
+        expect(selectInstance.emptyFilterTemplate()).toBeDefined();
+        expect(selectInstance.filterTemplate()).toBeDefined();
+        expect(selectInstance.loaderTemplate()).toBeDefined();
+        expect(selectInstance.dropdownIconTemplate()).toBeDefined();
+        expect(selectInstance.clearIconTemplate()).toBeDefined();
+        expect(selectInstance.filterIconTemplate()).toBeDefined();
+        expect(selectInstance.loadingIconTemplate()).toBeDefined();
     });
 
     it('should render item template reference with context', async () => {
@@ -1951,7 +1951,7 @@ describe('Select - #template Reference Content Projection', () => {
         if (dropdownIcon) {
             expect(dropdownIcon).toBeTruthy();
         }
-        expect(selectInstance.dropdownIconTemplate).toBeDefined();
+        expect(selectInstance.dropdownIconTemplate()).toBeDefined();
     });
 
     it('should render clear icon template reference with class context when showClear is true', () => {
@@ -1959,7 +1959,7 @@ describe('Select - #template Reference Content Projection', () => {
         selectInstance.showClear = true;
         fixture.detectChanges();
 
-        expect(selectInstance.clearIconTemplate).toBeDefined();
+        expect(selectInstance.clearIconTemplate()).toBeDefined();
     });
 
     it('should render filter icon template reference', async () => {
@@ -1986,7 +1986,7 @@ describe('Select - #template Reference Content Projection', () => {
         if (loadingIcon) {
             expect(loadingIcon).toBeTruthy();
         }
-        expect(selectInstance.loadingIconTemplate).toBeDefined();
+        expect(selectInstance.loadingIconTemplate()).toBeDefined();
     });
 });
 

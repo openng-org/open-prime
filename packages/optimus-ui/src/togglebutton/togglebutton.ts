@@ -1,23 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-    booleanAttribute,
-    ChangeDetectionStrategy,
-    Component,
-    ContentChild,
-    ContentChildren,
-    EventEmitter,
-    forwardRef,
-    HostListener,
-    inject,
-    InjectionToken,
-    input,
-    Input,
-    NgModule,
-    numberAttribute,
-    Output,
-    QueryList,
-    TemplateRef
-} from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, forwardRef, HostListener, inject, InjectionToken, input, Input, NgModule, numberAttribute, Output, TemplateRef, contentChild, contentChildren } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
@@ -58,14 +40,14 @@ export const TOGGLEBUTTON_VALUE_ACCESSOR: any = {
         '[attr.data-p]': 'dataP'
     },
     template: `<span [class]="cx('content')" [pBind]="ptm('content')" [attr.data-p]="dataP">
-        <ng-container *ngTemplateOutlet="contentTemplate || _contentTemplate; context: { $implicit: checked }"></ng-container>
-        @if (!contentTemplate) {
-            @if (!iconTemplate) {
+        <ng-container *ngTemplateOutlet="contentTemplate() || _contentTemplate; context: { $implicit: checked }"></ng-container>
+        @if (!contentTemplate()) {
+            @if (!iconTemplate()) {
                 @if (onIcon || offIcon) {
                     <span [class]="cn(cx('icon'), checked ? this.onIcon : this.offIcon, iconPos === 'left' ? cx('iconLeft') : cx('iconRight'))" [pBind]="ptm('icon')"></span>
                 }
             } @else {
-                <ng-container *ngTemplateOutlet="iconTemplate || _iconTemplate; context: { $implicit: checked }"></ng-container>
+                <ng-container *ngTemplateOutlet="iconTemplate() || _iconTemplate; context: { $implicit: checked }"></ng-container>
             }
             <span [class]="cx('label')" [pBind]="ptm('label')">{{ checked ? (hasOnLabel ? onLabel : ' ') : hasOffLabel ? offLabel : ' ' }}</span>
         }
@@ -197,16 +179,16 @@ export class ToggleButton extends BaseEditableHolder<ToggleButtonPassThrough> {
      * @see {@link ToggleButtonIconTemplateContext}
      * @group Templates
      */
-    @ContentChild('icon', { descendants: false }) iconTemplate: Nullable<TemplateRef<ToggleButtonIconTemplateContext>>;
+    readonly iconTemplate = contentChild<Nullable<TemplateRef<ToggleButtonIconTemplateContext>>>('icon', { descendants: false });
     /**
      * Custom content template.
      * @param {ToggleButtonContentTemplateContext} context - content context.
      * @see {@link ToggleButtonContentTemplateContext}
      * @group Templates
      */
-    @ContentChild('content', { descendants: false }) contentTemplate: Nullable<TemplateRef<ToggleButtonContentTemplateContext>>;
+    readonly contentTemplate = contentChild<Nullable<TemplateRef<ToggleButtonContentTemplateContext>>>('content', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates!: QueryList<PrimeTemplate>;
+    readonly templates = contentChildren(PrimeTemplate);
 
     checked: boolean = false;
 
@@ -239,7 +221,7 @@ export class ToggleButton extends BaseEditableHolder<ToggleButtonPassThrough> {
     _contentTemplate: TemplateRef<ToggleButtonContentTemplateContext> | undefined;
 
     onAfterContentInit() {
-        this.templates.forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'icon':
                     this._iconTemplate = item.template;

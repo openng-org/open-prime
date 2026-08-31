@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, ContentChild, ContentChildren, EventEmitter, inject, InjectionToken, input, Input, NgModule, Output, QueryList, signal, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, EventEmitter, inject, InjectionToken, input, Input, NgModule, Output, signal, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
 import { MotionOptions } from '@openng/optimus-ui-motion';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
@@ -23,15 +23,15 @@ const MESSAGE_INSTANCE = new InjectionToken<Message>('MESSAGE_INSTANCE');
     template: `
         <div [pBind]="ptm('contentWrapper')" [class]="cx('contentWrapper')" [attr.data-p]="dataP">
             <div [pBind]="ptm('content')" [class]="cx('content')" [attr.data-p]="dataP">
-                @if (iconTemplate || _iconTemplate) {
-                    <ng-container *ngTemplateOutlet="iconTemplate || _iconTemplate"></ng-container>
+                @if (iconTemplate() || _iconTemplate) {
+                    <ng-container *ngTemplateOutlet="iconTemplate() || _iconTemplate"></ng-container>
                 }
                 @if (icon) {
                     <i [pBind]="ptm('icon')" [class]="cn(cx('icon'), icon)" [attr.data-p]="dataP"></i>
                 }
 
-                @if (containerTemplate || _containerTemplate) {
-                    <ng-container *ngTemplateOutlet="containerTemplate || _containerTemplate; context: { closeCallback: closeCallback }"></ng-container>
+                @if (containerTemplate() || _containerTemplate) {
+                    <ng-container *ngTemplateOutlet="containerTemplate() || _containerTemplate; context: { closeCallback: closeCallback }"></ng-container>
                 } @else {
                     @if (!escape) {
                         <div>
@@ -54,10 +54,10 @@ const MESSAGE_INSTANCE = new InjectionToken<Message>('MESSAGE_INSTANCE');
                         @if (closeIcon) {
                             <i [pBind]="ptm('closeIcon')" [class]="cn(cx('closeIcon'), closeIcon)" [ngClass]="closeIcon" [attr.data-p]="dataP"></i>
                         }
-                        @if (closeIconTemplate || _closeIconTemplate) {
-                            <ng-container *ngTemplateOutlet="closeIconTemplate || _closeIconTemplate"></ng-container>
+                        @if (closeIconTemplate() || _closeIconTemplate) {
+                            <ng-container *ngTemplateOutlet="closeIconTemplate() || _closeIconTemplate"></ng-container>
                         }
-                        @if (!closeIconTemplate && !_closeIconTemplate && !closeIcon) {
+                        @if (!closeIconTemplate() && !_closeIconTemplate && !closeIcon) {
                             <svg [pBind]="ptm('closeIcon')" data-p-icon="times" [class]="cx('closeIcon')" [attr.data-p]="dataP" />
                         }
                     </button>
@@ -198,21 +198,21 @@ export class Message extends BaseComponent<MessagePassThrough> {
      * @see {@link MessageContainerTemplateContext}
      * @group Templates
      */
-    @ContentChild('container', { descendants: false }) containerTemplate: TemplateRef<MessageContainerTemplateContext> | undefined;
+    readonly containerTemplate = contentChild<TemplateRef<MessageContainerTemplateContext>>('container', { descendants: false });
 
     /**
      * Custom template of the message icon.
      * @group Templates
      */
-    @ContentChild('icon', { descendants: false }) iconTemplate: TemplateRef<void> | undefined;
+    readonly iconTemplate = contentChild<TemplateRef<void>>('icon', { descendants: false });
 
     /**
      * Custom template of the close icon.
      * @group Templates
      */
-    @ContentChild('closeicon', { descendants: false }) closeIconTemplate: TemplateRef<void> | undefined;
+    readonly closeIconTemplate = contentChild<TemplateRef<void>>('closeicon', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _containerTemplate: TemplateRef<MessageContainerTemplateContext> | undefined;
 
@@ -233,7 +233,7 @@ export class Message extends BaseComponent<MessagePassThrough> {
     }
 
     onAfterContentInit() {
-        this.templates?.forEach((item) => {
+        this.templates()?.forEach((item) => {
             switch (item.getType()) {
                 case 'container':
                     this._containerTemplate = item.template;

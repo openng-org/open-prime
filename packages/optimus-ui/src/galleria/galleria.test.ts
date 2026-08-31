@@ -754,7 +754,7 @@ describe('Galleria', () => {
             // Add a mock close button element
             const closeButton = document.createElement('button');
             closeButton.setAttribute('data-pc-section', 'closebutton');
-            galleriaInstance.container!.nativeElement.appendChild(closeButton);
+            galleriaInstance.container()!.nativeElement.appendChild(closeButton);
 
             // const mockAnimationEvent = {
             //     toState: 'visible'

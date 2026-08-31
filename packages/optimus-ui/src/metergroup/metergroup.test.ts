@@ -401,7 +401,7 @@ describe('MeterGroup', () => {
             // Since we're using a custom label template, the icon template won't be used
             // (MeterGroupLabel is only rendered when there's no custom label template)
             // The icon template is stored but not rendered in this test case
-            expect(meterGroup._iconTemplate || meterGroup.iconTemplate).toBeDefined();
+            expect(meterGroup._iconTemplate || meterGroup.iconTemplate()).toBeDefined();
         });
 
         it('should pass correct context to label template', () => {
@@ -417,11 +417,11 @@ describe('MeterGroup', () => {
 
         it('should handle template processing in ngAfterContentInit', () => {
             // Templates should already be processed during component initialization
-            expect(meterGroup._labelTemplate || meterGroup.labelTemplate).toBeDefined();
-            expect(meterGroup._meterTemplate || meterGroup.meterTemplate).toBeDefined();
-            expect(meterGroup._startTemplate || meterGroup.startTemplate).toBeDefined();
-            expect(meterGroup._endTemplate || meterGroup.endTemplate).toBeDefined();
-            expect(meterGroup._iconTemplate || meterGroup.iconTemplate).toBeDefined();
+            expect(meterGroup._labelTemplate || meterGroup.labelTemplate()).toBeDefined();
+            expect(meterGroup._meterTemplate || meterGroup.meterTemplate()).toBeDefined();
+            expect(meterGroup._startTemplate || meterGroup.startTemplate()).toBeDefined();
+            expect(meterGroup._endTemplate || meterGroup.endTemplate()).toBeDefined();
+            expect(meterGroup._iconTemplate || meterGroup.iconTemplate()).toBeDefined();
 
             // Calling ngAfterContentInit again should not throw
             expect(() => meterGroup.ngAfterContentInit()).not.toThrow();

@@ -4,8 +4,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    ContentChild,
-    ContentChildren,
     effect,
     EventEmitter,
     inject,
@@ -17,10 +15,11 @@ import {
     numberAttribute,
     output,
     Output,
-    QueryList,
     signal,
     TemplateRef,
-    ViewEncapsulation
+    ViewEncapsulation,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { MotionEvent, MotionOptions } from '@openng/optimus-ui-motion';
 import { isEmpty, setAttribute, uuid } from '@openng/optimus-ui-utils';
@@ -270,8 +269,8 @@ export class ToastItem extends BaseComponent<ToastPassThrough> {
                 (onClose)="onMessageClose($event)"
                 (onAnimationEnd)="onAnimationEnd()"
                 (onAnimationStart)="onAnimationStart()"
-                [template]="template || _template"
-                [headlessTemplate]="headlessTemplate || _headlessTemplate"
+                [template]="template() || _template"
+                [headlessTemplate]="headlessTemplate() || _headlessTemplate"
                 [pt]="pt"
                 [unstyled]="unstyled()"
                 [motionOptions]="computedMotionOptions()"
@@ -400,14 +399,14 @@ export class Toast extends BaseComponent<ToastPassThrough> {
      * @see {@link ToastMessageTemplateContext}
      * @group Templates
      */
-    @ContentChild('message') template: TemplateRef<ToastMessageTemplateContext> | undefined;
+    readonly template = contentChild<TemplateRef<ToastMessageTemplateContext>>('message');
     /**
      * Custom headless template.
      * @param {ToastHeadlessTemplateContext} context - headless context.
      * @see {@link ToastHeadlessTemplateContext}
      * @group Templates
      */
-    @ContentChild('headless') headlessTemplate: TemplateRef<ToastHeadlessTemplateContext> | undefined;
+    readonly headlessTemplate = contentChild<TemplateRef<ToastHeadlessTemplateContext>>('headless');
 
     messageSubscription: Subscription | undefined;
 
@@ -427,7 +426,7 @@ export class Toast extends BaseComponent<ToastPassThrough> {
 
     id: string = uuid('pn_id_');
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     clearAllTrigger = signal<{} | null>(null);
 
@@ -466,7 +465,7 @@ export class Toast extends BaseComponent<ToastPassThrough> {
     _headlessTemplate: TemplateRef<ToastHeadlessTemplateContext> | undefined;
 
     onAfterContentInit() {
-        this.templates?.forEach((item) => {
+        this.templates()?.forEach((item) => {
             switch (item.getType()) {
                 case 'message':
                     this._template = item.template;

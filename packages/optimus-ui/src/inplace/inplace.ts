@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, Component, ContentChild, ContentChildren, EventEmitter, inject, InjectionToken, Input, NgModule, Output, QueryList, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, inject, InjectionToken, Input, NgModule, Output, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
 import { Bind } from '@openng/optimus-ui/bind';
@@ -40,13 +40,13 @@ export class InplaceContent extends BaseComponent {}
         @if (!active) {
             <div [class]="cx('display')" [pBind]="ptm('display')" (click)="onActivateClick($event)" tabindex="0" role="button" (keydown)="onKeydown($event)" [attr.data-p-disabled]="disabled">
                 <ng-content select="[pInplaceDisplay]"></ng-content>
-                <ng-container *ngTemplateOutlet="displayTemplate || _displayTemplate"></ng-container>
+                <ng-container *ngTemplateOutlet="displayTemplate() || _displayTemplate"></ng-container>
             </div>
         }
         @if (active) {
             <div [class]="cx('content')" [pBind]="ptm('content')">
                 <ng-content select="[pInplaceContent]"></ng-content>
-                <ng-container *ngTemplateOutlet="contentTemplate || _contentTemplate; context: { closeCallback: onDeactivateClick.bind(this) }"></ng-container>
+                <ng-container *ngTemplateOutlet="contentTemplate() || _contentTemplate; context: { closeCallback: onDeactivateClick.bind(this) }"></ng-container>
                 @if (closable) {
                     @if (closeIcon) {
                         <p-button [pt]="ptm('pcButton')" type="button" [icon]="closeIcon" pRipple (click)="onDeactivateClick($event)" [attr.aria-label]="closeAriaLabel"></p-button>
@@ -54,11 +54,11 @@ export class InplaceContent extends BaseComponent {}
                     @if (!closeIcon) {
                         <p-button [pt]="ptm('pcButton')" type="button" pRipple (click)="onDeactivateClick($event)" [attr.aria-label]="closeAriaLabel">
                             <ng-template #icon>
-                                @if (!closeIconTemplate && !_closeIconTemplate) {
+                                @if (!closeIconTemplate() && !_closeIconTemplate) {
                                     <svg data-p-icon="times" />
                                 }
                             </ng-template>
-                            <ng-template *ngTemplateOutlet="closeIconTemplate || _closeIconTemplate"></ng-template>
+                            <ng-template *ngTemplateOutlet="closeIconTemplate() || _closeIconTemplate"></ng-template>
                         </p-button>
                     }
                 }
@@ -141,17 +141,17 @@ export class Inplace extends BaseComponent<InplacePassThrough> {
      * Custom display template.
      * @group Templates
      */
-    @ContentChild('display', { descendants: false }) displayTemplate: TemplateRef<void> | undefined;
+    readonly displayTemplate = contentChild<TemplateRef<void>>('display', { descendants: false });
     /**
      * Custom content template.
      * @group Templates
      */
-    @ContentChild('content', { descendants: false }) contentTemplate: TemplateRef<InplaceContentTemplateContext> | undefined;
+    readonly contentTemplate = contentChild<TemplateRef<InplaceContentTemplateContext>>('content', { descendants: false });
     /**
      * Custom close icon template.
      * @group Templates
      */
-    @ContentChild('closeicon', { descendants: false }) closeIconTemplate: TemplateRef<void> | undefined;
+    readonly closeIconTemplate = contentChild<TemplateRef<void>>('closeicon', { descendants: false });
 
     _componentStyle = inject(InplaceStyle);
 
@@ -195,7 +195,7 @@ export class Inplace extends BaseComponent<InplacePassThrough> {
         }
     }
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _displayTemplate: TemplateRef<void> | undefined;
 
@@ -204,7 +204,7 @@ export class Inplace extends BaseComponent<InplacePassThrough> {
     _contentTemplate: TemplateRef<InplaceContentTemplateContext> | undefined;
 
     onAfterContentInit() {
-        this.templates?.forEach((item) => {
+        this.templates()?.forEach((item) => {
             switch (item.getType()) {
                 case 'display':
                     this._displayTemplate = item.template;

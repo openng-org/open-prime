@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ContentChild, ContentChildren, EventEmitter, inject, InjectionToken, Input, NgModule, Output, QueryList, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, InjectionToken, Input, NgModule, Output, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterModule } from '@angular/router';
 import { MenuItem, PrimeTemplate, SharedModule, TranslationKeys } from '@openng/optimus-ui/api';
 import { Badge } from '@openng/optimus-ui/badge';
@@ -25,8 +25,8 @@ const BREADCRUMB_INSTANCE = new InjectionToken<Breadcrumb>('BREADCRUMB_INSTANCE'
             <ol [class]="cx('list')" [pBind]="ptm('list')">
                 @if (home && home.visible !== false) {
                     <li [attr.id]="home.id" [class]="cn(cx('homeItem'), home.styleClass)" [ngStyle]="home.style" pTooltip [tooltipOptions]="home.tooltipOptions" [pBind]="ptm('homeItem')" [unstyled]="unstyled()">
-                        @if (itemTemplate || _itemTemplate) {
-                            <ng-template *ngTemplateOutlet="itemTemplate || _itemTemplate; context: { $implicit: home }"></ng-template>
+                        @if (itemTemplate() || _itemTemplate) {
+                            <ng-template *ngTemplateOutlet="itemTemplate() || _itemTemplate; context: { $implicit: home }"></ng-template>
                         } @else {
                             @if (!home.routerLink) {
                                 <a
@@ -104,10 +104,10 @@ const BREADCRUMB_INSTANCE = new InjectionToken<Breadcrumb>('BREADCRUMB_INSTANCE'
                 }
                 @if (model && home) {
                     <li [class]="cx('separator')" [pBind]="ptm('separator')" aria-hidden="true">
-                        @if (!separatorTemplate && !_separatorTemplate) {
+                        @if (!separatorTemplate() && !_separatorTemplate) {
                             <svg data-p-icon="chevron-right" [pBind]="ptm('separatorIcon')" />
                         }
-                        <ng-template *ngTemplateOutlet="separatorTemplate || _separatorTemplate"></ng-template>
+                        <ng-template *ngTemplateOutlet="separatorTemplate() || _separatorTemplate"></ng-template>
                     </li>
                 }
                 @for (menuitem of model; track menuitem; let end = $last; let i = $index) {
@@ -121,8 +121,8 @@ const BREADCRUMB_INSTANCE = new InjectionToken<Breadcrumb>('BREADCRUMB_INSTANCE'
                             [pBind]="getPTOptions(menuitem, i, 'item')"
                             [pTooltipUnstyled]="unstyled()"
                         >
-                            @if (itemTemplate || _itemTemplate) {
-                                <ng-template *ngTemplateOutlet="itemTemplate || _itemTemplate; context: { $implicit: menuitem }"></ng-template>
+                            @if (itemTemplate() || _itemTemplate) {
+                                <ng-template *ngTemplateOutlet="itemTemplate() || _itemTemplate; context: { $implicit: menuitem }"></ng-template>
                             } @else {
                                 @if (!menuitem?.routerLink) {
                                     <a
@@ -137,7 +137,7 @@ const BREADCRUMB_INSTANCE = new InjectionToken<Breadcrumb>('BREADCRUMB_INSTANCE'
                                         [attr.aria-current]="isCurrentPage(i) ? 'page' : undefined"
                                         [pBind]="getPTOptions(menuitem, i, 'itemLink')"
                                     >
-                                        @if (!itemTemplate && !_itemTemplate) {
+                                        @if (!itemTemplate() && !_itemTemplate) {
                                             @if (menuitem?.icon) {
                                                 <span [class]="cn(cx('itemIcon'), menuitem?.icon, menuitem?.iconClass)" [ngStyle]="menuitem?.iconStyle" [pBind]="getPTOptions(menuitem, i, 'itemIcon')"></span>
                                             }
@@ -196,10 +196,10 @@ const BREADCRUMB_INSTANCE = new InjectionToken<Breadcrumb>('BREADCRUMB_INSTANCE'
                     }
                     @if (!end && menuitem.visible !== false) {
                         <li [class]="cx('separator')" [pBind]="ptm('separator')" aria-hidden="true">
-                            @if (!separatorTemplate && !_separatorTemplate) {
+                            @if (!separatorTemplate() && !_separatorTemplate) {
                                 <svg data-p-icon="chevron-right" [pBind]="ptm('separatorIcon')" />
                             }
-                            <ng-template *ngTemplateOutlet="separatorTemplate || _separatorTemplate"></ng-template>
+                            <ng-template *ngTemplateOutlet="separatorTemplate() || _separatorTemplate"></ng-template>
                         </li>
                     }
                 }
@@ -287,22 +287,22 @@ export class Breadcrumb extends BaseComponent<BreadcrumbPassThrough> {
      * Custom item template.
      * @group Templates
      */
-    @ContentChild('item') itemTemplate: TemplateRef<BreadcrumbItemTemplateContext> | undefined;
+    readonly itemTemplate = contentChild<TemplateRef<BreadcrumbItemTemplateContext>>('item');
 
     /**
      * Custom separator template.
      * @group Templates
      */
-    @ContentChild('separator') separatorTemplate: TemplateRef<void> | undefined;
+    readonly separatorTemplate = contentChild<TemplateRef<void>>('separator');
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _separatorTemplate: TemplateRef<void> | undefined;
 
     _itemTemplate: TemplateRef<BreadcrumbItemTemplateContext> | undefined;
 
     onAfterContentInit() {
-        this.templates?.forEach((item) => {
+        this.templates()?.forEach((item) => {
             switch (item.getType()) {
                 case 'separator':
                     this._separatorTemplate = item.template;

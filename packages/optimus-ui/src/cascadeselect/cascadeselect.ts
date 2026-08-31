@@ -4,8 +4,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    ContentChild,
-    ContentChildren,
     effect,
     ElementRef,
     EventEmitter,
@@ -18,12 +16,13 @@ import {
     NgModule,
     numberAttribute,
     Output,
-    QueryList,
     signal,
     SimpleChanges,
     TemplateRef,
-    ViewChild,
-    ViewEncapsulation
+    ViewEncapsulation,
+    viewChild,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MotionOptions } from '@openng/optimus-ui-motion';
@@ -293,30 +292,30 @@ export class CascadeSelectSub extends BaseComponent {
             />
         </div>
         <span [class]="cx('label')" [pBind]="ptm('label')">
-            @if (valueTemplate || _valueTemplate) {
-                <ng-container *ngTemplateOutlet="valueTemplate || _valueTemplate; context: { $implicit: value, placeholder: placeholder }"></ng-container>
+            @if (valueTemplate() || _valueTemplate) {
+                <ng-container *ngTemplateOutlet="valueTemplate() || _valueTemplate; context: { $implicit: value, placeholder: placeholder }"></ng-container>
             } @else {
                 {{ label() }}
             }
         </span>
 
         @if ($filled() && !$disabled() && showClear) {
-            @if (!clearIconTemplate && !_clearIconTemplate) {
+            @if (!clearIconTemplate() && !_clearIconTemplate) {
                 <svg data-p-icon="times" [class]="cx('clearIcon')" (click)="clear($event)" [pBind]="ptm('clearIcon')" [attr.aria-hidden]="true" />
             }
-            @if (clearIconTemplate || _clearIconTemplate) {
+            @if (clearIconTemplate() || _clearIconTemplate) {
                 <span [class]="cx('clearIcon')" (click)="clear($event)" [pBind]="ptm('clearIcon')" [attr.aria-hidden]="true">
-                    <ng-template *ngTemplateOutlet="clearIconTemplate || _clearIconTemplate"></ng-template>
+                    <ng-template *ngTemplateOutlet="clearIconTemplate() || _clearIconTemplate"></ng-template>
                 </span>
             }
         }
 
         <div [class]="cx('dropdown')" role="button" aria-haspopup="listbox" [attr.aria-expanded]="overlayVisible ?? false" [pBind]="ptm('dropdown')" [attr.aria-hidden]="true">
             @if (loading) {
-                @if (loadingIconTemplate || _loadingIconTemplate) {
-                    <ng-container *ngTemplateOutlet="loadingIconTemplate || _loadingIconTemplate"></ng-container>
+                @if (loadingIconTemplate() || _loadingIconTemplate) {
+                    <ng-container *ngTemplateOutlet="loadingIconTemplate() || _loadingIconTemplate"></ng-container>
                 }
-                @if (!loadingIconTemplate && !_loadingIconTemplate) {
+                @if (!loadingIconTemplate() && !_loadingIconTemplate) {
                     @if (loadingIcon) {
                         <span [class]="cn(cx('loadingIcon'), loadingIcon + 'pi-spin')" aria-hidden="true" [pBind]="ptm('loadingIcon')"></span>
                     }
@@ -325,12 +324,12 @@ export class CascadeSelectSub extends BaseComponent {
                     }
                 }
             } @else {
-                @if (!triggerIconTemplate && !_triggerIconTemplate) {
+                @if (!triggerIconTemplate() && !_triggerIconTemplate) {
                     <svg data-p-icon="chevron-down" [class]="cx('dropdownIcon')" [pBind]="ptm('dropdownIcon')" />
                 }
-                @if (triggerIconTemplate || _triggerIconTemplate) {
+                @if (triggerIconTemplate() || _triggerIconTemplate) {
                     <span [class]="cx('dropdownIcon')" [pBind]="ptm('dropdownIcon')">
-                        <ng-template *ngTemplateOutlet="triggerIconTemplate || _triggerIconTemplate"></ng-template>
+                        <ng-template *ngTemplateOutlet="triggerIconTemplate() || _triggerIconTemplate"></ng-template>
                     </span>
                 }
             }
@@ -356,7 +355,7 @@ export class CascadeSelectSub extends BaseComponent {
         >
             <ng-template #content>
                 <div #panel [class]="cn(cx('overlay'), panelStyleClass)" [ngStyle]="panelStyle" [pBind]="ptm('overlay')">
-                    <ng-template *ngTemplateOutlet="headerTemplate || _headerTemplate"></ng-template>
+                    <ng-template *ngTemplateOutlet="headerTemplate() || _headerTemplate"></ng-template>
                     <div [class]="cx('listContainer')" [pBind]="ptm('listContainer')">
                         <ul
                             pCascadeSelectSub
@@ -368,8 +367,8 @@ export class CascadeSelectSub extends BaseComponent {
                             [optionLabel]="optionLabel"
                             [optionValue]="optionValue"
                             [level]="0"
-                            [optionTemplate]="optionTemplate || _optionTemplate"
-                            [groupicon]="groupIconTemplate || groupIconTemplate"
+                            [optionTemplate]="optionTemplate() || _optionTemplate"
+                            [groupicon]="groupIconTemplate() || groupIconTemplate()"
                             [optionGroupLabel]="optionGroupLabel"
                             [optionGroupChildren]="optionGroupChildren"
                             [optionDisabled]="optionDisabled"
@@ -389,7 +388,7 @@ export class CascadeSelectSub extends BaseComponent {
                     <span role="status" aria-live="polite" class="p-hidden-accessible" [pBind]="ptm('selectedMessageText')">
                         {{ selectedMessageText }}
                     </span>
-                    <ng-template *ngTemplateOutlet="footerTemplate || _footerTemplate"></ng-template>
+                    <ng-template *ngTemplateOutlet="footerTemplate() || _footerTemplate"></ng-template>
                 </div>
             </ng-template>
         </p-overlay>
@@ -669,58 +668,58 @@ export class CascadeSelect extends BaseEditableHolder<CascadeSelectPassThrough> 
      */
     @Output() onBlur: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
 
-    @ViewChild('focusInput') focusInputViewChild: Nullable<ElementRef>;
+    readonly focusInputViewChild = viewChild<Nullable<ElementRef>>('focusInput');
 
-    @ViewChild('panel') panelViewChild: Nullable<ElementRef>;
+    readonly panelViewChild = viewChild<Nullable<ElementRef>>('panel');
 
-    @ViewChild('overlay') overlayViewChild: Nullable<Overlay>;
+    readonly overlayViewChild = viewChild<Nullable<Overlay>>('overlay');
     /**
      * Custom value template.
      * @group Templates
      */
-    @ContentChild('value', { descendants: false }) valueTemplate: Nullable<TemplateRef<CascadeSelectValueTemplateContext>>;
+    readonly valueTemplate = contentChild<Nullable<TemplateRef<CascadeSelectValueTemplateContext>>>('value', { descendants: false });
 
     /**
      * Custom option template.
      * @group Templates
      */
-    @ContentChild('option', { descendants: false }) optionTemplate: Nullable<TemplateRef<CascadeSelectOptionTemplateContext>>;
+    readonly optionTemplate = contentChild<Nullable<TemplateRef<CascadeSelectOptionTemplateContext>>>('option', { descendants: false });
 
     /**
      * Custom header template.
      * @group Templates
      */
-    @ContentChild('header', { descendants: false }) headerTemplate: Nullable<TemplateRef<void>>;
+    readonly headerTemplate = contentChild<Nullable<TemplateRef<void>>>('header', { descendants: false });
 
     /**
      * Custom footer template.
      * @group Templates
      */
-    @ContentChild('footer', { descendants: false }) footerTemplate: Nullable<TemplateRef<void>>;
+    readonly footerTemplate = contentChild<Nullable<TemplateRef<void>>>('footer', { descendants: false });
 
     /**
      * Custom trigger icon template.
      * @group Templates
      */
-    @ContentChild('triggericon', { descendants: false }) triggerIconTemplate: Nullable<TemplateRef<void>>;
+    readonly triggerIconTemplate = contentChild<Nullable<TemplateRef<void>>>('triggericon', { descendants: false });
 
     /**
      * Custom loading icon template.
      * @group Templates
      */
-    @ContentChild('loadingicon', { descendants: false }) loadingIconTemplate: Nullable<TemplateRef<void>>;
+    readonly loadingIconTemplate = contentChild<Nullable<TemplateRef<void>>>('loadingicon', { descendants: false });
 
     /**
      * Custom option group icon template.
      * @group Templates
      */
-    @ContentChild('optiongroupicon', { descendants: false }) groupIconTemplate: Nullable<TemplateRef<void>>;
+    readonly groupIconTemplate = contentChild<Nullable<TemplateRef<void>>>('optiongroupicon', { descendants: false });
 
     /**
      * Custom clear icon template.
      * @group Templates
      */
-    @ContentChild('clearicon', { descendants: false }) clearIconTemplate: Nullable<TemplateRef<void>>;
+    readonly clearIconTemplate = contentChild<Nullable<TemplateRef<void>>>('clearicon', { descendants: false });
 
     _valueTemplate: TemplateRef<CascadeSelectValueTemplateContext> | undefined;
 
@@ -843,10 +842,10 @@ export class CascadeSelect extends BaseEditableHolder<CascadeSelectPassThrough> 
         return label;
     }
 
-    @ContentChildren(PrimeTemplate) templates!: QueryList<PrimeTemplate>;
+    readonly templates = contentChildren(PrimeTemplate);
 
     onAfterContentInit() {
-        this.templates.forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'value':
                     this._valueTemplate = item.template;
@@ -1175,7 +1174,7 @@ export class CascadeSelect extends BaseEditableHolder<CascadeSelectPassThrough> 
 
     scrollInView(index = -1) {
         const id = index !== -1 ? `${this.id}_${index}` : this.focusedOptionId;
-        const element = findSingle(this.panelViewChild?.nativeElement, `li[id="${id}"]`);
+        const element = findSingle(this.panelViewChild()?.nativeElement, `li[id="${id}"]`);
 
         if (element) {
             element.scrollIntoView && element.scrollIntoView({ block: 'nearest', inline: 'start' });
@@ -1222,14 +1221,14 @@ export class CascadeSelect extends BaseEditableHolder<CascadeSelectPassThrough> 
             return;
         }
 
-        if (!this.overlayViewChild?.el?.nativeElement?.contains(event.target)) {
+        if (!this.overlayViewChild()?.el?.nativeElement?.contains(event.target)) {
             if (this.overlayVisible) {
                 this.hide();
             } else {
                 this.show();
             }
 
-            this.focusInputViewChild?.nativeElement.focus();
+            this.focusInputViewChild()?.nativeElement.focus();
         }
 
         this.clicked = true;
@@ -1371,7 +1370,7 @@ export class CascadeSelect extends BaseEditableHolder<CascadeSelectPassThrough> 
             this.activeOptionPath.set([]);
             this.focusedOptionInfo.set({ index: -1, level: 0, parentKey: '' });
 
-            isFocus && focus(this.focusInputViewChild?.nativeElement);
+            isFocus && focus(this.focusInputViewChild()?.nativeElement);
             this.onHide.emit(event);
             this.cd.markForCheck();
         };
@@ -1402,7 +1401,7 @@ export class CascadeSelect extends BaseEditableHolder<CascadeSelectPassThrough> 
 
         this.focusedOptionInfo.set(focusedOptionInfo);
 
-        isFocus && focus(this.focusInputViewChild?.nativeElement);
+        isFocus && focus(this.focusInputViewChild()?.nativeElement);
     }
 
     clear(event?: MouseEvent) {
@@ -1451,7 +1450,7 @@ export class CascadeSelect extends BaseEditableHolder<CascadeSelectPassThrough> 
         effect(() => {
             const activeOptionPath = this.activeOptionPath();
             if (isNotEmpty(activeOptionPath)) {
-                this.overlayViewChild?.alignOverlay();
+                this.overlayViewChild()?.alignOverlay();
             }
         });
     }
@@ -1509,7 +1508,7 @@ export class CascadeSelect extends BaseEditableHolder<CascadeSelectPassThrough> 
             }
         }
 
-        isFocus && focus(this.focusInputViewChild?.nativeElement);
+        isFocus && focus(this.focusInputViewChild()?.nativeElement);
     }
 
     onOptionMouseEnter(event) {

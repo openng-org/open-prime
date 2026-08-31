@@ -3,8 +3,6 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
-    ContentChild,
-    ContentChildren,
     ElementRef,
     EventEmitter,
     inject,
@@ -13,11 +11,12 @@ import {
     NgModule,
     numberAttribute,
     Output,
-    QueryList,
     signal,
     TemplateRef,
-    ViewChild,
-    ViewEncapsulation
+    ViewEncapsulation,
+    viewChild,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { find, findSingle, focus, hasClass, uuid } from '@openng/optimus-ui-utils';
@@ -44,7 +43,7 @@ const SPEED_DIAL_INSTANCE = new InjectionToken<SpeedDial>('SPEED_DIAL_INSTANCE')
     imports: [CommonModule, ButtonModule, Ripple, TooltipModule, RouterModule, PlusIcon, SharedModule, Bind],
     template: `
         <div #container [pBind]="ptm('root')" [class]="cn(cx('root'), className)" [style]="style" [ngStyle]="sx('root')">
-            @if (!buttonTemplate && !_buttonTemplate) {
+            @if (!buttonTemplate() && !_buttonTemplate) {
                 <button
                     type="button"
                     pButton
@@ -64,14 +63,14 @@ const SPEED_DIAL_INSTANCE = new InjectionToken<SpeedDial>('SPEED_DIAL_INSTANCE')
                     [pt]="ptm('pcButton')"
                     [unstyled]="unstyled()"
                 >
-                    @if (!buttonIconClass && !iconTemplate && !_iconTemplate) {
+                    @if (!buttonIconClass && !iconTemplate() && !_iconTemplate) {
                         <svg data-p-icon="plus" pButtonIcon [pt]="ptm('pcButton')['icon']" />
                     }
-                    <ng-container *ngTemplateOutlet="iconTemplate || _iconTemplate"></ng-container>
+                    <ng-container *ngTemplateOutlet="iconTemplate() || _iconTemplate"></ng-container>
                 </button>
             }
-            @if (buttonTemplate || _buttonTemplate) {
-                <ng-container *ngTemplateOutlet="buttonTemplate || _buttonTemplate; context: { toggleCallback: onButtonClick.bind(this) }"></ng-container>
+            @if (buttonTemplate() || _buttonTemplate) {
+                <ng-container *ngTemplateOutlet="buttonTemplate() || _buttonTemplate; context: { toggleCallback: onButtonClick.bind(this) }"></ng-container>
             }
             <ul
                 #list
@@ -99,10 +98,10 @@ const SPEED_DIAL_INSTANCE = new InjectionToken<SpeedDial>('SPEED_DIAL_INSTANCE')
                         role="menuitem"
                         [attr.data-p-active]="isItemActive(id + '_' + i)"
                     >
-                        @if (itemTemplate || _itemTemplate) {
-                            <ng-container *ngTemplateOutlet="itemTemplate || _itemTemplate; context: { $implicit: item, index: i, toggleCallback: onItemClick.bind(this) }"></ng-container>
+                        @if (itemTemplate() || _itemTemplate) {
+                            <ng-container *ngTemplateOutlet="itemTemplate() || _itemTemplate; context: { $implicit: item, index: i, toggleCallback: onItemClick.bind(this) }"></ng-container>
                         }
-                        @if (!itemTemplate && !_itemTemplate) {
+                        @if (!itemTemplate() && !_itemTemplate) {
                             <button
                                 type="button"
                                 pButton
@@ -306,30 +305,30 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
      */
     @Output() onHide: EventEmitter<Event> = new EventEmitter<Event>();
 
-    @ViewChild('container') container: ElementRef | undefined;
+    readonly container = viewChild<ElementRef>('container');
 
-    @ViewChild('list') list: ElementRef | undefined;
+    readonly list = viewChild<ElementRef>('list');
     /**
      * Custom button template.
      * @param {SpeedDialButtonTemplateContext} context - button context.
      * @see {@link SpeedDialButtonTemplateContext}
      * @group Templates
      */
-    @ContentChild('button', { descendants: false }) buttonTemplate: TemplateRef<SpeedDialButtonTemplateContext> | undefined;
+    readonly buttonTemplate = contentChild<TemplateRef<SpeedDialButtonTemplateContext>>('button', { descendants: false });
     /**
      * Custom item template.
      * @param {SpeedDialItemTemplateContext} context - item context.
      * @see {@link SpeedDialItemTemplateContext}
      * @group Templates
      */
-    @ContentChild('item', { descendants: false }) itemTemplate: TemplateRef<SpeedDialItemTemplateContext> | undefined;
+    readonly itemTemplate = contentChild<TemplateRef<SpeedDialItemTemplateContext>>('item', { descendants: false });
     /**
      * Custom icon template.
      * @group Templates
      */
-    @ContentChild('icon', { descendants: false }) iconTemplate: TemplateRef<void> | undefined;
+    readonly iconTemplate = contentChild<TemplateRef<void>>('icon', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _buttonTemplate: TemplateRef<SpeedDialButtonTemplateContext> | undefined;
 
@@ -377,21 +376,22 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
     onAfterViewInit() {
         if (isPlatformBrowser(this.platformId)) {
             if (this.type !== 'linear') {
-                const button = <any>findSingle(this.container?.nativeElement, '[data-pc-name="pcbutton"]');
-                const firstItem = <any>findSingle(this.list?.nativeElement, '[data-pc-section="item"]');
+                const button = <any>findSingle(this.container()?.nativeElement, '[data-pc-name="pcbutton"]');
+                const list = this.list();
+                const firstItem = <any>findSingle(list?.nativeElement, '[data-pc-section="item"]');
 
                 if (button && firstItem) {
                     const wDiff = Math.abs(button.offsetWidth - firstItem.offsetWidth);
                     const hDiff = Math.abs(button.offsetHeight - firstItem.offsetHeight);
-                    this.list?.nativeElement.style.setProperty('--item-diff-x', `${wDiff / 2}px`);
-                    this.list?.nativeElement.style.setProperty('--item-diff-y', `${hDiff / 2}px`);
+                    list?.nativeElement.style.setProperty('--item-diff-x', `${wDiff / 2}px`);
+                    list?.nativeElement.style.setProperty('--item-diff-y', `${hDiff / 2}px`);
                 }
             }
         }
     }
 
     onAfterContentInit() {
-        this.templates?.forEach((item) => {
+        this.templates()?.forEach((item) => {
             switch (item.getType()) {
                 case 'button':
                     this._buttonTemplate = item.template;
@@ -550,7 +550,8 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
     }
 
     onEnterKey(event: any) {
-        const items = find(this.container?.nativeElement, '[data-pc-section="item"]');
+        const container = this.container();
+        const items = find(container?.nativeElement, '[data-pc-section="item"]');
         const itemIndex = [...items].findIndex((item) => item.id === this.focusedOptionIndex());
 
         if (itemIndex !== -1 && this.model && this.model[itemIndex]) {
@@ -558,7 +559,7 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
         }
         this.onBlur(event);
 
-        const buttonEl = <any>findSingle(this.container?.nativeElement, 'button');
+        const buttonEl = <any>findSingle(container?.nativeElement, 'button');
 
         buttonEl && focus(buttonEl);
     }
@@ -566,7 +567,7 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
     onEscapeKey(event: KeyboardEvent) {
         this.hide();
 
-        const buttonEl = <any>findSingle(this.container?.nativeElement, 'button');
+        const buttonEl = <any>findSingle(this.container()?.nativeElement, 'button');
 
         buttonEl && focus(buttonEl);
     }
@@ -597,7 +598,7 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
 
     onTogglerArrowUp(event) {
         this.focused = true;
-        focus(this.list?.nativeElement);
+        focus(this.list()?.nativeElement);
 
         this.show();
         this.navigatePrevItem(event);
@@ -607,7 +608,7 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
 
     onTogglerArrowDown(event) {
         this.focused = true;
-        focus(this.list?.nativeElement);
+        focus(this.list()?.nativeElement);
 
         this.show();
         this.navigateNextItem(event);
@@ -632,7 +633,7 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
     }
 
     findPrevOptionIndex(index) {
-        const items = find(this.container?.nativeElement, '[data-pc-section="item"]');
+        const items = find(this.container()?.nativeElement, '[data-pc-section="item"]');
 
         const filteredItems = [...items].filter((item) => !hasClass(findSingle(item, 'a')!, 'p-disabled'));
         const newIndex = index === -1 ? filteredItems[filteredItems.length - 1].id : index;
@@ -644,7 +645,7 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
     }
 
     findNextOptionIndex(index) {
-        const items = find(this.container?.nativeElement, '[data-pc-section="item"]');
+        const items = find(this.container()?.nativeElement, '[data-pc-section="item"]');
         const filteredItems = [...items].filter((item) => !hasClass(findSingle(item, 'a')!, 'p-disabled'));
         const newIndex = index === -1 ? filteredItems[0].id : index;
         let matchedOptionIndex = filteredItems.findIndex((link) => link.getAttribute('id') === newIndex);
@@ -655,7 +656,7 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
     }
 
     changeFocusedOptionIndex(index) {
-        const items = find(this.container?.nativeElement, '[data-pc-section="item"]');
+        const items = find(this.container()?.nativeElement, '[data-pc-section="item"]');
         const filteredItems = [...items].filter((item) => !hasClass(findSingle(item, 'a')!, 'p-disabled'));
 
         if (filteredItems[index]) {
@@ -741,7 +742,8 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
     }
 
     isOutsideClicked(event: Event) {
-        return this.container && !(this.container.nativeElement.isSameNode(event.target) || this.container.nativeElement.contains(event.target) || this.isItemClicked);
+        const container = this.container();
+        return container && !(container.nativeElement.isSameNode(event.target) || container.nativeElement.contains(event.target) || this.isItemClicked);
     }
 
     bindDocumentClickListener() {

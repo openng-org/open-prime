@@ -4,8 +4,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    ContentChild,
-    ContentChildren,
     ElementRef,
     EventEmitter,
     HostListener,
@@ -17,10 +15,11 @@ import {
     NgZone,
     numberAttribute,
     Output,
-    QueryList,
     TemplateRef,
     ViewEncapsulation,
-    ViewRef
+    ViewRef,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { MotionEvent, MotionOptions } from '@openng/optimus-ui-motion';
 import { $dt } from '@openng/optimus-ui-styled';
@@ -69,7 +68,7 @@ const POPOVER_INSTANCE = new InjectionToken<Popover>('POPOVER_INSTANCE');
             >
                 <div [pBind]="ptm('content')" [class]="cx('content')" (click)="onContentClick($event)" (mousedown)="onContentClick($event)">
                     <ng-content></ng-content>
-                    <ng-template *ngTemplateOutlet="contentTemplate || _contentTemplate; context: { closeCallback: onCloseClick.bind(this) }"></ng-template>
+                    <ng-template *ngTemplateOutlet="contentTemplate() || _contentTemplate; context: { closeCallback: onCloseClick.bind(this) }"></ng-template>
                 </div>
             </div>
         }
@@ -200,9 +199,9 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
      * @see {@link PopoverContentTemplateContext}
      * @group Templates
      */
-    @ContentChild('content', { descendants: false }) contentTemplate: Nullable<TemplateRef<PopoverContentTemplateContext>>;
+    readonly contentTemplate = contentChild<Nullable<TemplateRef<PopoverContentTemplateContext>>>('content', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates!: QueryList<PrimeTemplate>;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _contentTemplate: TemplateRef<PopoverContentTemplateContext> | undefined;
 
@@ -219,7 +218,7 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
     overlayService = inject(OverlayService);
 
     onAfterContentInit() {
-        this.templates.forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'content':
                     this._contentTemplate = item.template;

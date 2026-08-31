@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ContentChild, ContentChildren, inject, InjectionToken, Input, NgModule, QueryList, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, InjectionToken, Input, NgModule, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
 import { Bind, BindModule } from '@openng/optimus-ui/bind';
@@ -17,8 +17,8 @@ const IMAGECOMPARE_INSTANCE = new InjectionToken<ImageCompare>('IMAGECOMPARE_INS
     standalone: true,
     imports: [CommonModule, SharedModule, BindModule],
     template: `
-        <ng-template *ngTemplateOutlet="leftTemplate || _leftTemplate"></ng-template>
-        <ng-template *ngTemplateOutlet="rightTemplate || _rightTemplate"></ng-template>
+        <ng-template *ngTemplateOutlet="leftTemplate() || _leftTemplate"></ng-template>
+        <ng-template *ngTemplateOutlet="rightTemplate() || _rightTemplate"></ng-template>
 
         <input type="range" min="0" max="100" value="50" (input)="onSlide($event)" [class]="cx('slider')" [pBind]="ptm('slider')" />
     `,
@@ -60,19 +60,19 @@ export class ImageCompare extends BaseComponent<ImageComparePassThrough> {
      * Custom left side template.
      * @group Templates
      */
-    @ContentChild('left', { descendants: false }) leftTemplate: TemplateRef<void> | undefined;
+    readonly leftTemplate = contentChild<TemplateRef<void>>('left', { descendants: false });
 
     /**
      * Custom right side template.
      * @group Templates
      */
-    @ContentChild('right', { descendants: false }) rightTemplate: TemplateRef<void> | undefined;
+    readonly rightTemplate = contentChild<TemplateRef<void>>('right', { descendants: false });
 
     _leftTemplate: TemplateRef<void> | undefined;
 
     _rightTemplate: TemplateRef<void> | undefined;
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _componentStyle = inject(ImageCompareStyle);
 
@@ -90,7 +90,7 @@ export class ImageCompare extends BaseComponent<ImageComparePassThrough> {
     }
 
     onAfterContentInit() {
-        this.templates?.forEach((item) => {
+        this.templates()?.forEach((item) => {
             switch (item.getType()) {
                 case 'left':
                     this._leftTemplate = item.template;

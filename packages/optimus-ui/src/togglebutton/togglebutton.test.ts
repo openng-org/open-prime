@@ -781,8 +781,8 @@ describe('ToggleButton', () => {
         it('should create component with pTemplate templates', async () => {
             expect(component).toBeTruthy();
             expect(toggleButtonInstance).toBeTruthy();
-            expect(() => toggleButtonInstance.iconTemplate).not.toThrow();
-            expect(() => toggleButtonInstance.contentTemplate).not.toThrow();
+            expect(() => toggleButtonInstance.iconTemplate()).not.toThrow();
+            expect(() => toggleButtonInstance.contentTemplate()).not.toThrow();
         });
 
         it('should pass context parameters to icon template', async () => {
@@ -890,8 +890,8 @@ describe('ToggleButton', () => {
         it('should create component with #template references', async () => {
             expect(component).toBeTruthy();
             expect(toggleButtonInstance).toBeTruthy();
-            expect(() => toggleButtonInstance.iconTemplate).not.toThrow();
-            expect(() => toggleButtonInstance.contentTemplate).not.toThrow();
+            expect(() => toggleButtonInstance.iconTemplate()).not.toThrow();
+            expect(() => toggleButtonInstance.contentTemplate()).not.toThrow();
         });
 
         it('should pass context parameters to icon template', async () => {

@@ -1,4 +1,23 @@
-import { AfterViewChecked, booleanAttribute, ChangeDetectionStrategy, Component, computed, ElementRef, EventEmitter, forwardRef, inject, InjectionToken, input, Input, NgModule, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+    AfterViewChecked,
+    booleanAttribute,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    ElementRef,
+    EventEmitter,
+    forwardRef,
+    inject,
+    InjectionToken,
+    input,
+    Input,
+    NgModule,
+    Output,
+    TemplateRef,
+    ViewChild,
+    ViewEncapsulation,
+    viewChild
+} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MotionOptions } from '@openng/optimus-ui-motion';
 import { OverlayOptions, OverlayService, SharedModule, TranslationKeys } from '@openng/optimus-ui/api';
@@ -189,9 +208,9 @@ export class ColorPicker extends BaseEditableHolder<ColorPickerPassThrough> impl
      */
     @Output() onHide: EventEmitter<any> = new EventEmitter<any>();
 
-    @ViewChild('input') inputViewChild: Nullable<ElementRef>;
+    readonly inputViewChild = viewChild<Nullable<ElementRef>>('input');
 
-    @ViewChild('overlay') overlayViewChild!: ElementRef<HTMLDivElement>;
+    readonly overlayViewChild = viewChild.required<ElementRef<HTMLDivElement>>('overlay');
 
     $appendTo = computed(() => this.appendTo() || this.config.overlayAppendTo());
 
@@ -678,8 +697,9 @@ export class ColorPicker extends BaseEditableHolder<ColorPickerPassThrough> impl
             this.scrollHandler = null;
         }
 
-        if (this.overlayViewChild?.nativeElement && this.autoZIndex) {
-            ZIndexUtils.clear(this.overlayViewChild?.nativeElement);
+        const overlayViewChild = this.overlayViewChild();
+        if (overlayViewChild?.nativeElement && this.autoZIndex) {
+            ZIndexUtils.clear(overlayViewChild?.nativeElement);
         }
     }
 }

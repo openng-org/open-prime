@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, contentChild, ContentChildren, ElementRef, EventEmitter, forwardRef, inject, InjectionToken, Input, NgModule, numberAttribute, Output, QueryList, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, contentChild, ElementRef, EventEmitter, forwardRef, inject, InjectionToken, Input, NgModule, numberAttribute, Output, ViewEncapsulation, contentChildren } from '@angular/core';
 import { addClass, getHeight, getOuterHeight, getOuterWidth, getWidth, hasClass, isRTL, removeClass } from '@openng/optimus-ui-utils';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
@@ -152,9 +152,9 @@ export class Splitter extends BaseComponent<SplitterPassThrough> {
      */
     @Output() onResizeStart: EventEmitter<SplitterResizeStartEvent> = new EventEmitter<SplitterResizeStartEvent>();
 
-    @ContentChildren(PrimeTemplate) templates!: QueryList<PrimeTemplate>;
+    readonly templates = contentChildren(PrimeTemplate);
 
-    @ContentChildren('panel', { descendants: false }) panelChildren!: QueryList<ElementRef>;
+    readonly panelChildren = contentChildren<ElementRef>('panel');
 
     splitter = contentChild(forwardRef(() => Splitter));
 
@@ -197,8 +197,9 @@ export class Splitter extends BaseComponent<SplitterPassThrough> {
     _componentStyle = inject(SplitterStyle);
 
     onAfterContentInit() {
-        if (this.templates && this.templates.toArray().length > 0) {
-            this.templates.forEach((item) => {
+        const templates = this.templates();
+        if (templates && templates.length > 0) {
+            templates.forEach((item) => {
                 switch (item.getType()) {
                     case 'panel':
                         this.panels.push(item.template);
@@ -209,8 +210,9 @@ export class Splitter extends BaseComponent<SplitterPassThrough> {
                 }
             });
         }
-        if (this.panelChildren && this.panelChildren.toArray().length > 0) {
-            this.panelChildren.forEach((item) => {
+        const panelChildren = this.panelChildren();
+        if (panelChildren && panelChildren.length > 0) {
+            panelChildren.forEach((item) => {
                 this.panels.push(item);
             });
         }

@@ -3,8 +3,6 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
-    ContentChild,
-    ContentChildren,
     ElementRef,
     EventEmitter,
     forwardRef,
@@ -16,10 +14,11 @@ import {
     NgModule,
     numberAttribute,
     Output,
-    QueryList,
     TemplateRef,
-    ViewChild,
-    ViewEncapsulation
+    ViewEncapsulation,
+    viewChild,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
@@ -67,8 +66,8 @@ export const TOGGLESWITCH_VALUE_ACCESSOR: any = {
         />
         <div [class]="cx('slider')" [pBind]="ptm('slider')" [attr.data-p]="dataP">
             <div [class]="cx('handle')" [pBind]="ptm('handle')" [attr.data-p]="dataP">
-                @if (handleTemplate || _handleTemplate) {
-                    <ng-container *ngTemplateOutlet="handleTemplate || _handleTemplate; context: { checked: checked() }" />
+                @if (handleTemplate() || _handleTemplate) {
+                    <ng-container *ngTemplateOutlet="handleTemplate() || _handleTemplate; context: { checked: checked() }" />
                 }
             </div>
         </div>
@@ -155,14 +154,14 @@ export class ToggleSwitch extends BaseEditableHolder<ToggleSwitchPassThrough> {
      */
     @Output() onChange: EventEmitter<ToggleSwitchChangeEvent> = new EventEmitter<ToggleSwitchChangeEvent>();
 
-    @ViewChild('input') input!: ElementRef;
+    readonly input = viewChild.required<ElementRef>('input');
     /**
      * Custom handle template.
      * @param {ToggleSwitchHandleTemplateContext} context - handle context.
      * @see {@link ToggleSwitchHandleTemplateContext}
      * @group Templates
      */
-    @ContentChild('handle', { descendants: false }) handleTemplate: TemplateRef<ToggleSwitchHandleTemplateContext> | undefined;
+    readonly handleTemplate = contentChild<TemplateRef<ToggleSwitchHandleTemplateContext>>('handle', { descendants: false });
 
     _handleTemplate: TemplateRef<ToggleSwitchHandleTemplateContext> | undefined;
 
@@ -170,7 +169,7 @@ export class ToggleSwitch extends BaseEditableHolder<ToggleSwitchPassThrough> {
 
     _componentStyle = inject(ToggleSwitchStyle);
 
-    @ContentChildren(PrimeTemplate) templates!: QueryList<PrimeTemplate>;
+    readonly templates = contentChildren(PrimeTemplate);
 
     @HostListener('click', ['$event'])
     onHostClick(event: MouseEvent) {
@@ -178,7 +177,7 @@ export class ToggleSwitch extends BaseEditableHolder<ToggleSwitchPassThrough> {
     }
 
     onAfterContentInit() {
-        this.templates.forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'handle':
                     this._handleTemplate = item.template;
@@ -200,7 +199,7 @@ export class ToggleSwitch extends BaseEditableHolder<ToggleSwitchPassThrough> {
                 checked: this.modelValue()
             });
 
-            this.input.nativeElement.focus();
+            this.input().nativeElement.focus();
         }
     }
 

@@ -163,7 +163,7 @@ describe('Tag', () => {
         });
 
         it('should initialize templates properties', () => {
-            expect(tagInstance.templates).toBeDefined();
+            expect(tagInstance.templates()).toBeDefined();
             expect(tagInstance._iconTemplate).toBeUndefined();
         });
     });

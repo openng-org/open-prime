@@ -17,7 +17,7 @@ import {
     OnDestroy,
     OnInit,
     Output,
-    ViewChild
+    viewChild
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { SharedModule } from '@openng/optimus-ui/api';
@@ -197,7 +197,7 @@ export class RadioButton extends BaseEditableHolder<RadioButtonPassThrough> {
      */
     @Output() onBlur: EventEmitter<Event> = new EventEmitter<Event>();
 
-    @ViewChild('input') inputViewChild!: ElementRef;
+    readonly inputViewChild = viewChild.required<ElementRef>('input');
 
     $variant = computed(() => this.variant() || this.config.inputStyle() || this.config.inputVariant());
 
@@ -250,7 +250,7 @@ export class RadioButton extends BaseEditableHolder<RadioButtonPassThrough> {
      * @group Method
      */
     public focus() {
-        this.inputViewChild.nativeElement.focus();
+        this.inputViewChild().nativeElement.focus();
     }
 
     /**

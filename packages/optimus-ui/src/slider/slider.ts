@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { booleanAttribute, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, forwardRef, HostListener, inject, InjectionToken, Input, NgModule, NgZone, numberAttribute, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, forwardRef, HostListener, inject, InjectionToken, Input, NgModule, NgZone, numberAttribute, Output, ViewEncapsulation, viewChild } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { addClass, getWindowScrollLeft, getWindowScrollTop, isRTL, removeClass } from '@openng/optimus-ui-utils';
 import { SharedModule } from '@openng/optimus-ui/api';
@@ -232,11 +232,11 @@ export class Slider extends BaseEditableHolder<SliderPassThrough> {
      */
     @Output() onSlideEnd: EventEmitter<SliderSlideEndEvent> = new EventEmitter<SliderSlideEndEvent>();
 
-    @ViewChild('sliderHandle') sliderHandle: Nullable<ElementRef>;
+    readonly sliderHandle = viewChild<Nullable<ElementRef>>('sliderHandle');
 
-    @ViewChild('sliderHandleStart') sliderHandleStart: Nullable<ElementRef>;
+    readonly sliderHandleStart = viewChild<Nullable<ElementRef>>('sliderHandleStart');
 
-    @ViewChild('sliderHandleEnd') sliderHandleEnd: Nullable<ElementRef>;
+    readonly sliderHandleEnd = viewChild<Nullable<ElementRef>>('sliderHandleEnd');
 
     _componentStyle = inject(SliderStyle);
 
@@ -638,7 +638,7 @@ export class Slider extends BaseEditableHolder<SliderPassThrough> {
                         this.handleValues[0] = 100;
                     }
                 }
-                this.sliderHandleStart?.nativeElement.focus();
+                this.sliderHandleStart()?.nativeElement.focus();
             } else {
                 if (value > this.max) {
                     value = this.max;
@@ -650,7 +650,7 @@ export class Slider extends BaseEditableHolder<SliderPassThrough> {
                 } else if (value < (this.values as number[])[0]) {
                     this.offset = this.handleValues[1];
                 }
-                this.sliderHandleEnd?.nativeElement.focus();
+                this.sliderHandleEnd()?.nativeElement.focus();
             }
 
             if (this.step) {
@@ -676,7 +676,7 @@ export class Slider extends BaseEditableHolder<SliderPassThrough> {
 
             this.onModelChange(this.value);
             this.onChange.emit({ event: event as Event, value: this.value });
-            this.sliderHandle?.nativeElement.focus();
+            this.sliderHandle()?.nativeElement.focus();
         }
         this.updateHandleValue();
     }

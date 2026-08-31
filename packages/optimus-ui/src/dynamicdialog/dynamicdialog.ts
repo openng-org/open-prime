@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ComponentRef, inject, InjectionToken, NgModule, Type, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ComponentRef, inject, InjectionToken, NgModule, Type, ViewEncapsulation, viewChild } from '@angular/core';
 import { uuid } from '@openng/optimus-ui-utils';
 import { SharedModule, TranslationKeys } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
@@ -127,9 +127,9 @@ export class DynamicDialog extends BaseComponent<DialogPassThrough> {
 
     id: string = uuid('pn_id_');
 
-    @ViewChild(DynamicDialogContent) insertionPoint: Nullable<DynamicDialogContent>;
+    readonly insertionPoint = viewChild(DynamicDialogContent);
 
-    @ViewChild(Dialog) dialog: Nullable<Dialog>;
+    readonly dialog = viewChild(Dialog);
 
     childComponentType: Nullable<Type<any>>;
 
@@ -285,7 +285,7 @@ export class DynamicDialog extends BaseComponent<DialogPassThrough> {
     }
 
     loadChildComponent(componentType: Type<any>) {
-        let viewContainerRef = this.insertionPoint?.viewContainerRef;
+        let viewContainerRef = this.insertionPoint()?.viewContainerRef;
         viewContainerRef?.clear();
 
         this.componentRef = viewContainerRef?.createComponent(componentType);

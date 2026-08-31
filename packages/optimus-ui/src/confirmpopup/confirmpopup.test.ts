@@ -714,10 +714,10 @@ describe('ConfirmPopup', () => {
 
             it('should use default templates when custom ones are not provided', () => {
                 // Test default behavior without custom templates
-                expect(confirmPopupInstance.contentTemplate).toBeUndefined();
-                expect(confirmPopupInstance.acceptIconTemplate).toBeUndefined();
-                expect(confirmPopupInstance.rejectIconTemplate).toBeUndefined();
-                expect(confirmPopupInstance.headlessTemplate).toBeUndefined();
+                expect(confirmPopupInstance.contentTemplate()).toBeUndefined();
+                expect(confirmPopupInstance.acceptIconTemplate()).toBeUndefined();
+                expect(confirmPopupInstance.rejectIconTemplate()).toBeUndefined();
+                expect(confirmPopupInstance.headlessTemplate()).toBeUndefined();
             });
 
             it('should handle ngAfterContentInit template processing correctly', async () => {

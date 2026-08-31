@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, input, provideZonelessChangeDetection, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, input, provideZonelessChangeDetection, viewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -88,7 +88,7 @@ class TestTemplateBlockUIComponent {
     `
 })
 class TestTargetBlockUIComponent {
-    @ViewChild('targetElement', { static: true }) targetElement!: ElementRef;
+    readonly targetElement = viewChild.required<ElementRef>('targetElement');
     blocked = false;
 }
 
@@ -100,10 +100,10 @@ class TestTargetBlockUIComponent {
     template: `<div #blockableElement class="blockable-content"><ng-content></ng-content></div>`
 })
 class MockBlockableComponent {
-    @ViewChild('blockableElement', { static: true }) blockableElement!: ElementRef;
+    readonly blockableElement = viewChild.required<ElementRef>('blockableElement');
 
     getBlockableElement() {
-        return this.blockableElement.nativeElement;
+        return this.blockableElement().nativeElement;
     }
 }
 
@@ -119,7 +119,7 @@ class MockBlockableComponent {
     `
 })
 class TestBlockableTargetBlockUIComponent {
-    @ViewChild('blockableTarget', { static: true }) blockableTarget!: MockBlockableComponent;
+    readonly blockableTarget = viewChild.required<MockBlockableComponent>('blockableTarget');
     blocked = false;
 }
 
@@ -133,7 +133,7 @@ class TestBlockableTargetBlockUIComponent {
     `
 })
 class TestInvalidTargetBlockUIComponent {
-    @ViewChild('invalidTarget', { static: true }) invalidTarget!: ElementRef;
+    readonly invalidTarget = viewChild.required<ElementRef>('invalidTarget');
     blocked = false;
 }
 
@@ -465,8 +465,8 @@ describe('BlockUI', () => {
         });
 
         it('should have blockable target reference', () => {
-            expect(component.blockableTarget).toBeTruthy();
-            expect(blockUIComponent.target).toBe(component.blockableTarget);
+            expect(component.blockableTarget()).toBeTruthy();
+            expect(blockUIComponent.target).toBe(component.blockableTarget());
         });
 
         it('should block target component', async () => {

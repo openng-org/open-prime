@@ -366,7 +366,7 @@ describe('SplitButton', () => {
         it('should render with correct structure', () => {
             expect(defaultButton).toBeTruthy();
             expect(dropdownButton).toBeTruthy();
-            expect(splitButtonInstance.menu).toBeTruthy();
+            expect(splitButtonInstance.menu()).toBeTruthy();
         });
 
         it('should generate unique aria id', () => {
@@ -390,7 +390,7 @@ describe('SplitButton', () => {
             await fixture.whenStable();
 
             expect(splitButtonInstance.model).toEqual(newModel);
-            expect(splitButtonInstance.menu?.model).toEqual(newModel);
+            expect(splitButtonInstance.menu()?.model).toEqual(newModel);
         });
 
         it('should update label property', async () => {
@@ -571,7 +571,7 @@ describe('SplitButton', () => {
             fixture.detectChanges();
 
             // Menu show may be async, check via onShow method instead
-            expect(splitButtonInstance.menu).toBeTruthy();
+            expect(splitButtonInstance.menu()).toBeTruthy();
         });
 
         it('should hide menu when default button is clicked', async () => {
@@ -637,7 +637,7 @@ describe('SplitButton', () => {
             const keydownEvent = new KeyboardEvent('keydown', { code: 'ArrowDown', bubbles: true });
             Object.defineProperty(keydownEvent, 'currentTarget', { value: dropdownButton, writable: false, configurable: true });
             const preventDefaultSpy = vi.spyOn(keydownEvent, 'preventDefault').mockImplementation(() => {});
-            const toggleSpy = vi.spyOn(splitButtonInstance.menu!, 'toggle').mockImplementation(() => {});
+            const toggleSpy = vi.spyOn(splitButtonInstance.menu()!, 'toggle').mockImplementation(() => {});
 
             splitButtonInstance.onDropdownButtonKeydown(keydownEvent);
             await new Promise((resolve) => setTimeout(resolve, 100));
@@ -652,7 +652,7 @@ describe('SplitButton', () => {
             const keydownEvent = new KeyboardEvent('keydown', { code: 'ArrowUp', bubbles: true });
             Object.defineProperty(keydownEvent, 'currentTarget', { value: dropdownButton, writable: false, configurable: true });
             const preventDefaultSpy = vi.spyOn(keydownEvent, 'preventDefault').mockImplementation(() => {});
-            const toggleSpy = vi.spyOn(splitButtonInstance.menu!, 'toggle').mockImplementation(() => {});
+            const toggleSpy = vi.spyOn(splitButtonInstance.menu()!, 'toggle').mockImplementation(() => {});
 
             splitButtonInstance.onDropdownButtonKeydown(keydownEvent);
             await new Promise((resolve) => setTimeout(resolve, 100));

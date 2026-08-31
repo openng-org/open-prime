@@ -5,8 +5,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    ContentChild,
-    ContentChildren,
     ElementRef,
     EventEmitter,
     inject,
@@ -19,9 +17,10 @@ import {
     OnDestroy,
     OnInit,
     Output,
-    QueryList,
     TemplateRef,
-    ViewEncapsulation
+    ViewEncapsulation,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { findSingle, setAttribute, uuid } from '@openng/optimus-ui-utils';
 import { Confirmation, ConfirmationService, ConfirmEventType, Footer, PrimeTemplate, SharedModule, TranslationKeys } from '@openng/optimus-ui/api';
@@ -68,11 +67,11 @@ const CONFIRMDIALOG_INSTANCE = new InjectionToken<ConfirmDialog>('CONFIRMDIALOG_
             [unstyled]="unstyled()"
             (onHide)="onDialogHide()"
         >
-            @if (headlessTemplate || _headlessTemplate) {
+            @if (headlessTemplate() || _headlessTemplate) {
                 <ng-template #headless>
                     <ng-container
                         *ngTemplateOutlet="
-                            headlessTemplate || _headlessTemplate;
+                            headlessTemplate() || _headlessTemplate;
                             context: {
                                 $implicit: confirmation,
                                 onAccept: onAccept.bind(this),
@@ -82,31 +81,31 @@ const CONFIRMDIALOG_INSTANCE = new InjectionToken<ConfirmDialog>('CONFIRMDIALOG_
                     ></ng-container>
                 </ng-template>
             } @else {
-                @if (headerTemplate || _headerTemplate) {
+                @if (headerTemplate() || _headerTemplate) {
                     <ng-template #header>
-                        <ng-container *ngTemplateOutlet="headerTemplate || _headerTemplate"></ng-container>
+                        <ng-container *ngTemplateOutlet="headerTemplate() || _headerTemplate"></ng-container>
                     </ng-template>
                 }
 
                 <ng-template #content>
-                    @if (iconTemplate || _iconTemplate) {
-                        <ng-template *ngTemplateOutlet="iconTemplate || _iconTemplate"></ng-template>
-                    } @else if (!iconTemplate && !_iconTemplate && !_messageTemplate && !messageTemplate) {
+                    @if (iconTemplate() || _iconTemplate) {
+                        <ng-template *ngTemplateOutlet="iconTemplate() || _iconTemplate"></ng-template>
+                    } @else if (!iconTemplate() && !_iconTemplate && !_messageTemplate && !messageTemplate()) {
                         <i [ngClass]="cx('icon')" [class]="option('icon')" [pBind]="ptm('icon')" *ngIf="option('icon')"></i>
                     }
-                    @if (messageTemplate || _messageTemplate) {
-                        <ng-template *ngTemplateOutlet="messageTemplate || _messageTemplate; context: { $implicit: confirmation }"></ng-template>
+                    @if (messageTemplate() || _messageTemplate) {
+                        <ng-template *ngTemplateOutlet="messageTemplate() || _messageTemplate; context: { $implicit: confirmation }"></ng-template>
                     } @else {
                         <span [class]="cx('message')" [pBind]="ptm('message')" [innerHTML]="option('message')"> </span>
                     }
                 </ng-template>
             }
             <ng-template #footer>
-                @if (footerTemplate || _footerTemplate) {
+                @if (footerTemplate() || _footerTemplate) {
                     <ng-content select="p-footer"></ng-content>
-                    <ng-container *ngTemplateOutlet="footerTemplate || _footerTemplate"></ng-container>
+                    <ng-container *ngTemplateOutlet="footerTemplate() || _footerTemplate"></ng-container>
                 }
-                @if (!footerTemplate && !_footerTemplate) {
+                @if (!footerTemplate() && !_footerTemplate) {
                     <p-button
                         [pt]="ptm('pcRejectButton')"
                         *ngIf="option('rejectVisible')"
@@ -118,10 +117,10 @@ const CONFIRMDIALOG_INSTANCE = new InjectionToken<ConfirmDialog>('CONFIRMDIALOG_
                         [unstyled]="unstyled()"
                     >
                         <ng-template #icon>
-                            @if (option('rejectIcon') && !rejectIconTemplate && !_rejectIconTemplate) {
+                            @if (option('rejectIcon') && !rejectIconTemplate() && !_rejectIconTemplate) {
                                 <i *ngIf="option('rejectIcon')" [class]="option('rejectIcon')" [pBind]="ptm('pcRejectButton')['icon']"></i>
                             }
-                            <ng-template *ngTemplateOutlet="rejectIconTemplate || _rejectIconTemplate"></ng-template>
+                            <ng-template *ngTemplateOutlet="rejectIconTemplate() || _rejectIconTemplate"></ng-template>
                         </ng-template>
                     </p-button>
                     <p-button
@@ -135,10 +134,10 @@ const CONFIRMDIALOG_INSTANCE = new InjectionToken<ConfirmDialog>('CONFIRMDIALOG_
                         [unstyled]="unstyled()"
                     >
                         <ng-template #icon>
-                            @if (option('acceptIcon') && !_acceptIconTemplate && !acceptIconTemplate) {
+                            @if (option('acceptIcon') && !_acceptIconTemplate && !acceptIconTemplate()) {
                                 <i *ngIf="option('acceptIcon')" [class]="option('acceptIcon')" [pBind]="ptm('pcAcceptButton')['icon']"></i>
                             }
-                            <ng-template *ngTemplateOutlet="acceptIconTemplate || _acceptIconTemplate"></ng-template>
+                            <ng-template *ngTemplateOutlet="acceptIconTemplate() || _acceptIconTemplate"></ng-template>
                         </ng-template>
                     </p-button>
                 }
@@ -360,7 +359,7 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> imple
      */
     @Output() onHide: EventEmitter<ConfirmEventType> = new EventEmitter<ConfirmEventType>();
 
-    @ContentChild(Footer) footer: Nullable<TemplateRef<any>>;
+    readonly footer = contentChild(Footer);
 
     _componentStyle = inject(ConfirmDialogStyle);
 
@@ -368,45 +367,45 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> imple
      * Custom header template.
      * @group Templates
      */
-    @ContentChild('header', { descendants: false }) headerTemplate: Nullable<TemplateRef<void>>;
+    readonly headerTemplate = contentChild<Nullable<TemplateRef<void>>>('header', { descendants: false });
 
     /**
      * Custom footer template.
      * @group Templates
      */
-    @ContentChild('footer', { descendants: false }) footerTemplate: Nullable<TemplateRef<void>>;
+    readonly footerTemplate = contentChild<Nullable<TemplateRef<void>>>('footer', { descendants: false });
 
     /**
      * Custom reject icon template.
      * @group Templates
      */
-    @ContentChild('rejecticon', { descendants: false }) rejectIconTemplate: Nullable<TemplateRef<void>>;
+    readonly rejectIconTemplate = contentChild<Nullable<TemplateRef<void>>>('rejecticon', { descendants: false });
 
     /**
      * Custom accept icon template.
      * @group Templates
      */
-    @ContentChild('accepticon', { descendants: false }) acceptIconTemplate: Nullable<TemplateRef<void>>;
+    readonly acceptIconTemplate = contentChild<Nullable<TemplateRef<void>>>('accepticon', { descendants: false });
 
     /**
      * Custom message template.
      * @group Templates
      */
-    @ContentChild('message', { descendants: false }) messageTemplate: Nullable<TemplateRef<ConfirmDialogMessageTemplateContext>>;
+    readonly messageTemplate = contentChild<Nullable<TemplateRef<ConfirmDialogMessageTemplateContext>>>('message', { descendants: false });
 
     /**
      * Custom icon template.
      * @group Templates
      */
-    @ContentChild('icon', { descendants: false }) iconTemplate: Nullable<TemplateRef<void>>;
+    readonly iconTemplate = contentChild<Nullable<TemplateRef<void>>>('icon', { descendants: false });
 
     /**
      * Custom headless template.
      * @group Templates
      */
-    @ContentChild('headless', { descendants: false }) headlessTemplate: Nullable<TemplateRef<ConfirmDialogHeadlessTemplateContext>>;
+    readonly headlessTemplate = contentChild<Nullable<TemplateRef<ConfirmDialogHeadlessTemplateContext>>>('headless', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     $appendTo = computed(() => this.appendTo() || this.config.overlayAppendTo());
 
@@ -488,7 +487,7 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> imple
     }
 
     onAfterContentInit() {
-        this.templates?.forEach((item) => {
+        this.templates()?.forEach((item) => {
             switch (item.getType()) {
                 case 'header':
                     this._headerTemplate = item.template;

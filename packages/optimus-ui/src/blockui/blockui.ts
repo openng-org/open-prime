@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { booleanAttribute, ChangeDetectionStrategy, Component, ContentChild, ContentChildren, ElementRef, inject, InjectionToken, Input, NgModule, numberAttribute, QueryList, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, ElementRef, inject, InjectionToken, Input, NgModule, numberAttribute, QueryList, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
 import { blockBodyScroll, unblockBodyScroll } from '@openng/optimus-ui-utils';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
@@ -20,7 +20,7 @@ const BLOCKUI_INSTANCE = new InjectionToken<BlockUI>('BLOCKUI_INSTANCE');
     imports: [CommonModule, SharedModule],
     template: `
         <ng-content></ng-content>
-        <ng-container *ngTemplateOutlet="contentTemplate || _contentTemplate"></ng-container>
+        <ng-container *ngTemplateOutlet="contentTemplate() || _contentTemplate"></ng-container>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
@@ -85,7 +85,7 @@ export class BlockUI extends BaseComponent<BlockUIPassThrough> {
      * template of the content
      * @group Templates
      */
-    @ContentChild('content', { descendants: false }) contentTemplate: TemplateRef<any> | undefined;
+    readonly contentTemplate = contentChild<TemplateRef<any>>('content', { descendants: false });
 
     _blocked: boolean = false;
 
@@ -103,10 +103,10 @@ export class BlockUI extends BaseComponent<BlockUIPassThrough> {
 
     _contentTemplate: TemplateRef<any> | undefined;
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     onAfterContentInit() {
-        (this.templates as QueryList<PrimeTemplate>).forEach((item) => {
+        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
             switch (item.getType()) {
                 case 'content':
                     this.contentTemplate = item.template;

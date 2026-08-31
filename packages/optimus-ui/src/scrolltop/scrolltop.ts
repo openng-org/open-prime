@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, ContentChild, ContentChildren, inject, InjectionToken, input, Input, NgModule, numberAttribute, QueryList, signal, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, InjectionToken, input, Input, NgModule, numberAttribute, QueryList, signal, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
 import { MotionEvent, MotionOptions } from '@openng/optimus-ui-motion';
 import { getWindowScrollTop } from '@openng/optimus-ui-utils';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
@@ -42,7 +42,7 @@ const SCROLLTOP_INSTANCE = new InjectionToken<ScrollTop>('SCROLLTOP_INSTANCE');
                 [unstyled]="unstyled()"
             >
                 <ng-template #icon>
-                    @if (!iconTemplate && !_iconTemplate) {
+                    @if (!iconTemplate() && !_iconTemplate) {
                         @if (_icon) {
                             <span [class]="cn(cx('icon'), _icon)"></span>
                         }
@@ -50,7 +50,7 @@ const SCROLLTOP_INSTANCE = new InjectionToken<ScrollTop>('SCROLLTOP_INSTANCE');
                             <svg data-p-icon="chevron-up" [class]="cx('icon')" />
                         }
                     } @else {
-                        <ng-template *ngTemplateOutlet="iconTemplate || _iconTemplate; context: { styleClass: cx('icon') }"></ng-template>
+                        <ng-template *ngTemplateOutlet="iconTemplate() || _iconTemplate; context: { styleClass: cx('icon') }"></ng-template>
                     }
                 </ng-template>
             </p-button>
@@ -144,9 +144,9 @@ export class ScrollTop extends BaseComponent<ScrollTopPassThrough> {
      * @see {@link ScrollTopIconTemplateContext}
      * @group Templates
      */
-    @ContentChild('icon', { descendants: false }) iconTemplate: TemplateRef<ScrollTopIconTemplateContext> | undefined;
+    readonly iconTemplate = contentChild<TemplateRef<ScrollTopIconTemplateContext>>('icon', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _iconTemplate: TemplateRef<ScrollTopIconTemplateContext> | undefined;
 
@@ -174,7 +174,7 @@ export class ScrollTop extends BaseComponent<ScrollTopPassThrough> {
     }
 
     onAfterContentInit() {
-        (this.templates as QueryList<PrimeTemplate>).forEach((item) => {
+        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
             switch (item.getType()) {
                 case 'icon':
                     this._iconTemplate = item.template;

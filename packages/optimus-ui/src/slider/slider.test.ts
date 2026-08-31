@@ -1059,7 +1059,7 @@ describe('Slider', () => {
 
             component.updateValue(30);
 
-            expect(component.sliderHandleStart!.nativeElement.focus).toHaveBeenCalled();
+            expect(component.sliderHandleStart()!.nativeElement.focus).toHaveBeenCalled();
         });
 
         it('should handle animation removal and addition', () => {

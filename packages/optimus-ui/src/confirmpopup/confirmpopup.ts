@@ -5,8 +5,6 @@ import {
     ChangeDetectorRef,
     Component,
     computed,
-    ContentChild,
-    ContentChildren,
     effect,
     ElementRef,
     EventEmitter,
@@ -17,13 +15,14 @@ import {
     Input,
     NgModule,
     numberAttribute,
-    QueryList,
     Renderer2,
     signal,
     TemplateRef,
     untracked,
     viewChild,
-    ViewEncapsulation
+    ViewEncapsulation,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { MotionEvent, MotionOptions } from '@openng/optimus-ui-motion';
 import { absolutePosition, addClass, appendChild, findSingle, focus, getOffset, isIOS, isTouchDevice } from '@openng/optimus-ui-utils';
@@ -68,13 +67,13 @@ const CONFIRMPOPUP_INSTANCE = new InjectionToken<ConfirmPopup>('CONFIRMPOPUP_INS
                 role="alertdialog"
                 (click)="onOverlayClick($event)"
             >
-                <ng-container *ngIf="headlessTemplate || _headlessTemplate; else notHeadless">
-                    <ng-container *ngTemplateOutlet="headlessTemplate || _headlessTemplate; context: { $implicit: confirmation }"></ng-container>
+                <ng-container *ngIf="headlessTemplate() || _headlessTemplate; else notHeadless">
+                    <ng-container *ngTemplateOutlet="headlessTemplate() || _headlessTemplate; context: { $implicit: confirmation }"></ng-container>
                 </ng-container>
                 <ng-template #notHeadless>
                     <div #content [pBind]="ptm('content')" [class]="cx('content')">
-                        <ng-container *ngIf="contentTemplate || _contentTemplate; else withoutContentTemplate">
-                            <ng-container *ngTemplateOutlet="contentTemplate || _contentTemplate; context: { $implicit: confirmation }"></ng-container>
+                        <ng-container *ngIf="contentTemplate() || _contentTemplate; else withoutContentTemplate">
+                            <ng-container *ngTemplateOutlet="contentTemplate() || _contentTemplate; context: { $implicit: confirmation }"></ng-container>
                         </ng-container>
                         <ng-template #withoutContentTemplate>
                             <i [pBind]="ptm('icon')" [class]="cx('icon')" *ngIf="confirmation?.icon"></i>
@@ -99,7 +98,7 @@ const CONFIRMPOPUP_INSTANCE = new InjectionToken<ConfirmPopup>('CONFIRMPOPUP_INS
                         >
                             <ng-template #icon>
                                 <i [class]="confirmation?.rejectIcon" *ngIf="confirmation?.rejectIcon; else rejecticon"></i>
-                                <ng-template #rejecticon *ngTemplateOutlet="rejectIconTemplate || _rejectIconTemplate"></ng-template>
+                                <ng-template #rejecticon *ngTemplateOutlet="rejectIconTemplate() || _rejectIconTemplate"></ng-template>
                             </ng-template>
                         </p-button>
                         <p-button
@@ -118,7 +117,7 @@ const CONFIRMPOPUP_INSTANCE = new InjectionToken<ConfirmPopup>('CONFIRMPOPUP_INS
                         >
                             <ng-template #icon>
                                 <i [class]="confirmation?.acceptIcon" *ngIf="confirmation?.acceptIcon; else accepticontemplate"></i>
-                                <ng-template #accepticontemplate *ngTemplateOutlet="acceptIconTemplate || _acceptIconTemplate"></ng-template>
+                                <ng-template #accepticontemplate *ngTemplateOutlet="acceptIconTemplate() || _acceptIconTemplate"></ng-template>
                             </ng-template>
                         </p-button>
                     </div>
@@ -237,25 +236,25 @@ export class ConfirmPopup extends BaseComponent<ConfirmPopupPassThrough> {
      * Custom content template.
      * @group Templates
      */
-    @ContentChild('content', { descendants: false }) contentTemplate: Nullable<TemplateRef<ConfirmPopupContentTemplateContext>>;
+    readonly contentTemplate = contentChild<Nullable<TemplateRef<ConfirmPopupContentTemplateContext>>>('content', { descendants: false });
 
     /**
      * Custom accept icon template.
      * @group Templates
      */
-    @ContentChild('accepticon', { descendants: false }) acceptIconTemplate: Nullable<TemplateRef<void>>;
+    readonly acceptIconTemplate = contentChild<Nullable<TemplateRef<void>>>('accepticon', { descendants: false });
 
     /**
      * Custom reject icon template.
      * @group Templates
      */
-    @ContentChild('rejecticon', { descendants: false }) rejectIconTemplate: Nullable<TemplateRef<void>>;
+    readonly rejectIconTemplate = contentChild<Nullable<TemplateRef<void>>>('rejecticon', { descendants: false });
 
     /**
      * Custom headless template.
      * @group Templates
      */
-    @ContentChild('headless', { descendants: false }) headlessTemplate: Nullable<TemplateRef<ConfirmPopupHeadlessTemplateContext>>;
+    readonly headlessTemplate = contentChild<Nullable<TemplateRef<ConfirmPopupHeadlessTemplateContext>>>('headless', { descendants: false });
 
     acceptButtonViewChild = viewChild('acceptButton', { read: ElementRef });
 
@@ -323,10 +322,10 @@ export class ConfirmPopup extends BaseComponent<ConfirmPopupPassThrough> {
         });
     }
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     onAfterContentInit() {
-        this.templates?.forEach((item) => {
+        this.templates()?.forEach((item) => {
             switch (item.getType()) {
                 case 'content':
                     this._contentTemplate = item.template;

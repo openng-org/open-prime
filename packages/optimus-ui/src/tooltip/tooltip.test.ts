@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, TemplateRef, ViewChild, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, TemplateRef, provideZonelessChangeDetection, viewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -34,7 +34,7 @@ import { Tooltip } from './tooltip';
     `
 })
 class TestBasicTooltipComponent {
-    @ViewChild('inputElement', { read: ElementRef }) inputElement!: ElementRef;
+    readonly inputElement = viewChild.required('inputElement', { read: ElementRef });
 
     tooltipPosition: 'right' | 'left' | 'top' | 'bottom' = 'right';
     tooltipEvent: 'hover' | 'focus' | 'both' = 'hover';
@@ -68,8 +68,8 @@ class TestBasicTooltipComponent {
     `
 })
 class TestTemplateTooltipComponent {
-    @ViewChild('templateElement', { read: ElementRef }) templateElement!: ElementRef;
-    @ViewChild('tooltipTemplate') tooltipTemplate!: TemplateRef<any>;
+    readonly templateElement = viewChild.required('templateElement', { read: ElementRef });
+    readonly tooltipTemplate = viewChild.required<TemplateRef<any>>('tooltipTemplate');
 }
 
 @Component({
@@ -78,7 +78,7 @@ class TestTemplateTooltipComponent {
     template: ` <button #buttonElement pTooltip="Button tooltip" [tooltipOptions]="options" type="button">Click me</button> `
 })
 class TestTooltipOptionsComponent {
-    @ViewChild('buttonElement', { read: ElementRef }) buttonElement!: ElementRef;
+    readonly buttonElement = viewChild.required('buttonElement', { read: ElementRef });
 
     options: TooltipOptions = {
         tooltipLabel: 'Options tooltip',
@@ -113,7 +113,7 @@ describe('Tooltip', () => {
 
             const debugElement = fixture.debugElement.query(By.directive(Tooltip));
             tooltipDirective = debugElement.injector.get(Tooltip);
-            inputElement = component.inputElement.nativeElement;
+            inputElement = component.inputElement().nativeElement;
         });
 
         it('should create the directive', () => {
@@ -237,7 +237,7 @@ describe('Tooltip', () => {
 
             const debugElement = fixture.debugElement.query(By.directive(Tooltip));
             tooltipDirective = debugElement.injector.get(Tooltip);
-            inputElement = component.inputElement.nativeElement;
+            inputElement = component.inputElement().nativeElement;
         });
 
         it('should activate on mouse enter for hover event', () => {
@@ -301,7 +301,7 @@ describe('Tooltip', () => {
 
             const debugElement = fixture.debugElement.query(By.directive(Tooltip));
             tooltipDirective = debugElement.injector.get(Tooltip);
-            inputElement = component.inputElement.nativeElement;
+            inputElement = component.inputElement().nativeElement;
         });
 
         afterEach(() => {
@@ -630,7 +630,7 @@ describe('Tooltip', () => {
         });
 
         it('should handle template content', () => {
-            expect(tooltipDirective.content).toEqual(component.tooltipTemplate);
+            expect(tooltipDirective.content).toEqual(component.tooltipTemplate());
         });
     });
 
@@ -769,7 +769,7 @@ describe('Tooltip', () => {
             template: ` <input #inputElement pTooltip="PT Test Tooltip" [pt]="pt" type="text" /> `
         })
         class TestPTTooltipComponent {
-            @ViewChild('inputElement', { read: ElementRef }) inputElement!: ElementRef;
+            readonly inputElement = viewChild.required('inputElement', { read: ElementRef });
             testValue = false;
             pt: any = {};
         }
@@ -792,7 +792,7 @@ describe('Tooltip', () => {
 
             const debugElement = fixture.debugElement.query(By.directive(Tooltip));
             tooltipDirective = debugElement.injector.get(Tooltip);
-            inputEl = component.inputElement.nativeElement;
+            inputEl = component.inputElement().nativeElement;
         });
 
         // Case 1: Simple string classes

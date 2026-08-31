@@ -4,8 +4,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    ContentChild,
-    ContentChildren,
     ElementRef,
     EventEmitter,
     inject,
@@ -18,12 +16,13 @@ import {
     Pipe,
     PipeTransform,
     PLATFORM_ID,
-    QueryList,
     signal,
     TemplateRef,
     viewChild,
     ViewEncapsulation,
-    ViewRef
+    ViewRef,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
@@ -189,9 +188,9 @@ export class MenuItemContent extends BaseComponent {
                 (pMotionOnBeforeEnter)="onOverlayBeforeEnter($event)"
                 (pMotionOnAfterLeave)="onOverlayAfterLeave()"
             >
-                @if (startTemplate ?? _startTemplate) {
+                @if (startTemplate() ?? _startTemplate) {
                     <div [class]="cx('start')" [pBind]="ptm('start')" [attr.data-pc-section]="'start'">
-                        <ng-container *ngTemplateOutlet="startTemplate ?? _startTemplate"></ng-container>
+                        <ng-container *ngTemplateOutlet="startTemplate() ?? _startTemplate"></ng-container>
                     </div>
                 }
                 <ul
@@ -226,7 +225,7 @@ export class MenuItemContent extends BaseComponent {
                                         [attr.id]="menuitemId(submenu, id, i)"
                                         [attr.data-pc-section]="'submenulabel'"
                                     >
-                                        @let submenuHeader = submenuHeaderTemplate ?? _submenuHeaderTemplate;
+                                        @let submenuHeader = submenuHeaderTemplate() ?? _submenuHeaderTemplate;
                                         @if (submenuHeader) {
                                             <ng-container *ngTemplateOutlet="submenuHeader; context: { $implicit: submenu }"></ng-container>
                                         } @else {
@@ -248,7 +247,7 @@ export class MenuItemContent extends BaseComponent {
                                         [class]="cn(cx('item', { item, id: menuitemId(item, id, i, j) }), item?.styleClass)"
                                         [pBind]="ptm('item')"
                                         [pMenuItemContent]="item"
-                                        [itemTemplate]="itemTemplate ?? _itemTemplate"
+                                        [itemTemplate]="itemTemplate() ?? _itemTemplate"
                                         [idx]="j"
                                         [menuitemId]="menuitemId(item, id, i, j)"
                                         [style]="item.style"
@@ -278,7 +277,7 @@ export class MenuItemContent extends BaseComponent {
                                     [class]="cn(cx('item', { item, id: menuitemId(item, id, i) }), item?.styleClass)"
                                     [pBind]="ptm('item')"
                                     [pMenuItemContent]="item"
-                                    [itemTemplate]="itemTemplate ?? _itemTemplate"
+                                    [itemTemplate]="itemTemplate() ?? _itemTemplate"
                                     [idx]="i"
                                     [menuitemId]="menuitemId(item, id, i)"
                                     [ngStyle]="item.style"
@@ -298,9 +297,9 @@ export class MenuItemContent extends BaseComponent {
                         }
                     }
                 </ul>
-                @if (endTemplate ?? _endTemplate) {
+                @if (endTemplate() ?? _endTemplate) {
                     <div [class]="cx('end')" [pBind]="ptm('end')" [attr.data-pc-section]="'end'">
-                        <ng-container *ngTemplateOutlet="endTemplate ?? _endTemplate"></ng-container>
+                        <ng-container *ngTemplateOutlet="endTemplate() ?? _endTemplate"></ng-container>
                     </div>
                 }
             </div>
@@ -517,21 +516,21 @@ export class Menu extends BaseComponent<MenuPassThrough> {
      * Defines template option for start.
      * @group Templates
      */
-    @ContentChild('start', { descendants: false }) startTemplate: TemplateRef<void> | undefined;
+    readonly startTemplate = contentChild<TemplateRef<void>>('start', { descendants: false });
     _startTemplate: TemplateRef<void> | undefined;
 
     /**
      * Defines template option for end.
      * @group Templates
      */
-    @ContentChild('end', { descendants: false }) endTemplate: TemplateRef<void> | undefined;
+    readonly endTemplate = contentChild<TemplateRef<void>>('end', { descendants: false });
     _endTemplate: TemplateRef<void> | undefined;
 
     /**
      * Defines template option for header.
      * @group Templates
      */
-    @ContentChild('header', { descendants: false }) headerTemplate: TemplateRef<void> | undefined;
+    readonly headerTemplate = contentChild<TemplateRef<void>>('header', { descendants: false });
     _headerTemplate: TemplateRef<void> | undefined;
 
     /**
@@ -540,7 +539,7 @@ export class Menu extends BaseComponent<MenuPassThrough> {
      * @see {@link MenuItemTemplateContext}
      * @group Templates
      */
-    @ContentChild('item', { descendants: false }) itemTemplate: TemplateRef<MenuItemTemplateContext> | undefined;
+    readonly itemTemplate = contentChild<TemplateRef<MenuItemTemplateContext>>('item', { descendants: false });
     _itemTemplate: TemplateRef<MenuItemTemplateContext> | undefined;
 
     /**
@@ -549,13 +548,13 @@ export class Menu extends BaseComponent<MenuPassThrough> {
      * @see {@link MenuSubmenuHeaderTemplateContext}
      * @group Templates
      */
-    @ContentChild('submenuheader', { descendants: false }) submenuHeaderTemplate: TemplateRef<MenuSubmenuHeaderTemplateContext> | undefined;
+    readonly submenuHeaderTemplate = contentChild<TemplateRef<MenuSubmenuHeaderTemplateContext>>('submenuheader', { descendants: false });
     _submenuHeaderTemplate: TemplateRef<MenuSubmenuHeaderTemplateContext> | undefined;
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate>;
+    readonly templates = contentChildren(PrimeTemplate);
 
     onAfterContentInit() {
-        this.templates?.forEach((item) => {
+        this.templates()?.forEach((item) => {
             switch (item.getType()) {
                 case 'start':
                     this._startTemplate = item.template;

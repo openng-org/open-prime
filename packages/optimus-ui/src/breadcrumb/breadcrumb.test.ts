@@ -266,11 +266,11 @@ describe('Breadcrumb', () => {
         });
 
         it('should initialize templates properties', () => {
-            expect(breadcrumbInstance.templates).toBeDefined();
+            expect(breadcrumbInstance.templates()).toBeDefined();
             expect(breadcrumbInstance._itemTemplate).toBeUndefined();
             expect(breadcrumbInstance._separatorTemplate).toBeUndefined();
-            expect(breadcrumbInstance.itemTemplate).toBeUndefined();
-            expect(breadcrumbInstance.separatorTemplate).toBeUndefined();
+            expect(breadcrumbInstance.itemTemplate()).toBeUndefined();
+            expect(breadcrumbInstance.separatorTemplate()).toBeUndefined();
         });
 
         it('should have onItemClick output emitter', () => {

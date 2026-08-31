@@ -1,23 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-    booleanAttribute,
-    ChangeDetectionStrategy,
-    Component,
-    ContentChild,
-    ContentChildren,
-    EventEmitter,
-    forwardRef,
-    inject,
-    InjectionToken,
-    Input,
-    NgModule,
-    numberAttribute,
-    Output,
-    QueryList,
-    signal,
-    TemplateRef,
-    ViewEncapsulation
-} from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, forwardRef, inject, InjectionToken, Input, NgModule, numberAttribute, Output, signal, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { focus, getFirstFocusableElement, uuid } from '@openng/optimus-ui-utils';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
@@ -69,8 +51,8 @@ export const RATING_VALUE_ACCESSOR: any = {
                     />
                 </span>
                 @if (star + 1 <= value) {
-                    @if (onIconTemplate || _onIconTemplate) {
-                        <ng-container *ngTemplateOutlet="onIconTemplate || _onIconTemplate; context: { $implicit: star + 1, class: cx('onIcon') }"></ng-container>
+                    @if (onIconTemplate() || _onIconTemplate) {
+                        <ng-container *ngTemplateOutlet="onIconTemplate() || _onIconTemplate; context: { $implicit: star + 1, class: cx('onIcon') }"></ng-container>
                     } @else {
                         @if (iconOnClass) {
                             <span [class]="cx('onIcon')" [ngStyle]="iconOnStyle" [ngClass]="iconOnClass" [pBind]="ptm('onIcon')"></span>
@@ -80,8 +62,8 @@ export const RATING_VALUE_ACCESSOR: any = {
                         }
                     }
                 } @else {
-                    @if (offIconTemplate || _offIconTemplate) {
-                        <ng-container *ngTemplateOutlet="offIconTemplate || _offIconTemplate; context: { $implicit: star + 1, class: cx('offIcon') }"></ng-container>
+                    @if (offIconTemplate() || _offIconTemplate) {
+                        <ng-container *ngTemplateOutlet="offIconTemplate() || _offIconTemplate; context: { $implicit: star + 1, class: cx('offIcon') }"></ng-container>
                     } @else {
                         @if (iconOffClass) {
                             <span [class]="cx('offIcon')" [ngStyle]="iconOffStyle" [ngClass]="iconOffClass" [pBind]="ptm('offIcon')"></span>
@@ -173,16 +155,16 @@ export class Rating extends BaseEditableHolder<RatingPassThrough> {
      * @see {@link RatingIconTemplateContext}
      * @group Templates
      */
-    @ContentChild('onicon', { descendants: false }) onIconTemplate: Nullable<TemplateRef<RatingIconTemplateContext>>;
+    readonly onIconTemplate = contentChild<Nullable<TemplateRef<RatingIconTemplateContext>>>('onicon', { descendants: false });
     /**
      * Custom off icon template.
      * @param {RatingIconTemplateContext} context - icon context.
      * @see {@link RatingIconTemplateContext}
      * @group Templates
      */
-    @ContentChild('officon', { descendants: false }) offIconTemplate: Nullable<TemplateRef<RatingIconTemplateContext>>;
+    readonly offIconTemplate = contentChild<Nullable<TemplateRef<RatingIconTemplateContext>>>('officon', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates!: QueryList<PrimeTemplate>;
+    readonly templates = contentChildren(PrimeTemplate);
 
     value: Nullable<number>;
 
@@ -209,7 +191,7 @@ export class Rating extends BaseEditableHolder<RatingPassThrough> {
     }
 
     onAfterContentInit() {
-        this.templates.forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'onicon':
                     this._onIconTemplate = item.template;
@@ -279,7 +261,7 @@ export class Rating extends BaseEditableHolder<RatingPassThrough> {
     }
 
     getIconTemplate(i: number): Nullable<TemplateRef<RatingIconTemplateContext>> {
-        return !this.value || i >= this.value ? this.offIconTemplate || this._offIconTemplate : this.onIconTemplate || this.offIconTemplate;
+        return !this.value || i >= this.value ? this.offIconTemplate() || this._offIconTemplate : this.onIconTemplate() || this.offIconTemplate();
     }
 
     /**
@@ -294,7 +276,7 @@ export class Rating extends BaseEditableHolder<RatingPassThrough> {
     }
 
     get isCustomIcon(): boolean {
-        return !!(this.onIconTemplate || this._onIconTemplate || this.offIconTemplate || this._offIconTemplate);
+        return !!(this.onIconTemplate() || this._onIconTemplate || this.offIconTemplate() || this._offIconTemplate);
     }
 
     get dataP() {

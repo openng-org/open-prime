@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { booleanAttribute, ChangeDetectionStrategy, Component, ContentChild, ElementRef, EventEmitter, inject, InjectionToken, Input, NgModule, numberAttribute, Output, SimpleChanges, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, inject, InjectionToken, Input, NgModule, numberAttribute, Output, SimpleChanges, TemplateRef, ViewEncapsulation, contentChild } from '@angular/core';
 import { resolveFieldData } from '@openng/optimus-ui-utils';
 import { BlockableUI, FilterService, Footer, Header, SharedModule, TranslationKeys } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
@@ -42,16 +42,16 @@ const DATAVIEW_INSTANCE = new InjectionToken<DataView>('DATAVIEW_INSTANCE');
                     } @else {
                         <ng-container>
                             <svg [pBind]="ptm('loadingIcon')" data-p-icon="spinner" [spin]="true" [class]="cx('loadingIcon')" />
-                            <ng-template *ngTemplateOutlet="loadingicon"></ng-template>
+                            <ng-template *ngTemplateOutlet="loadingicon()"></ng-template>
                         </ng-container>
                     }
                 </div>
             </div>
         }
-        @if (header || headerTemplate) {
+        @if (header() || headerTemplate()) {
             <div [pBind]="ptm('header')" [class]="cx('header')">
                 <ng-content select="p-header"></ng-content>
-                <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
+                <ng-container *ngTemplateOutlet="headerTemplate()"></ng-container>
             </div>
         }
         @if (paginator && (paginatorPosition === 'top' || paginatorPosition == 'both')) {
@@ -65,11 +65,11 @@ const DATAVIEW_INSTANCE = new InjectionToken<DataView>('DATAVIEW_INSTANCE');
                 [rowsPerPageOptions]="rowsPerPageOptions"
                 [appendTo]="paginatorDropdownAppendTo"
                 [dropdownScrollHeight]="paginatorDropdownScrollHeight"
-                [templateLeft]="paginatorleft"
-                [templateRight]="paginatorright"
+                [templateLeft]="paginatorleft()"
+                [templateRight]="paginatorright()"
                 [currentPageReportTemplate]="currentPageReportTemplate"
                 [showFirstLastIcon]="showFirstLastIcon"
-                [dropdownItemTemplate]="paginatordropdownitem"
+                [dropdownItemTemplate]="paginatordropdownitem()"
                 [showCurrentPageReport]="showCurrentPageReport"
                 [showJumpToPageDropdown]="showJumpToPageDropdown"
                 [showPageLinks]="showPageLinks"
@@ -82,7 +82,7 @@ const DATAVIEW_INSTANCE = new InjectionToken<DataView>('DATAVIEW_INSTANCE');
             @if (layout === 'list') {
                 <ng-container
                     *ngTemplateOutlet="
-                        listTemplate;
+                        listTemplate();
                         context: {
                             $implicit: paginator ? (filteredValue || value | slice: (lazy ? 0 : first) : (lazy ? 0 : first) + rows) : filteredValue || value
                         }
@@ -92,7 +92,7 @@ const DATAVIEW_INSTANCE = new InjectionToken<DataView>('DATAVIEW_INSTANCE');
             @if (layout === 'grid') {
                 <ng-container
                     *ngTemplateOutlet="
-                        gridTemplate;
+                        gridTemplate();
                         context: {
                             $implicit: paginator ? (filteredValue || value | slice: (lazy ? 0 : first) : (lazy ? 0 : first) + rows) : filteredValue || value
                         }
@@ -101,12 +101,12 @@ const DATAVIEW_INSTANCE = new InjectionToken<DataView>('DATAVIEW_INSTANCE');
             }
             @if (isEmpty() && !loading) {
                 <div [pBind]="ptm('emptyMessage')" [class]="cx('emptyMessage')">
-                    @if (!emptymessageTemplate) {
+                    @if (!emptymessageTemplate()) {
                         {{ emptyMessageLabel }}
                     } @else {
                         <ng-template [ngTemplateOutlet]="empty"></ng-template>
                     }
-                    <ng-container #empty *ngTemplateOutlet="emptymessageTemplate"></ng-container>
+                    <ng-container #empty *ngTemplateOutlet="emptymessageTemplate()"></ng-container>
                 </div>
             }
         </div>
@@ -121,11 +121,11 @@ const DATAVIEW_INSTANCE = new InjectionToken<DataView>('DATAVIEW_INSTANCE');
                 [rowsPerPageOptions]="rowsPerPageOptions"
                 [appendTo]="paginatorDropdownAppendTo"
                 [dropdownScrollHeight]="paginatorDropdownScrollHeight"
-                [templateLeft]="paginatorleft"
-                [templateRight]="paginatorright"
+                [templateLeft]="paginatorleft()"
+                [templateRight]="paginatorright()"
                 [currentPageReportTemplate]="currentPageReportTemplate"
                 [showFirstLastIcon]="showFirstLastIcon"
-                [dropdownItemTemplate]="paginatordropdownitem"
+                [dropdownItemTemplate]="paginatordropdownitem()"
                 [showCurrentPageReport]="showCurrentPageReport"
                 [showJumpToPageDropdown]="showJumpToPageDropdown"
                 [showPageLinks]="showPageLinks"
@@ -134,10 +134,10 @@ const DATAVIEW_INSTANCE = new InjectionToken<DataView>('DATAVIEW_INSTANCE');
                 [unstyled]="unstyled()"
             ></p-paginator>
         }
-        @if (footer || footerTemplate) {
+        @if (footer() || footerTemplate()) {
             <div [pBind]="ptm('footer')" [class]="cx('footer')">
                 <ng-content select="p-footer"></ng-content>
-                <ng-container *ngTemplateOutlet="footerTemplate"></ng-container>
+                <ng-container *ngTemplateOutlet="footerTemplate()"></ng-container>
             </div>
         }
     `,
@@ -340,65 +340,65 @@ export class DataView extends BaseComponent<DataViewPassThrough> implements Bloc
      * @param {DataViewListTemplateContext} context - list template context.
      * @group Templates
      */
-    @ContentChild('list') listTemplate: Nullable<TemplateRef<DataViewListTemplateContext>>;
+    readonly listTemplate = contentChild<Nullable<TemplateRef<DataViewListTemplateContext>>>('list');
     /**
      * Template for grid layout.
      * @param {DataViewGridTemplateContext} context - grid template context.
      * @group Templates
      */
-    @ContentChild('grid') gridTemplate: TemplateRef<DataViewGridTemplateContext>;
+    readonly gridTemplate = contentChild.required<TemplateRef<DataViewGridTemplateContext>>('grid');
     /**
      * Template for the header section.
      * @group Templates
      */
-    @ContentChild('header') headerTemplate: TemplateRef<void>;
+    readonly headerTemplate = contentChild.required<TemplateRef<void>>('header');
     /**
      * Template for the empty message section.
      * @group Templates
      */
-    @ContentChild('emptymessage') emptymessageTemplate: TemplateRef<void>;
+    readonly emptymessageTemplate = contentChild.required<TemplateRef<void>>('emptymessage');
     /**
      * Template for the footer section.
      * @group Templates
      */
-    @ContentChild('footer') footerTemplate: TemplateRef<void>;
+    readonly footerTemplate = contentChild.required<TemplateRef<void>>('footer');
     /**
      * Template for the left side of paginator.
      * @param {DataViewPaginatorLeftTemplateContext} context - paginator left template context.
      * @group Templates
      */
-    @ContentChild('paginatorleft') paginatorleft: TemplateRef<DataViewPaginatorLeftTemplateContext>;
+    readonly paginatorleft = contentChild.required<TemplateRef<DataViewPaginatorLeftTemplateContext>>('paginatorleft');
     /**
      * Template for the right side of paginator.
      * @param {DataViewPaginatorRightTemplateContext} context - paginator right template context.
      * @group Templates
      */
-    @ContentChild('paginatorright') paginatorright: TemplateRef<DataViewPaginatorRightTemplateContext>;
+    readonly paginatorright = contentChild.required<TemplateRef<DataViewPaginatorRightTemplateContext>>('paginatorright');
     /**
      * Template for items in paginator dropdown.
      * @param {DataViewPaginatorDropdownItemTemplateContext} context - paginator dropdown item template context.
      * @group Templates
      */
-    @ContentChild('paginatordropdownitem') paginatordropdownitem: TemplateRef<DataViewPaginatorDropdownItemTemplateContext>;
+    readonly paginatordropdownitem = contentChild.required<TemplateRef<DataViewPaginatorDropdownItemTemplateContext>>('paginatordropdownitem');
     /**
      * Template for loading icon.
      * @group Templates
      */
-    @ContentChild('loadingicon') loadingicon: TemplateRef<void>;
+    readonly loadingicon = contentChild.required<TemplateRef<void>>('loadingicon');
     /**
      * Template for list icon.
      * @group Templates
      */
-    @ContentChild('listicon') listicon: TemplateRef<void>;
+    readonly listicon = contentChild.required<TemplateRef<void>>('listicon');
     /**
      * Template for grid icon.
      * @group Templates
      */
-    @ContentChild('gridicon') gridicon: TemplateRef<void>;
+    readonly gridicon = contentChild.required<TemplateRef<void>>('gridicon');
 
-    @ContentChild(Header) header: any;
+    readonly header = contentChild(Header);
 
-    @ContentChild(Footer) footer: any;
+    readonly footer = contentChild(Footer);
 
     _value: Nullable<any[]>;
 

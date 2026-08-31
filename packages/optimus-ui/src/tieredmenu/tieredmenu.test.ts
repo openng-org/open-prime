@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, provideZonelessChangeDetection, viewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -45,8 +45,8 @@ class TestBasicTieredMenuComponent {
     `
 })
 class TestPopupTieredMenuComponent {
-    @ViewChild('menu') menu!: TieredMenu;
-    @ViewChild('toggleButton') toggleButton!: ElementRef;
+    readonly menu = viewChild.required<TieredMenu>('menu');
+    readonly toggleButton = viewChild.required<ElementRef>('toggleButton');
 
     model: MenuItem[] = [
         {
@@ -367,7 +367,7 @@ describe('TieredMenu', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await popupFixture.whenStable();
 
-            popupTieredMenu = popupComponent.menu;
+            popupTieredMenu = popupComponent.menu();
         });
 
         it('should create popup menu', () => {
@@ -376,7 +376,7 @@ describe('TieredMenu', () => {
         });
 
         it('should toggle menu visibility', async () => {
-            const mockEvent = { currentTarget: popupComponent.toggleButton.nativeElement, preventDefault: () => {} };
+            const mockEvent = { currentTarget: popupComponent.toggleButton().nativeElement, preventDefault: () => {} };
 
             popupTieredMenu.toggle(mockEvent);
             await new Promise((resolve) => setTimeout(resolve, 100));
@@ -392,7 +392,7 @@ describe('TieredMenu', () => {
         });
 
         it('should show menu with show method', async () => {
-            const mockEvent = { currentTarget: popupComponent.toggleButton.nativeElement };
+            const mockEvent = { currentTarget: popupComponent.toggleButton().nativeElement };
 
             popupTieredMenu.show(mockEvent);
             await new Promise((resolve) => setTimeout(resolve, 100));
@@ -403,7 +403,7 @@ describe('TieredMenu', () => {
         });
 
         it('should hide menu with hide method', async () => {
-            const mockEvent = { currentTarget: popupComponent.toggleButton.nativeElement };
+            const mockEvent = { currentTarget: popupComponent.toggleButton().nativeElement };
 
             popupTieredMenu.show(mockEvent);
             await new Promise((resolve) => setTimeout(resolve, 100));
@@ -418,7 +418,7 @@ describe('TieredMenu', () => {
         });
 
         it('should execute command on item click', async () => {
-            const mockEvent = { currentTarget: popupComponent.toggleButton.nativeElement };
+            const mockEvent = { currentTarget: popupComponent.toggleButton().nativeElement };
             popupTieredMenu.show(mockEvent);
             popupFixture.detectChanges();
             await new Promise((resolve) => setTimeout(resolve, 100));
@@ -879,12 +879,12 @@ describe('TieredMenu', () => {
             popupFixture.detectChanges();
             await new Promise((resolve) => setTimeout(resolve, 100));
             await popupFixture.whenStable();
-            popupTieredMenu = popupFixture.componentInstance.menu;
+            popupTieredMenu = popupFixture.componentInstance.menu();
         });
 
         it('should emit onShow event', async () => {
             const showSpy = vi.spyOn(popupTieredMenu.onShow, 'emit').mockImplementation(() => {});
-            const mockEvent = { currentTarget: popupFixture.componentInstance.toggleButton.nativeElement };
+            const mockEvent = { currentTarget: popupFixture.componentInstance.toggleButton().nativeElement };
 
             popupTieredMenu.show(mockEvent);
             popupFixture.changeDetectorRef.markForCheck();

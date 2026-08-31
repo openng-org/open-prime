@@ -4,8 +4,6 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
-    ContentChild,
-    ContentChildren,
     effect,
     ElementRef,
     EventEmitter,
@@ -17,12 +15,13 @@ import {
     numberAttribute,
     Output,
     PLATFORM_ID,
-    QueryList,
     Renderer2,
     signal,
     TemplateRef,
-    ViewChild,
-    ViewEncapsulation
+    ViewEncapsulation,
+    viewChild,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { findLastIndex, findSingle, focus, isEmpty, isNotEmpty, isPrintableCharacter, isTouchDevice, resolve, uuid } from '@openng/optimus-ui-utils';
@@ -379,9 +378,9 @@ export class MenubarSub extends BaseComponent<MenubarPassThrough> {
     standalone: true,
     imports: [CommonModule, RouterModule, MenubarSub, TooltipModule, BarsIcon, BadgeModule, SharedModule, BindModule],
     template: `
-        @if (startTemplate || _startTemplate) {
+        @if (startTemplate() || _startTemplate) {
             <div [class]="cx('start')" [pBind]="ptm('start')">
-                <ng-container *ngTemplateOutlet="startTemplate || _startTemplate"></ng-container>
+                <ng-container *ngTemplateOutlet="startTemplate() || _startTemplate"></ng-container>
             </div>
         }
         @if (model && model.length > 0) {
@@ -398,17 +397,17 @@ export class MenubarSub extends BaseComponent<MenubarPassThrough> {
                 (click)="menuButtonClick($event)"
                 (keydown)="menuButtonKeydown($event)"
             >
-                @if (!menuIconTemplate && !_menuIconTemplate) {
+                @if (!menuIconTemplate() && !_menuIconTemplate) {
                     <svg data-p-icon="bars" [pBind]="ptm('buttonIcon')" />
                 }
-                <ng-template *ngTemplateOutlet="menuIconTemplate || _menuIconTemplate"></ng-template>
+                <ng-template *ngTemplateOutlet="menuIconTemplate() || _menuIconTemplate"></ng-template>
             </a>
         }
         <ul
             pMenubarSub
             #rootmenu
             [items]="processedItems"
-            [itemTemplate]="itemTemplate"
+            [itemTemplate]="itemTemplate()"
             tabindex="0"
             [menuId]="id"
             [root]="true"
@@ -419,7 +418,7 @@ export class MenubarSub extends BaseComponent<MenubarPassThrough> {
             [attr.aria-label]="ariaLabel"
             [attr.aria-labelledby]="ariaLabelledBy"
             [focusedItemId]="focused ? focusedItemId : undefined"
-            [submenuiconTemplate]="submenuIconTemplate || _submenuIconTemplate"
+            [submenuiconTemplate]="submenuIconTemplate() || _submenuIconTemplate"
             [activeItemPath]="activeItemPath()"
             (itemClick)="onItemClick($event)"
             (mousedown)="onMenuMouseDown($event)"
@@ -432,9 +431,9 @@ export class MenubarSub extends BaseComponent<MenubarPassThrough> {
             [pBind]="ptm('rootList')"
             [unstyled]="unstyled()"
         ></ul>
-        @if (endTemplate || _endTemplate) {
+        @if (endTemplate() || _endTemplate) {
             <div [class]="cx('end')" [pBind]="ptm('end')">
-                <ng-container *ngTemplateOutlet="endTemplate || _endTemplate"></ng-container>
+                <ng-container *ngTemplateOutlet="endTemplate() || _endTemplate"></ng-container>
             </div>
         } @else {
             <div [class]="cx('end')">
@@ -544,9 +543,9 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
      */
     @Output() onBlur: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
 
-    @ViewChild('menubutton') menubutton: ElementRef | undefined;
+    readonly menubutton = viewChild<ElementRef>('menubutton');
 
-    @ViewChild('rootmenu') rootmenu: MenubarSub | undefined;
+    readonly rootmenu = viewChild<MenubarSub>('rootmenu');
 
     mobileActive: boolean | undefined;
 
@@ -629,13 +628,13 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
      * Defines template option for start.
      * @group Templates
      */
-    @ContentChild('start', { descendants: false }) startTemplate: TemplateRef<void> | undefined;
+    readonly startTemplate = contentChild<TemplateRef<void>>('start', { descendants: false });
 
     /**
      * Defines template option for end.
      * @group Templates
      */
-    @ContentChild('end', { descendants: false }) endTemplate: TemplateRef<void> | undefined;
+    readonly endTemplate = contentChild<TemplateRef<void>>('end', { descendants: false });
 
     /**
      * Custom item template.
@@ -643,19 +642,19 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
      * @see {@link MenubarItemTemplateContext}
      * @group Templates
      */
-    @ContentChild('item', { descendants: false }) itemTemplate: TemplateRef<MenubarItemTemplateContext> | undefined;
+    readonly itemTemplate = contentChild<TemplateRef<MenubarItemTemplateContext>>('item', { descendants: false });
     /**
      * Defines template option for menu icon.
      * @group Templates
      */
-    @ContentChild('menuicon', { descendants: false }) menuIconTemplate: TemplateRef<void> | undefined;
+    readonly menuIconTemplate = contentChild<TemplateRef<void>>('menuicon', { descendants: false });
     /**
      * Defines template option for submenu icon.
      * @group Templates
      */
-    @ContentChild('submenuicon', { descendants: false }) submenuIconTemplate: TemplateRef<void> | undefined;
+    readonly submenuIconTemplate = contentChild<TemplateRef<void>>('submenuicon', { descendants: false });
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     _startTemplate: TemplateRef<void> | undefined;
 
@@ -668,7 +667,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
     _submenuIconTemplate: TemplateRef<void> | undefined;
 
     onAfterContentInit() {
-        this.templates?.forEach((item) => {
+        this.templates()?.forEach((item) => {
             switch (item.getType()) {
                 case 'start':
                     this._startTemplate = item.template;
@@ -771,7 +770,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
             this.focusedItemInfo.set({ index, level, parentKey, item });
 
             this.dirty = !root;
-            focus(this.rootmenu?.el.nativeElement);
+            focus(this.rootmenu()?.el.nativeElement);
         } else {
             if (grouped) {
                 this.onItemChange(event);
@@ -781,7 +780,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
                 this.changeFocusedItemIndex(originalEvent, rootProcessedItem ? rootProcessedItem.index : -1);
 
                 this.mobileActive = false;
-                focus(this.rootmenu?.el.nativeElement);
+                focus(this.rootmenu()?.el.nativeElement);
             }
         }
     }
@@ -818,7 +817,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
 
     scrollInView(index: number = -1) {
         const id = index !== -1 ? `${this.id}_${index}` : this.focusedItemId;
-        const element = findSingle(this.rootmenu?.el.nativeElement, `li[id="${id}"]`);
+        const element = findSingle(this.rootmenu()?.el.nativeElement, `li[id="${id}"]`);
 
         if (element) {
             element.scrollIntoView && element.scrollIntoView({ block: 'nearest', inline: 'nearest' });
@@ -838,7 +837,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
         this.focusedItemInfo.set({ index, level, parentKey, item });
 
         grouped && (this.dirty = true);
-        isFocus && focus(this.rootmenu?.el.nativeElement);
+        isFocus && focus(this.rootmenu()?.el.nativeElement);
 
         if (type === 'hover' && this.queryMatches()) {
             return;
@@ -850,11 +849,11 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
     toggle(event: MouseEvent) {
         if (this.mobileActive) {
             this.mobileActive = false;
-            ZIndexUtils.clear(this.rootmenu?.el.nativeElement);
+            ZIndexUtils.clear(this.rootmenu()?.el.nativeElement);
             this.hide();
         } else {
             this.mobileActive = true;
-            ZIndexUtils.set('menu', this.rootmenu?.el.nativeElement, this.config.zIndex.menu);
+            ZIndexUtils.set('menu', this.rootmenu()?.el.nativeElement, this.config.zIndex.menu);
             setTimeout(() => {
                 this.show();
             }, 0);
@@ -867,21 +866,21 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
     hide(event?, isFocus?: boolean) {
         if (this.mobileActive) {
             setTimeout(() => {
-                focus(this.menubutton?.nativeElement);
+                focus(this.menubutton()?.nativeElement);
             }, 0);
         }
 
         this.activeItemPath.set([]);
         this.focusedItemInfo.set({ index: -1, level: 0, parentKey: '', item: null });
 
-        isFocus && focus(this.rootmenu?.el.nativeElement);
+        isFocus && focus(this.rootmenu()?.el.nativeElement);
         this.dirty = false;
     }
 
     show() {
         const processedItem = this.findVisibleItem(this.findFirstFocusedItemIndex());
         this.focusedItemInfo.set({ index: this.findFirstFocusedItemIndex(), level: 0, parentKey: '', item: processedItem?.item });
-        focus(this.rootmenu?.el.nativeElement);
+        focus(this.rootmenu()?.el.nativeElement);
     }
 
     onMenuMouseDown(event: any) {
@@ -1200,7 +1199,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
 
     onEnterKey(event: KeyboardEvent) {
         if (this.focusedItemInfo().index !== -1) {
-            const element = <any>findSingle(this.rootmenu?.el.nativeElement, `li[id="${`${this.focusedItemId}`}"]`);
+            const element = <any>findSingle(this.rootmenu()?.el.nativeElement, `li[id="${`${this.focusedItemId}`}"]`);
             const anchorElement = element && (<any>findSingle(element, '[data-pc-section="itemlink"]') || findSingle(element, 'a,button'));
 
             anchorElement ? anchorElement.click() : element && element.click();
@@ -1248,8 +1247,10 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
         if (isPlatformBrowser(this.platformId)) {
             if (!this.outsideClickListener) {
                 this.outsideClickListener = this.renderer.listen(this.document, 'click', (event) => {
-                    const isOutsideContainer = this.rootmenu?.el.nativeElement !== event.target && !this.rootmenu?.el.nativeElement?.contains(event.target);
-                    const isOutsideMenuButton = this.mobileActive && this.menubutton?.nativeElement !== event.target && !this.menubutton?.nativeElement?.contains(event.target);
+                    const rootmenu = this.rootmenu();
+                    const isOutsideContainer = rootmenu?.el.nativeElement !== event.target && !rootmenu?.el.nativeElement?.contains(event.target);
+                    const menubutton = this.menubutton();
+                    const isOutsideMenuButton = this.mobileActive && menubutton?.nativeElement !== event.target && !menubutton?.nativeElement?.contains(event.target);
 
                     if (isOutsideContainer) {
                         isOutsideMenuButton ? (this.mobileActive = false) : this.hide();

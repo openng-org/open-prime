@@ -1037,12 +1037,12 @@ describe('Dialog', () => {
                 await new Promise((resolve) => setTimeout(resolve, 0));
 
                 // Check that ContentChild templates are assigned
-                expect(hashTemplateDialogInstance._headerTemplate).toBeDefined();
-                expect(hashTemplateDialogInstance._contentTemplate).toBeDefined();
-                expect(hashTemplateDialogInstance._footerTemplate).toBeDefined();
-                expect(hashTemplateDialogInstance._closeiconTemplate).toBeDefined();
-                expect(hashTemplateDialogInstance._maximizeiconTemplate).toBeDefined();
-                expect(hashTemplateDialogInstance._minimizeiconTemplate).toBeDefined();
+                expect(hashTemplateDialogInstance._headerTemplate()).toBeDefined();
+                expect(hashTemplateDialogInstance._contentTemplate()).toBeDefined();
+                expect(hashTemplateDialogInstance._footerTemplate()).toBeDefined();
+                expect(hashTemplateDialogInstance._closeiconTemplate()).toBeDefined();
+                expect(hashTemplateDialogInstance._maximizeiconTemplate()).toBeDefined();
+                expect(hashTemplateDialogInstance._minimizeiconTemplate()).toBeDefined();
             });
         });
 

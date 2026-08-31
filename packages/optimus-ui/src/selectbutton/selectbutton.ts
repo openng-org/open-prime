@@ -5,8 +5,6 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
-    ContentChild,
-    ContentChildren,
     EventEmitter,
     forwardRef,
     inject,
@@ -18,7 +16,9 @@ import {
     Output,
     QueryList,
     TemplateRef,
-    ViewEncapsulation
+    ViewEncapsulation,
+    contentChild,
+    contentChildren
 } from '@angular/core';
 import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { equals, resolveFieldData } from '@openng/optimus-ui-utils';
@@ -62,9 +62,9 @@ export const SELECTBUTTON_VALUE_ACCESSOR: any = {
                 [pt]="ptm('pcToggleButton')"
                 [unstyled]="unstyled()"
             >
-                @if (itemTemplate || _itemTemplate) {
+                @if (itemTemplate() || _itemTemplate) {
                     <ng-template #content>
-                        <ng-container *ngTemplateOutlet="itemTemplate || _itemTemplate; context: { $implicit: option, index: i }"></ng-container>
+                        <ng-container *ngTemplateOutlet="itemTemplate() || _itemTemplate; context: { $implicit: option, index: i }"></ng-container>
                     </ng-template>
                 }
             </p-togglebutton>
@@ -183,7 +183,7 @@ export class SelectButton extends BaseEditableHolder<SelectButtonPassThrough> im
      * @see {@link SelectButtonItemTemplateContext}
      * @group Templates
      */
-    @ContentChild('item', { descendants: false }) itemTemplate: TemplateRef<SelectButtonItemTemplateContext> | undefined;
+    readonly itemTemplate = contentChild<TemplateRef<SelectButtonItemTemplateContext>>('item', { descendants: false });
 
     _itemTemplate: TemplateRef<SelectButtonItemTemplateContext> | undefined;
 
@@ -316,10 +316,10 @@ export class SelectButton extends BaseEditableHolder<SelectButtonPassThrough> im
         return selected;
     }
 
-    @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
+    readonly templates = contentChildren(PrimeTemplate);
 
     onAfterContentInit() {
-        (this.templates as QueryList<PrimeTemplate>).forEach((item) => {
+        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
             switch (item.getType()) {
                 case 'item':
                     this._itemTemplate = item.template;

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DebugElement, provideZonelessChangeDetection, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement, provideZonelessChangeDetection, viewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
@@ -80,7 +80,7 @@ class TestBasicMenuComponent {
     `
 })
 class TestPopupMenuComponent {
-    @ViewChild('menu') menu!: Menu;
+    readonly menu = viewChild.required<Menu>('menu');
 
     popupItems: MenuItem[] = [
         {
@@ -1119,7 +1119,7 @@ describe('Menu', () => {
             popupComponent = popupFixture.componentInstance;
             popupFixture.detectChanges();
 
-            popupMenuInstance = popupComponent.menu;
+            popupMenuInstance = popupComponent.menu();
         });
 
         it('should create popup menu', () => {

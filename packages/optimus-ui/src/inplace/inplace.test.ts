@@ -899,9 +899,9 @@ describe('Inplace', () => {
 
         it('should handle both template types (# and pTemplate)', () => {
             // Component should have both contentTemplate and _contentTemplate defined
-            expect(inplaceComponent.contentTemplate || inplaceComponent._contentTemplate).toBeTruthy();
-            expect(inplaceComponent.displayTemplate || inplaceComponent._displayTemplate).toBeTruthy();
-            expect(inplaceComponent.closeIconTemplate || inplaceComponent._closeIconTemplate).toBeTruthy();
+            expect(inplaceComponent.contentTemplate() || inplaceComponent._contentTemplate).toBeTruthy();
+            expect(inplaceComponent.displayTemplate() || inplaceComponent._displayTemplate).toBeTruthy();
+            expect(inplaceComponent.closeIconTemplate() || inplaceComponent._closeIconTemplate).toBeTruthy();
         });
     });
 

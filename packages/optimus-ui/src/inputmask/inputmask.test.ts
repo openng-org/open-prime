@@ -306,7 +306,7 @@ describe('InputMask', () => {
 
         it('should focus input element', () => {
             component.focus();
-            expect(component.inputViewChild?.nativeElement.focus).toHaveBeenCalled();
+            expect(component.inputViewChild()?.nativeElement.focus).toHaveBeenCalled();
         });
 
         it('should clear input value', () => {
@@ -315,7 +315,7 @@ describe('InputMask', () => {
 
             component.clear();
 
-            expect(component.inputViewChild?.nativeElement.value).toBe('' as any);
+            expect(component.inputViewChild()?.nativeElement.value).toBe('' as any);
             expect(component.value).toBeNull();
             expect(component.onModelChange).toHaveBeenCalledWith(null);
             expect(component.onClear.emit).toHaveBeenCalled();
@@ -483,7 +483,7 @@ describe('InputMask', () => {
             const escapeEvent = new KeyboardEvent('keydown', { keyCode: 27 });
             component.onInputKeydown(escapeEvent as any);
 
-            expect(component.inputViewChild?.nativeElement.value).toBe('123-45-');
+            expect(component.inputViewChild()?.nativeElement.value).toBe('123-45-');
             expect(component.caret).toHaveBeenCalledWith(0, 7);
         });
 
@@ -767,7 +767,7 @@ describe('InputMask', () => {
             const mockSetValue = vi.fn();
             component.writeControlValue(null, mockSetValue);
 
-            expect(component.inputViewChild!.nativeElement.value).toBe('' as any);
+            expect(component.inputViewChild()!.nativeElement.value).toBe('' as any);
             expect(component.value).toBeNull();
         });
     });
