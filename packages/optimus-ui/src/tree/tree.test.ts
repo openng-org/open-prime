@@ -1326,6 +1326,53 @@ describe('Tree', () => {
         });
     });
 
+    describe('Drag and Drop without TreeDragDropService provider', () => {
+        // TreeDragDropService is injected with { optional: true } (see [[tree.ts]]), so a
+        // <p-tree> with draggableNodes/droppableNodes enabled but no TreeDragDropService
+        // provided must not throw - dragDropService should stay null and every call site
+        // must guard with `?.` rather than assume the service exists.
+        let noServiceFixture: ComponentFixture<TestBasicTreeComponent>;
+        let noServiceComponent: TestBasicTreeComponent;
+        let noServiceTree: Tree;
+
+        beforeEach(async () => {
+            TestBed.resetTestingModule();
+            await TestBed.configureTestingModule({
+                declarations: [TestBasicTreeComponent],
+                imports: [Tree, UITreeNode, FormsModule],
+                providers: [provideZonelessChangeDetection()]
+            }).compileComponents();
+
+            noServiceFixture = TestBed.createComponent(TestBasicTreeComponent);
+            noServiceComponent = noServiceFixture.componentInstance;
+            noServiceTree = noServiceFixture.debugElement.query(By.directive(Tree)).componentInstance;
+        });
+
+        it('should leave dragDropService null instead of throwing', () => {
+            expect(noServiceTree.dragDropService).toBeNull();
+        });
+
+        it('should not throw during onInit when droppableNodes is enabled', async () => {
+            noServiceComponent.droppableNodes = true;
+
+            expect(() => {
+                noServiceFixture.changeDetectorRef.markForCheck();
+                noServiceFixture.detectChanges();
+            }).not.toThrow();
+        });
+
+        it('should not throw when processTreeDrop is called without a drag-drop service', () => {
+            noServiceComponent.droppableNodes = true;
+            noServiceFixture.detectChanges();
+
+            const dragNode: TreeNode = { label: 'Dropped Node' };
+            noServiceTree.value = [];
+            noServiceTree.dragNodeSubNodes = [];
+
+            expect(() => noServiceTree.processTreeDrop(dragNode, 0)).not.toThrow();
+        });
+    });
+
     describe('Filter', () => {
         beforeEach(async () => {
             component.filter = true;

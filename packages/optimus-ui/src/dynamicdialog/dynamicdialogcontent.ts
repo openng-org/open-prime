@@ -1,9 +1,9 @@
-import { Directive, ViewContainerRef } from '@angular/core';
+import { Directive, ViewContainerRef, inject } from '@angular/core';
 
 @Directive({
     selector: '[pDynamicDialogContent]',
     standalone: true
 })
 export class DynamicDialogContent {
-    constructor(public viewContainerRef: ViewContainerRef) {}
+    viewContainerRef = inject(ViewContainerRef);
 }

@@ -102,6 +102,8 @@ const GALLERIA_INSTANCE = new InjectionToken<Galleria>('GALLERIA_INSTANCE');
     hostDirectives: [Bind]
 })
 export class Galleria extends BaseComponent<GalleriaPassThrough> {
+    element = inject(ElementRef);
+
     componentName = 'Galleria';
 
     bindDirectiveInstance = inject(Bind, { self: true });
@@ -400,10 +402,6 @@ export class Galleria extends BaseComponent<GalleriaPassThrough> {
 
     @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
 
-    constructor(public element: ElementRef) {
-        super();
-    }
-
     onAfterContentInit() {
         this.templates?.forEach((item) => {
             switch (item.getType()) {
@@ -606,6 +604,9 @@ export class Galleria extends BaseComponent<GalleriaPassThrough> {
     hostDirectives: [Bind]
 })
 export class GalleriaContent extends BaseComponent<GalleriaPassThrough> {
+    galleria = inject(Galleria);
+    private differs = inject(KeyValueDiffers);
+
     hostName: string = 'Galleria';
 
     bindDirectiveInstance = inject(Bind, { self: true });
@@ -649,10 +650,7 @@ export class GalleriaContent extends BaseComponent<GalleriaPassThrough> {
 
     private differ: any;
 
-    constructor(
-        public galleria: Galleria,
-        private differs: KeyValueDiffers
-    ) {
+    constructor() {
         super();
         this.id = this.galleria.id || uuid('pn_id_');
         this.differ = this.differs.find(this.galleria).create();
@@ -949,6 +947,8 @@ export class GalleriaItemSlot extends BaseComponent<GalleriaPassThrough> {
     hostDirectives: [Bind]
 })
 export class GalleriaItem extends BaseComponent<GalleriaPassThrough> {
+    galleria = inject(Galleria);
+
     hostName: string = 'Galleria';
 
     bindDirectiveInstance = inject(Bind, { self: true });
@@ -1004,10 +1004,6 @@ export class GalleriaItem extends BaseComponent<GalleriaPassThrough> {
     leftButtonFocused: boolean = false;
 
     rightButtonFocused: boolean = false;
-
-    constructor(public galleria: Galleria) {
-        super();
-    }
 
     getIndicatorPTOptions(index: number) {
         return this.ptm('indicator', {
@@ -1201,6 +1197,8 @@ export class GalleriaItem extends BaseComponent<GalleriaPassThrough> {
     hostDirectives: [Bind]
 })
 export class GalleriaThumbnails extends BaseComponent<GalleriaPassThrough> {
+    galleria = inject(Galleria);
+
     hostName: string = 'Galleria';
 
     bindDirectiveInstance = inject(Bind, { self: true });
@@ -1277,10 +1275,6 @@ export class GalleriaThumbnails extends BaseComponent<GalleriaPassThrough> {
     _oldactiveIndex: number = 0;
 
     _componentStyle = inject(GalleriaStyle);
-
-    constructor(public galleria: Galleria) {
-        super();
-    }
 
     onInit() {
         if (isPlatformBrowser(this.platformId)) {

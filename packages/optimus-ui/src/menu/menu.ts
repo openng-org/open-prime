@@ -8,8 +8,6 @@ import {
     ContentChildren,
     ElementRef,
     EventEmitter,
-    forwardRef,
-    Inject,
     inject,
     InjectionToken,
     input,
@@ -51,10 +49,8 @@ const MENU_INSTANCE = new InjectionToken<Menu>('MENU_INSTANCE');
     standalone: true
 })
 export class SafeHtmlPipe implements PipeTransform {
-    constructor(
-        @Inject(PLATFORM_ID) private readonly platformId: any,
-        private readonly sanitizer: DomSanitizer
-    ) {}
+    private readonly platformId = inject(PLATFORM_ID);
+    private readonly sanitizer = inject(DomSanitizer);
 
     public transform(value: string): SafeHtml {
         if (!value || !isPlatformBrowser(this.platformId)) {
@@ -151,7 +147,9 @@ export class MenuItemContent extends BaseComponent {
 
     hostName = 'Menu';
 
-    constructor(@Inject(forwardRef(() => Menu)) menu: Menu) {
+    constructor() {
+        const menu = inject(Menu);
+
         super();
         this.menu = menu as Menu;
     }
@@ -315,6 +313,8 @@ export class MenuItemContent extends BaseComponent {
     hostDirectives: [Bind]
 })
 export class Menu extends BaseComponent<MenuPassThrough> {
+    overlayService = inject(OverlayService);
+
     componentName = 'Menu';
 
     /**
@@ -463,7 +463,7 @@ export class Menu extends BaseComponent<MenuPassThrough> {
         this.bindDirectiveInstance.setAttrs(this.ptm('host'));
     }
 
-    constructor(public overlayService: OverlayService) {
+    constructor() {
         super();
         this.id = this.id || uuid('pn_id_');
     }

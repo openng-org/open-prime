@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, inject } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DomHandler } from '@openng/optimus-ui/dom';
@@ -21,12 +21,12 @@ import { DynamicDialogRef } from './dynamicdialog-ref';
     `
 })
 class TestDialogContentComponent {
+    private dialogRef = inject(DynamicDialogRef);
+    private config = inject(DynamicDialogConfig);
+
     data: any;
 
-    constructor(
-        private dialogRef: DynamicDialogRef,
-        private config: DynamicDialogConfig
-    ) {
+    constructor() {
         this.data = this.config.data;
     }
 
@@ -47,12 +47,12 @@ class TestDialogContentComponent {
     `
 })
 class NestedDialogContentComponent {
+    private dialogRef = inject(DynamicDialogRef);
+    private config = inject(DynamicDialogConfig);
+
     level: number;
 
-    constructor(
-        private dialogRef: DynamicDialogRef,
-        private config: DynamicDialogConfig
-    ) {
+    constructor() {
         this.level = this.config.data?.level || 1;
     }
 
@@ -72,7 +72,7 @@ class NestedDialogContentComponent {
     `
 })
 class DialogWithinDialogComponent {
-    constructor(private dialogRef: DynamicDialogRef) {}
+    private dialogRef = inject(DynamicDialogRef);
 
     closeDialog() {
         this.dialogRef.close('inner dialog closed');
@@ -782,7 +782,10 @@ describe('DynamicDialog', () => {
                 clear: vi.fn(),
                 createComponent: vi.fn(() => ({
                     setInput: vi.fn(),
-                    instance: new TestDialogContentComponent(mockDialogRef as unknown as DynamicDialogRef<any>, mockConfig)
+                    instance: {
+                        data: mockConfig.data,
+                        closeDialog: vi.fn()
+                    } as unknown as TestDialogContentComponent
                 }))
             };
 

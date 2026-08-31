@@ -46,6 +46,8 @@ const TERMINAL_INSTANCE = new InjectionToken<Terminal>('TERMINAL_INSTANCE');
     hostDirectives: [Bind]
 })
 export class Terminal extends BaseComponent<TerminalPassThrough> implements AfterViewInit, AfterViewChecked, OnDestroy {
+    terminalService = inject(TerminalService);
+
     componentName = 'Terminal';
     $pcTerminal: Terminal | undefined = inject(TERMINAL_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
 
@@ -87,9 +89,9 @@ export class Terminal extends BaseComponent<TerminalPassThrough> implements Afte
         this.focus(this.inputRef?.nativeElement);
     }
 
-    constructor(public terminalService: TerminalService) {
+    constructor() {
         super();
-        this.subscription = terminalService.responseHandler.subscribe((response) => {
+        this.subscription = this.terminalService.responseHandler.subscribe((response) => {
             this.commands[this.commands.length - 1].response = response;
             this.commandProcessed = true;
         });

@@ -124,6 +124,8 @@ const TOAST_INSTANCE = new InjectionToken<Toast>('TOAST_INSTANCE');
     providers: [ToastStyle]
 })
 export class ToastItem extends BaseComponent<ToastPassThrough> {
+    private zone = inject(NgZone);
+
     @Input() message: ToastMessageOptions | null | undefined;
 
     @Input({ transform: numberAttribute }) index: number | null | undefined;
@@ -179,7 +181,7 @@ export class ToastItem extends BaseComponent<ToastPassThrough> {
 
     private isClosing = false;
 
-    constructor(private zone: NgZone) {
+    constructor() {
         super();
 
         effect(() => {
@@ -428,10 +430,6 @@ export class Toast extends BaseComponent<ToastPassThrough> {
     @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined;
 
     clearAllTrigger = signal<{} | null>(null);
-
-    constructor() {
-        super();
-    }
 
     onInit() {
         this.messageSubscription = this.messageService.messageObserver.subscribe((messages) => {

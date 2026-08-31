@@ -396,10 +396,6 @@ export class Paginator extends BaseComponent<PaginatorPassThrough> {
         return this.alwaysShow || (this.pageLinks && this.pageLinks.length > 1) ? null : 'none';
     }
 
-    constructor() {
-        super();
-    }
-
     onInit() {
         this.updatePaginatorState();
     }

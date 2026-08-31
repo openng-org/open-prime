@@ -9,7 +9,6 @@ import {
     effect,
     ElementRef,
     EventEmitter,
-    Inject,
     inject,
     Injectable,
     InjectionToken,
@@ -452,6 +451,13 @@ export class MenubarSub extends BaseComponent<MenubarPassThrough> {
     hostDirectives: [Bind]
 })
 export class Menubar extends BaseComponent<MenubarPassThrough> {
+    document = inject<Document>(DOCUMENT);
+    platformId = inject(PLATFORM_ID);
+    el = inject(ElementRef);
+    renderer = inject(Renderer2);
+    cd = inject(ChangeDetectorRef);
+    private menubarService = inject(MenubarService);
+
     componentName = 'Menubar';
 
     $pcMenubar: Menubar | undefined = inject(MENUBAR_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
@@ -594,14 +600,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
         return focusedItem.item && focusedItem.item?.id ? focusedItem.item.id : focusedItem.index !== -1 ? `${this.id}${isNotEmpty(focusedItem.parentKey) ? '_' + focusedItem.parentKey : ''}_${focusedItem.index}` : null;
     }
 
-    constructor(
-        @Inject(DOCUMENT) public document: Document,
-        @Inject(PLATFORM_ID) public platformId: any,
-        public el: ElementRef,
-        public renderer: Renderer2,
-        public cd: ChangeDetectorRef,
-        private menubarService: MenubarService
-    ) {
+    constructor() {
         super();
         effect(() => {
             const path = this.activeItemPath();

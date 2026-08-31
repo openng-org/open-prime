@@ -19,7 +19,6 @@ import {
     NgModule,
     NgZone,
     numberAttribute,
-    Optional,
     Output,
     QueryList,
     signal,
@@ -3437,6 +3436,9 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     }
 })
 export class TableBody extends BaseComponent {
+    dataTable = inject(Table);
+    tableService = inject(TableService);
+
     hostName = 'Table';
 
     @Input('pTableBody') columns: any[] | undefined;
@@ -3477,10 +3479,7 @@ export class TableBody extends BaseComponent {
         }
     }
 
-    constructor(
-        public dataTable: Table,
-        public tableService: TableService
-    ) {
+    constructor() {
         super();
         this.subscription = this.dataTable.tableService.valueSource$.subscribe(() => {
             if (this.dataTable.virtualScroll) {
@@ -3590,9 +3589,7 @@ export class TableBody extends BaseComponent {
     providers: [TableStyle]
 })
 export class RowGroupHeader extends BaseComponent {
-    constructor(public dataTable: Table) {
-        super();
-    }
+    dataTable = inject(Table);
 
     _componentStyle = inject(TableStyle);
 
@@ -3722,6 +3719,8 @@ export class FrozenColumn extends BaseComponent {
     providers: [TableStyle]
 })
 export class SortableColumn extends BaseComponent {
+    dataTable = inject(Table);
+
     @Input('pSortableColumn') field: string | undefined;
 
     @Input({ transform: booleanAttribute }) pSortableColumnDisabled: boolean | undefined;
@@ -3736,7 +3735,7 @@ export class SortableColumn extends BaseComponent {
 
     _componentStyle = inject(TableStyle);
 
-    constructor(public dataTable: Table) {
+    constructor() {
         super();
         if (this.isEnabled()) {
             this.subscription = this.dataTable.tableService.sortSource$.subscribe((sortMeta) => {
@@ -3837,6 +3836,9 @@ export class SortableColumn extends BaseComponent {
     providers: [TableStyle]
 })
 export class SortIcon extends BaseComponent {
+    dataTable = inject(Table);
+    cd = inject(ChangeDetectorRef);
+
     @Input() field: string | undefined;
 
     subscription: Subscription | undefined;
@@ -3845,10 +3847,7 @@ export class SortIcon extends BaseComponent {
 
     _componentStyle = inject(TableStyle);
 
-    constructor(
-        public dataTable: Table,
-        public cd: ChangeDetectorRef
-    ) {
+    constructor() {
         super();
         this.subscription = this.dataTable.tableService.sortSource$.subscribe((sortMeta) => {
             this.updateSortState();
@@ -3919,6 +3918,9 @@ export class SortIcon extends BaseComponent {
     providers: [TableStyle]
 })
 export class SelectableRow extends BaseComponent {
+    dataTable = inject(Table);
+    tableService = inject(TableService);
+
     @Input('pSelectableRow') data: any;
 
     @Input('pSelectableRowIndex') index: number | undefined;
@@ -3931,10 +3933,7 @@ export class SelectableRow extends BaseComponent {
 
     _componentStyle = inject(TableStyle);
 
-    constructor(
-        public dataTable: Table,
-        public tableService: TableService
-    ) {
+    constructor() {
         super();
         if (this.isEnabled()) {
             this.subscription = this.dataTable.tableService.selectionSource$.subscribe(() => {
@@ -4174,6 +4173,9 @@ export class SelectableRow extends BaseComponent {
     providers: [TableStyle]
 })
 export class SelectableRowDblClick extends BaseComponent {
+    dataTable = inject(Table);
+    tableService = inject(TableService);
+
     @Input('pSelectableRowDblClick') data: any;
 
     @Input('pSelectableRowIndex') index: number | undefined;
@@ -4186,10 +4188,7 @@ export class SelectableRowDblClick extends BaseComponent {
 
     _componentStyle = inject(TableStyle);
 
-    constructor(
-        public dataTable: Table,
-        public tableService: TableService
-    ) {
+    constructor() {
         super();
         if (this.isEnabled()) {
             this.subscription = this.dataTable.tableService.selectionSource$.subscribe(() => {
@@ -4236,6 +4235,9 @@ export class SelectableRowDblClick extends BaseComponent {
     providers: [TableStyle]
 })
 export class ContextMenuRow extends BaseComponent {
+    dataTable = inject(Table);
+    tableService = inject(TableService);
+
     @Input('pContextMenuRow') data: any;
 
     @Input('pContextMenuRowIndex') index: number | undefined;
@@ -4248,10 +4250,7 @@ export class ContextMenuRow extends BaseComponent {
 
     _componentStyle = inject(TableStyle);
 
-    constructor(
-        public dataTable: Table,
-        public tableService: TableService
-    ) {
+    constructor() {
         super();
         if (this.isEnabled()) {
             this.subscription = this.dataTable.tableService.contextMenuSource$.subscribe((data) => {
@@ -4290,13 +4289,11 @@ export class ContextMenuRow extends BaseComponent {
     standalone: false
 })
 export class RowToggler extends BaseComponent {
+    dataTable = inject(Table);
+
     @Input('pRowToggler') data: any;
 
     @Input({ transform: booleanAttribute }) pRowTogglerDisabled: boolean | undefined;
-
-    constructor(public dataTable: Table) {
-        super();
-    }
 
     @HostListener('click', ['$event'])
     onClick(event: Event) {
@@ -4320,6 +4317,9 @@ export class RowToggler extends BaseComponent {
     providers: [TableStyle]
 })
 export class ResizableColumn extends BaseComponent {
+    dataTable = inject(Table);
+    zone = inject(NgZone);
+
     @Input({ transform: booleanAttribute }) pResizableColumnDisabled: boolean | undefined;
 
     resizer: HTMLSpanElement | undefined;
@@ -4337,13 +4337,6 @@ export class ResizableColumn extends BaseComponent {
     documentMouseUpListener: VoidListener;
 
     _componentStyle = inject(TableStyle);
-
-    constructor(
-        public dataTable: Table,
-        public zone: NgZone
-    ) {
-        super();
-    }
 
     onAfterViewInit() {
         if (isPlatformBrowser(this.platformId)) {
@@ -4441,6 +4434,10 @@ export class ResizableColumn extends BaseComponent {
     providers: [TableStyle]
 })
 export class ReorderableColumn extends BaseComponent {
+    dataTable = inject(Table);
+    el = inject(ElementRef);
+    zone = inject(NgZone);
+
     @Input({ transform: booleanAttribute }) pReorderableColumnDisabled: boolean | undefined;
 
     dragStartListener: VoidListener;
@@ -4454,14 +4451,6 @@ export class ReorderableColumn extends BaseComponent {
     mouseDownListener: VoidListener;
 
     _componentStyle = inject(TableStyle);
-
-    constructor(
-        public dataTable: Table,
-        public el: ElementRef,
-        public zone: NgZone
-    ) {
-        super();
-    }
 
     onAfterViewInit() {
         if (this.isEnabled()) {
@@ -4557,6 +4546,9 @@ export class ReorderableColumn extends BaseComponent {
     }
 })
 export class EditableColumn extends BaseComponent {
+    dataTable = inject(Table);
+    zone = inject(NgZone);
+
     @Input('pEditableColumn') data: any;
 
     @Input('pEditableColumnField') field: any;
@@ -4568,13 +4560,6 @@ export class EditableColumn extends BaseComponent {
     @Input() pFocusCellSelector: string | undefined;
 
     overlayEventListener: any;
-
-    constructor(
-        public dataTable: Table,
-        public zone: NgZone
-    ) {
-        super();
-    }
 
     public onChanges(changes: SimpleChanges): void {
         if (this.el.nativeElement && !changes.data?.firstChange) {
@@ -4924,12 +4909,8 @@ export class EditableRow extends BaseComponent {
     }
 })
 export class InitEditableRow extends BaseComponent {
-    constructor(
-        public dataTable: Table,
-        public editableRow: EditableRow
-    ) {
-        super();
-    }
+    dataTable = inject(Table);
+    editableRow = inject(EditableRow);
 
     @HostListener('click', ['$event'])
     onClick(event: Event) {
@@ -4946,12 +4927,8 @@ export class InitEditableRow extends BaseComponent {
     }
 })
 export class SaveEditableRow extends BaseComponent {
-    constructor(
-        public dataTable: Table,
-        public editableRow: EditableRow
-    ) {
-        super();
-    }
+    dataTable = inject(Table);
+    editableRow = inject(EditableRow);
 
     @HostListener('click', ['$event'])
     onClick(event: Event) {
@@ -4969,12 +4946,8 @@ export class SaveEditableRow extends BaseComponent {
     providers: [TableStyle]
 })
 export class CancelEditableRow extends BaseComponent {
-    constructor(
-        public dataTable: Table,
-        public editableRow: EditableRow
-    ) {
-        super();
-    }
+    dataTable = inject(Table);
+    editableRow = inject(EditableRow);
     _componentStyle = inject(TableStyle);
     @HostListener('click', ['$event'])
     onClick(event: Event) {
@@ -4998,6 +4971,10 @@ export class CancelEditableRow extends BaseComponent {
     encapsulation: ViewEncapsulation.None
 })
 export class CellEditor extends BaseComponent {
+    dataTable = inject(Table);
+    editableColumn = inject(EditableColumn, { optional: true });
+    editableRow = inject(EditableRow, { optional: true });
+
     @ContentChildren(PrimeTemplate) _templates: Nullable<QueryList<PrimeTemplate>>;
 
     @ContentChild('input') _inputTemplate: TemplateRef<any>;
@@ -5007,14 +4984,6 @@ export class CellEditor extends BaseComponent {
     inputTemplate: Nullable<TemplateRef<any>>;
 
     outputTemplate: Nullable<TemplateRef<any>>;
-
-    constructor(
-        public dataTable: Table,
-        @Optional() public editableColumn: EditableColumn,
-        @Optional() public editableRow: EditableRow
-    ) {
-        super();
-    }
 
     onAfterContentInit() {
         (this._templates as QueryList<PrimeTemplate>).forEach((item) => {
@@ -5031,8 +5000,9 @@ export class CellEditor extends BaseComponent {
     }
 
     get editing(): boolean {
-        return (
-            (this.dataTable.editingCell && this.editableColumn && this.dataTable.editingCell === this.editableColumn.el.nativeElement) || (this.editableRow && this.dataTable.editMode === 'row' && this.dataTable.isRowEditing(this.editableRow.data))
+        return !!(
+            (this.dataTable.editingCell && this.editableColumn && this.dataTable.editingCell === this.editableColumn.el.nativeElement) ||
+            (this.editableRow && this.dataTable.editMode === 'row' && this.dataTable.isRowEditing(this.editableRow.data))
         );
     }
 }
@@ -5057,6 +5027,9 @@ export class CellEditor extends BaseComponent {
     encapsulation: ViewEncapsulation.None
 })
 export class TableRadioButton extends BaseComponent {
+    dataTable = inject(Table);
+    cd = inject(ChangeDetectorRef);
+
     @Input() value: any;
 
     readonly disabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
@@ -5072,10 +5045,7 @@ export class TableRadioButton extends BaseComponent {
 
     subscription: Subscription;
 
-    constructor(
-        public dataTable: Table,
-        public cd: ChangeDetectorRef
-    ) {
+    constructor() {
         super();
         this.subscription = this.dataTable.tableService.selectionSource$.subscribe(() => {
             this.checked = this.dataTable.isSelected(this.value);
@@ -5138,6 +5108,9 @@ export class TableRadioButton extends BaseComponent {
     encapsulation: ViewEncapsulation.None
 })
 export class TableCheckbox extends BaseComponent {
+    dataTable = inject(Table);
+    tableService = inject(TableService);
+
     @Input() value: any;
 
     readonly disabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
@@ -5152,10 +5125,7 @@ export class TableCheckbox extends BaseComponent {
 
     subscription: Subscription;
 
-    constructor(
-        public dataTable: Table,
-        public tableService: TableService
-    ) {
+    constructor() {
         super();
         this.subscription = this.dataTable.tableService.selectionSource$.subscribe(() => {
             this.checked = this.dataTable.isSelected(this.value);
@@ -5216,6 +5186,9 @@ export class TableCheckbox extends BaseComponent {
     hostDirectives: [Bind]
 })
 export class TableHeaderCheckbox extends BaseComponent {
+    dataTable = inject(Table);
+    tableService = inject(TableService);
+
     hostName = 'Table';
 
     bindDirectiveInstance = inject(Bind, { self: true });
@@ -5236,10 +5209,7 @@ export class TableHeaderCheckbox extends BaseComponent {
 
     valueChangeSubscription: Subscription;
 
-    constructor(
-        public dataTable: Table,
-        public tableService: TableService
-    ) {
+    constructor() {
         super();
         this.valueChangeSubscription = this.dataTable.tableService.valueSource$.subscribe(() => {
             this.checked = this.updateCheckedState();
@@ -5304,6 +5274,8 @@ export class TableHeaderCheckbox extends BaseComponent {
     hostDirectives: [Bind]
 })
 export class ReorderableRowHandle extends BaseComponent {
+    el = inject(ElementRef);
+
     hostName = 'Table';
 
     bindDirectiveInstance = inject(Bind, { self: true });
@@ -5313,10 +5285,6 @@ export class ReorderableRowHandle extends BaseComponent {
     }
 
     _componentStyle = inject(TableStyle);
-
-    constructor(public el: ElementRef) {
-        super();
-    }
 
     onAfterViewInit() {
         // DomHandler.addClass(this.el.nativeElement, 'p-datatable-reorderable-row-handle');
@@ -5329,6 +5297,9 @@ export class ReorderableRowHandle extends BaseComponent {
     hostDirectives: [Bind]
 })
 export class ReorderableRow extends BaseComponent {
+    dataTable = inject(Table);
+    zone = inject(NgZone);
+
     hostName = 'Table';
 
     bindDirectiveInstance = inject(Bind, { self: true });
@@ -5352,13 +5323,6 @@ export class ReorderableRow extends BaseComponent {
     dragLeaveListener: VoidListener;
 
     dropListener: VoidListener;
-
-    constructor(
-        public dataTable: Table,
-        public zone: NgZone
-    ) {
-        super();
-    }
 
     onAfterViewInit() {
         if (this.isEnabled()) {
@@ -6557,6 +6521,9 @@ export class ColumnFilter extends BaseComponent {
     hostDirectives: [Bind]
 })
 export class ColumnFilterFormElement extends BaseComponent<ColumnFilterPassThrough> {
+    dataTable = inject(Table);
+    private colFilter = inject(ColumnFilter);
+
     hostName = 'Table';
 
     bindDirectiveInstance = inject(Bind, { self: true });
@@ -6606,13 +6573,6 @@ export class ColumnFilterFormElement extends BaseComponent<ColumnFilterPassThrou
     }
 
     filterCallback: any;
-
-    constructor(
-        public dataTable: Table,
-        private colFilter: ColumnFilter
-    ) {
-        super();
-    }
 
     onInit() {
         this.filterCallback = (value: any) => {

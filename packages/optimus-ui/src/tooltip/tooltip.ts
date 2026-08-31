@@ -23,6 +23,9 @@ const TOOLTIP_INSTANCE = new InjectionToken<Tooltip>('TOOLTIP_INSTANCE');
     providers: [TooltipStyle, { provide: TOOLTIP_INSTANCE, useExisting: Tooltip }, { provide: PARENT_INSTANCE, useExisting: Tooltip }]
 })
 export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
+    zone = inject(NgZone);
+    private viewContainer = inject(ViewContainerRef);
+
     componentName = 'Tooltip';
 
     $pcTooltip: Tooltip | undefined = inject(TOOLTIP_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
@@ -220,10 +223,7 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
      */
     pTooltipUnstyled = input<boolean | undefined>();
 
-    constructor(
-        public zone: NgZone,
-        private viewContainer: ViewContainerRef
-    ) {
+    constructor() {
         super();
         effect(() => {
             const pt = this.ptTooltip() || this.pTooltipPT();

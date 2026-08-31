@@ -84,10 +84,6 @@ export class OverlayBadge extends BaseComponent<OverlayBadgePassThrough> {
     }
 
     _componentStyle = inject(OverlayBadgeStyle);
-
-    constructor() {
-        super();
-    }
 }
 
 @NgModule({

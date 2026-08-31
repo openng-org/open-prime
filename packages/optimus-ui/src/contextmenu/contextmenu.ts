@@ -10,8 +10,6 @@ import {
     effect,
     ElementRef,
     EventEmitter,
-    forwardRef,
-    Inject,
     inject,
     InjectionToken,
     input,
@@ -261,6 +259,10 @@ const CONTEXTMENUSUB_INSTANCE = new InjectionToken<ContextMenuSub>('CONTEXTMENUS
     providers: [ContextMenuStyle, { provide: CONTEXTMENUSUB_INSTANCE, useExisting: ContextMenuSub }, { provide: PARENT_INSTANCE, useExisting: ContextMenuSub }]
 })
 export class ContextMenuSub extends BaseComponent<ContextMenuPassThrough> implements AfterViewChecked {
+    el = inject(ElementRef);
+    renderer = inject(Renderer2);
+    contextMenu = inject(ContextMenu);
+
     @Input() get visible(): boolean {
         return this._visible;
     }
@@ -324,11 +326,7 @@ export class ContextMenuSub extends BaseComponent<ContextMenuPassThrough> implem
 
     _visible: boolean = false;
 
-    constructor(
-        public el: ElementRef,
-        public renderer: Renderer2,
-        @Inject(forwardRef(() => ContextMenu)) public contextMenu: ContextMenu
-    ) {
+    constructor() {
         super();
 
         this.contextMenu.handleSubmenuAfterLeave = () => {
@@ -490,6 +488,8 @@ export class ContextMenuSub extends BaseComponent<ContextMenuPassThrough> implem
     providers: [ContextMenuStyle, { provide: CONTEXTMENU_INSTANCE, useExisting: ContextMenu }]
 })
 export class ContextMenu extends BaseComponent<ContextMenuPassThrough> {
+    overlayService = inject(OverlayService);
+
     componentName = 'ContextMenu';
 
     /**
@@ -666,7 +666,7 @@ export class ContextMenu extends BaseComponent<ContextMenuPassThrough> {
         return focusedItem.item && focusedItem.item?.id ? focusedItem.item.id : focusedItem.index !== -1 ? `${this.id}${isNotEmpty(focusedItem.parentKey) ? '_' + focusedItem.parentKey : ''}_${focusedItem.index}` : null;
     }
 
-    constructor(public overlayService: OverlayService) {
+    constructor() {
         super();
         effect(() => {
             const path = this.activeItemPath();

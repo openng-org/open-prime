@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, inject as inject_1 } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -204,10 +204,10 @@ class TestPositionConfirmDialogComponent {
     providers: [ConfirmationService]
 })
 class TestConfirmationServiceComponent {
+    private confirmationService = inject_1(ConfirmationService);
+
     acceptClicked = false;
     rejectClicked = false;
-
-    constructor(private confirmationService: ConfirmationService) {}
 
     confirm() {
         this.confirmationService.confirm({
@@ -1142,6 +1142,8 @@ describe('ConfirmDialog', () => {
                 `
             })
             class TestPTCase1Component {
+                private confirmationService = inject_1(ConfirmationService);
+
                 pt = {
                     pcDialog: 'DIALOG_CLASS',
                     message: 'MESSAGE_CLASS',
@@ -1149,8 +1151,6 @@ describe('ConfirmDialog', () => {
                     pcAcceptButton: 'ACCEPT_BUTTON_CLASS',
                     pcRejectButton: 'REJECT_BUTTON_CLASS'
                 };
-
-                constructor(private confirmationService: ConfirmationService) {}
 
                 confirm() {
                     this.confirmationService.confirm({
@@ -1196,6 +1196,8 @@ describe('ConfirmDialog', () => {
                 `
             })
             class TestPTCase2Component {
+                private confirmationService = inject_1(ConfirmationService);
+
                 pt = {
                     pcDialog: {
                         class: 'DIALOG_OBJECT_CLASS',
@@ -1211,8 +1213,6 @@ describe('ConfirmDialog', () => {
                         'aria-label': 'Confirmation icon'
                     }
                 };
-
-                constructor(private confirmationService: ConfirmationService) {}
 
                 confirm() {
                     this.confirmationService.confirm({
@@ -1259,6 +1259,8 @@ describe('ConfirmDialog', () => {
                 `
             })
             class TestPTCase3Component {
+                private confirmationService = inject_1(ConfirmationService);
+
                 pt = {
                     pcDialog: {
                         class: 'DIALOG_MIXED_CLASS'
@@ -1268,8 +1270,6 @@ describe('ConfirmDialog', () => {
                         class: 'ICON_MIXED_CLASS'
                     }
                 };
-
-                constructor(private confirmationService: ConfirmationService) {}
 
                 confirm() {
                     this.confirmationService.confirm({
@@ -1315,6 +1315,8 @@ describe('ConfirmDialog', () => {
                 `
             })
             class TestPTCase4Component {
+                private confirmationService = inject_1(ConfirmationService);
+
                 isVisible = false;
                 pt = {
                     pcDialog: ({ instance }: any) => {
@@ -1330,8 +1332,6 @@ describe('ConfirmDialog', () => {
                         };
                     }
                 };
-
-                constructor(private confirmationService: ConfirmationService) {}
 
                 confirm() {
                     this.confirmationService.confirm({
@@ -1376,6 +1376,8 @@ describe('ConfirmDialog', () => {
                 `
             })
             class TestPTCase5Component {
+                private confirmationService = inject_1(ConfirmationService);
+
                 clickedSection: string = '';
                 pt = {
                     message: {
@@ -1389,8 +1391,6 @@ describe('ConfirmDialog', () => {
                         }
                     }
                 };
-
-                constructor(private confirmationService: ConfirmationService) {}
 
                 confirm() {
                     this.confirmationService.confirm({
@@ -1437,7 +1437,7 @@ describe('ConfirmDialog', () => {
                 `
             })
             class TestPTCase6InlineComponent {
-                constructor(private confirmationService: ConfirmationService) {}
+                private confirmationService = inject_1(ConfirmationService);
 
                 confirm() {
                     this.confirmationService.confirm({
@@ -1457,7 +1457,7 @@ describe('ConfirmDialog', () => {
                 `
             })
             class TestPTCase6InlineObjectComponent {
-                constructor(private confirmationService: ConfirmationService) {}
+                private confirmationService = inject_1(ConfirmationService);
 
                 confirm() {
                     this.confirmationService.confirm({
@@ -1537,7 +1537,7 @@ describe('ConfirmDialog', () => {
                 `
             })
             class TestPTCase7GlobalComponent {
-                constructor(private confirmationService: ConfirmationService) {}
+                private confirmationService = inject_1(ConfirmationService);
 
                 confirm(key: string) {
                     this.confirmationService.confirm({
@@ -1589,6 +1589,8 @@ describe('ConfirmDialog', () => {
                 `
             })
             class TestPTCase8HooksComponent {
+                private confirmationService = inject_1(ConfirmationService);
+
                 afterViewInitCalled = false;
                 afterViewCheckedCalled = false;
                 onDestroyCalled = false;
@@ -1607,8 +1609,6 @@ describe('ConfirmDialog', () => {
                         }
                     }
                 };
-
-                constructor(private confirmationService: ConfirmationService) {}
 
                 confirm() {
                     this.confirmationService.confirm({

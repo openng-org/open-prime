@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, DebugElement, provideZonelessChangeDetection, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DebugElement, provideZonelessChangeDetection, signal, inject } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -600,6 +600,8 @@ class TestDynamicDataSourcesComponent {
     `
 })
 class TestComprehensiveFormComponent {
+    private fb = inject(FormBuilder);
+
     testForm: FormGroup;
     basicOptions = [
         { name: 'Form Option 1', code: 'form1' },
@@ -608,7 +610,7 @@ class TestComprehensiveFormComponent {
     ];
     ngModelValue: any = null as any;
 
-    constructor(private fb: FormBuilder) {
+    constructor() {
         this.testForm = this.fb.group({
             basicSelect: [null],
             disabledSelect: [{ value: null, disabled: true }],

@@ -93,10 +93,6 @@ export class BlockUI extends BaseComponent<BlockUIPassThrough> {
 
     _componentStyle = inject(BlockUiStyle);
 
-    constructor() {
-        super();
-    }
-
     onAfterViewInit() {
         if (this._blocked) this.block();
 

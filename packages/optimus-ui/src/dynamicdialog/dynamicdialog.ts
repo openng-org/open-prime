@@ -106,6 +106,9 @@ const DYNAMIC_DIALOG_INSTANCE = new InjectionToken<DynamicDialog>('DYNAMIC_DIALO
     hostDirectives: [Bind]
 })
 export class DynamicDialog extends BaseComponent<DialogPassThrough> {
+    ddconfig = inject(DynamicDialogConfig);
+    private dialogRef = inject(DynamicDialogRef);
+
     componentName = 'Dialog';
 
     _componentStyle = inject(DynamicDialogStyle);
@@ -255,13 +258,6 @@ export class DynamicDialog extends BaseComponent<DialogPassThrough> {
     documentResizeEndListener: any;
 
     documentEscapeListener: any;
-
-    constructor(
-        public ddconfig: DynamicDialogConfig,
-        private dialogRef: DynamicDialogRef
-    ) {
-        super();
-    }
 
     onVisibleChange(visible: boolean) {
         if (!visible) {

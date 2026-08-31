@@ -546,6 +546,9 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
     }
 })
 export class DatePicker extends BaseInput<DatePickerPassThrough> {
+    private zone = inject(NgZone);
+    overlayService = inject(OverlayService);
+
     componentName = 'DatePicker';
 
     bindDirectiveInstance = inject(Bind, { self: true });
@@ -1296,10 +1299,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         return this.currentView === 'year' ? this.getTranslation('nextDecade') : this.currentView === 'month' ? this.getTranslation('nextYear') : this.getTranslation('nextMonth');
     }
 
-    constructor(
-        private zone: NgZone,
-        public overlayService: OverlayService
-    ) {
+    constructor() {
         super();
         this.window = this.document.defaultView as Window;
     }

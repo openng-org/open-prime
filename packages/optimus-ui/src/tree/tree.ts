@@ -16,7 +16,6 @@ import {
     model,
     NgModule,
     numberAttribute,
-    Optional,
     Output,
     QueryList,
     signal,
@@ -424,7 +423,7 @@ export class UITreeNode extends BaseComponent<TreePassThrough> {
             this.node.children.push(dragNode);
         }
 
-        this.tree.dragDropService.stopDrag({
+        this.tree.dragDropService?.stopDrag({
             node: dragNode,
             subNodes,
             index: dragNodeIndex
@@ -490,7 +489,7 @@ export class UITreeNode extends BaseComponent<TreePassThrough> {
 
             setTimeout(() => document.body.removeChild(dragEl), 0);
 
-            this.tree.dragDropService.startDrag({
+            this.tree.dragDropService?.startDrag({
                 tree: this,
                 node: this.node,
                 subNodes: this.subNodes,
@@ -540,7 +539,7 @@ export class UITreeNode extends BaseComponent<TreePassThrough> {
     onNodeDragEnd(event: any) {
         event.currentTarget?.removeAttribute('data-p-dragging');
 
-        this.tree.dragDropService.stopDrag({
+        this.tree.dragDropService?.stopDrag({
             node: this.node,
             subNodes: this.subNodes,
             index: this.index
@@ -897,6 +896,8 @@ export class UITreeNode extends BaseComponent<TreePassThrough> {
     hostDirectives: [Bind]
 })
 export class Tree extends BaseComponent<TreePassThrough> implements BlockableUI {
+    dragDropService = inject(TreeDragDropService, { optional: true });
+
     componentName = 'Tree';
 
     bindDirectiveInstance = inject(Bind, { self: true });
@@ -1347,10 +1348,6 @@ export class Tree extends BaseComponent<TreePassThrough> implements BlockableUI 
         this.onDragLeave(event);
     }
 
-    constructor(@Optional() public dragDropService: TreeDragDropService) {
-        super();
-    }
-
     onInit() {
         if (this.filterBy) {
             this.filterOptions = {
@@ -1359,7 +1356,7 @@ export class Tree extends BaseComponent<TreePassThrough> implements BlockableUI 
             };
         }
         if (this.droppableNodes) {
-            this.dragStartSubscription = this.dragDropService.dragStart$.subscribe((event) => {
+            this.dragStartSubscription = this.dragDropService?.dragStart$.subscribe((event) => {
                 this.dragNodeTree = event.tree;
                 this.dragNode = event.node;
                 this.dragNodeSubNodes = event.subNodes;
@@ -1367,7 +1364,7 @@ export class Tree extends BaseComponent<TreePassThrough> implements BlockableUI 
                 this.dragNodeScope = event.scope;
             });
 
-            this.dragStopSubscription = this.dragDropService.dragStop$.subscribe((event) => {
+            this.dragStopSubscription = this.dragDropService?.dragStop$.subscribe((event) => {
                 this.dragNodeTree = null;
                 this.dragNode = null;
                 this.dragNodeSubNodes = null;
@@ -1754,7 +1751,7 @@ export class Tree extends BaseComponent<TreePassThrough> implements BlockableUI 
     processTreeDrop(dragNode: TreeNode, dragNodeIndex: number) {
         (<TreeNode<any>[]>this.dragNodeSubNodes).splice(dragNodeIndex, 1);
         (this.value as TreeNode<any>[]).push(dragNode);
-        this.dragDropService.stopDrag({
+        this.dragDropService?.stopDrag({
             node: dragNode
         });
     }

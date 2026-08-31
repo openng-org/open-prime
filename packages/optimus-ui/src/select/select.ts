@@ -438,6 +438,9 @@ export class SelectItem extends BaseComponent {
     hostDirectives: [Bind]
 })
 export class Select extends BaseInput<SelectPassThrough> implements AfterViewInit, AfterViewChecked {
+    zone = inject(NgZone);
+    filterService = inject(FilterService);
+
     componentName = 'Select';
 
     bindDirectiveInstance = inject(Bind, { self: true });
@@ -1057,10 +1060,7 @@ export class Select extends BaseInput<SelectPassThrough> implements AfterViewIni
 
     selectedOption: any;
 
-    constructor(
-        public zone: NgZone,
-        public filterService: FilterService
-    ) {
+    constructor() {
         super();
         effect(() => {
             const modelValue = this.modelValue();

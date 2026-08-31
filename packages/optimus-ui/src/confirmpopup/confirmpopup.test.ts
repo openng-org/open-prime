@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, inject as inject_1 } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -28,6 +28,8 @@ import { ConfirmPopup } from './confirmpopup';
     `
 })
 class TestBasicConfirmPopupComponent {
+    private confirmationService = inject_1(ConfirmationService);
+
     key: string | undefined;
     defaultFocus: string = 'accept';
     showTransitionOptions: string = '.12s cubic-bezier(0, 0, 0.2, 1)';
@@ -40,8 +42,6 @@ class TestBasicConfirmPopupComponent {
 
     acceptClicked = false;
     rejectClicked = false;
-
-    constructor(private confirmationService: ConfirmationService) {}
 
     confirm(event: Event) {
         this.confirmationService.confirm({
@@ -91,7 +91,7 @@ class TestBasicConfirmPopupComponent {
     `
 })
 class TestTemplatePConfirmPopupComponent {
-    constructor(private confirmationService: ConfirmationService) {}
+    private confirmationService = inject_1(ConfirmationService);
 
     confirm(event: Event) {
         this.confirmationService.confirm({
@@ -135,7 +135,7 @@ class TestTemplatePConfirmPopupComponent {
     `
 })
 class TestContentTemplateConfirmPopupComponent {
-    constructor(private confirmationService: ConfirmationService) {}
+    private confirmationService = inject_1(ConfirmationService);
 
     confirm(event: Event) {
         this.confirmationService.confirm({
@@ -158,10 +158,10 @@ class TestContentTemplateConfirmPopupComponent {
     `
 })
 class TestMultipleKeysComponent {
+    private confirmationService = inject_1(ConfirmationService);
+
     popup1Accepted = false;
     popup2Accepted = false;
-
-    constructor(private confirmationService: ConfirmationService) {}
 
     confirm1(event: Event) {
         this.confirmationService.confirm({
@@ -196,9 +196,9 @@ class TestMultipleKeysComponent {
     `
 })
 class TestFocusConfirmPopupComponent {
-    defaultFocus: string = 'accept';
+    private confirmationService = inject_1(ConfirmationService);
 
-    constructor(private confirmationService: ConfirmationService) {}
+    defaultFocus: string = 'accept';
 
     confirm(event: Event) {
         this.confirmationService.confirm({
@@ -219,7 +219,7 @@ class TestFocusConfirmPopupComponent {
     `
 })
 class TestButtonPropertiesComponent {
-    constructor(private confirmationService: ConfirmationService) {}
+    private confirmationService = inject_1(ConfirmationService);
 
     confirm(event: Event) {
         this.confirmationService.confirm({
@@ -247,7 +247,7 @@ class TestButtonPropertiesComponent {
     `
 })
 class TestPositionConfirmPopupComponent {
-    constructor(private confirmationService: ConfirmationService) {}
+    private confirmationService = inject_1(ConfirmationService);
 
     confirm(event: Event) {
         this.confirmationService.confirm({
@@ -268,7 +268,7 @@ class TestPositionConfirmPopupComponent {
     `
 })
 class TestAccessibilityConfirmPopupComponent {
-    constructor(private confirmationService: ConfirmationService) {}
+    private confirmationService = inject_1(ConfirmationService);
 
     confirm(event: Event) {
         this.confirmationService.confirm({
@@ -1449,6 +1449,8 @@ describe('ConfirmPopup', () => {
                 `
             })
             class TestPTCase1Component {
+                private confirmationService = inject_1(ConfirmationService);
+
                 pt = {
                     root: 'ROOT_CLASS',
                     content: 'CONTENT_CLASS',
@@ -1458,8 +1460,6 @@ describe('ConfirmPopup', () => {
                     pcAcceptButton: 'ACCEPT_BUTTON_CLASS',
                     pcRejectButton: 'REJECT_BUTTON_CLASS'
                 };
-
-                constructor(private confirmationService: ConfirmationService) {}
 
                 confirm(event: Event) {
                     this.confirmationService.confirm({
@@ -1510,6 +1510,8 @@ describe('ConfirmPopup', () => {
                 `
             })
             class TestPTCase2Component {
+                private confirmationService = inject_1(ConfirmationService);
+
                 pt = {
                     root: {
                         class: 'ROOT_OBJECT_CLASS',
@@ -1525,8 +1527,6 @@ describe('ConfirmPopup', () => {
                         'aria-label': 'Confirmation message'
                     }
                 };
-
-                constructor(private confirmationService: ConfirmationService) {}
 
                 confirm(event: Event) {
                     this.confirmationService.confirm({
@@ -1580,6 +1580,8 @@ describe('ConfirmPopup', () => {
                 `
             })
             class TestPTCase3Component {
+                private confirmationService = inject_1(ConfirmationService);
+
                 pt = {
                     root: {
                         class: 'ROOT_MIXED_CLASS'
@@ -1589,8 +1591,6 @@ describe('ConfirmPopup', () => {
                         class: 'MESSAGE_MIXED_CLASS'
                     }
                 };
-
-                constructor(private confirmationService: ConfirmationService) {}
 
                 confirm(event: Event) {
                     this.confirmationService.confirm({
@@ -1641,6 +1641,8 @@ describe('ConfirmPopup', () => {
                 `
             })
             class TestPTCase4Component {
+                private confirmationService = inject_1(ConfirmationService);
+
                 isVisible = false;
                 pt = {
                     root: ({ instance }: any) => {
@@ -1656,8 +1658,6 @@ describe('ConfirmPopup', () => {
                         };
                     }
                 };
-
-                constructor(private confirmationService: ConfirmationService) {}
 
                 confirm(event: Event) {
                     this.confirmationService.confirm({
@@ -1704,6 +1704,8 @@ describe('ConfirmPopup', () => {
                 `
             })
             class TestPTCase5Component {
+                private confirmationService = inject_1(ConfirmationService);
+
                 clickedSection: string = '';
                 pt = {
                     content: {
@@ -1717,8 +1719,6 @@ describe('ConfirmPopup', () => {
                         }
                     }
                 };
-
-                constructor(private confirmationService: ConfirmationService) {}
 
                 confirm(event: Event) {
                     this.confirmationService.confirm({
@@ -1766,7 +1766,7 @@ describe('ConfirmPopup', () => {
                 `
             })
             class TestPTCase6InlineComponent {
-                constructor(private confirmationService: ConfirmationService) {}
+                private confirmationService = inject_1(ConfirmationService);
 
                 confirm(event: Event) {
                     this.confirmationService.confirm({
@@ -1787,7 +1787,7 @@ describe('ConfirmPopup', () => {
                 `
             })
             class TestPTCase6InlineObjectComponent {
-                constructor(private confirmationService: ConfirmationService) {}
+                private confirmationService = inject_1(ConfirmationService);
 
                 confirm(event: Event) {
                     this.confirmationService.confirm({
@@ -1858,7 +1858,7 @@ describe('ConfirmPopup', () => {
                 `
             })
             class TestPTCase7GlobalComponent {
-                constructor(private confirmationService: ConfirmationService) {}
+                private confirmationService = inject_1(ConfirmationService);
 
                 confirm(event: Event, key: string) {
                     this.confirmationService.confirm({
@@ -1911,6 +1911,8 @@ describe('ConfirmPopup', () => {
                 `
             })
             class TestPTCase8HooksComponent {
+                private confirmationService = inject_1(ConfirmationService);
+
                 afterViewInitCalled = false;
                 afterViewCheckedCalled = false;
                 onDestroyCalled = false;
@@ -1929,8 +1931,6 @@ describe('ConfirmPopup', () => {
                         }
                     }
                 };
-
-                constructor(private confirmationService: ConfirmationService) {}
 
                 confirm(event: Event) {
                     this.confirmationService.confirm({

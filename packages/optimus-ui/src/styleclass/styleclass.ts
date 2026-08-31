@@ -1,4 +1,4 @@
-import { booleanAttribute, Directive, ElementRef, HostListener, Input, NgModule, NgZone, OnDestroy, Renderer2 } from '@angular/core';
+import { booleanAttribute, Directive, ElementRef, HostListener, Input, NgModule, NgZone, OnDestroy, Renderer2, inject } from '@angular/core';
 import { addClass, getTargetElement, hasClass, isElement, removeClass } from '@openng/optimus-ui-utils';
 import { VoidListener } from '@openng/optimus-ui/ts-helpers';
 
@@ -11,11 +11,10 @@ import { VoidListener } from '@openng/optimus-ui/ts-helpers';
     standalone: true
 })
 export class StyleClass implements OnDestroy {
-    constructor(
-        public el: ElementRef,
-        public renderer: Renderer2,
-        private zone: NgZone
-    ) {}
+    el = inject(ElementRef);
+    renderer = inject(Renderer2);
+    private zone = inject(NgZone);
+
     /**
      * Selector to define the target element. Available selectors are '@next', '@prev', '@parent' and '@grandparent'.
      * @group Props

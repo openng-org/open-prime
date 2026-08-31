@@ -221,6 +221,8 @@ export const INPUTNUMBER_VALUE_ACCESSOR: any = {
     hostDirectives: [Bind]
 })
 export class InputNumber extends BaseInput<InputNumberPassThrough> {
+    readonly injector = inject(Injector);
+
     componentName = 'InputNumber';
 
     $pcInputNumber: InputNumber | undefined = inject(INPUTNUMBER_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
@@ -495,10 +497,6 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     _index: number | any;
 
     private ngControl: NgControl | null = null;
-
-    constructor(public readonly injector: Injector) {
-        super();
-    }
 
     onChanges(simpleChange: SimpleChanges) {
         const props = ['locale', 'localeMatcher', 'mode', 'currency', 'currencyDisplay', 'useGrouping', 'minFractionDigits', 'maxFractionDigits', 'prefix', 'suffix'];

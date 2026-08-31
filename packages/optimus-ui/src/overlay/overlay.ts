@@ -77,6 +77,9 @@ const OVERLAY_INSTANCE = new InjectionToken<Overlay>('OVERLAY_INSTANCE');
     providers: [OverlayStyle, { provide: OVERLAY_INSTANCE, useExisting: Overlay }, { provide: PARENT_INSTANCE, useExisting: Overlay }]
 })
 export class Overlay extends BaseComponent {
+    overlayService = inject(OverlayService);
+    private zone = inject(NgZone);
+
     componentName = 'Overlay';
 
     $pcOverlay: Overlay | undefined = inject(OVERLAY_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
@@ -471,13 +474,6 @@ export class Overlay extends BaseComponent {
 
     get targetEl() {
         return <any>getTargetElement(this.target, this.el?.nativeElement);
-    }
-
-    constructor(
-        public overlayService: OverlayService,
-        private zone: NgZone
-    ) {
-        super();
     }
 
     onAfterContentInit() {

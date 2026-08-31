@@ -11,7 +11,6 @@ import {
     ElementRef,
     EventEmitter,
     HostListener,
-    Inject,
     inject,
     InjectionToken,
     input,
@@ -132,6 +131,13 @@ const CONFIRMPOPUP_INSTANCE = new InjectionToken<ConfirmPopup>('CONFIRMPOPUP_INS
     encapsulation: ViewEncapsulation.None
 })
 export class ConfirmPopup extends BaseComponent<ConfirmPopupPassThrough> {
+    el = inject(ElementRef);
+    private confirmationService = inject(ConfirmationService);
+    renderer = inject(Renderer2);
+    cd = inject(ChangeDetectorRef);
+    overlayService = inject(OverlayService);
+    document = inject<Document>(DOCUMENT);
+
     componentName = 'ConfirmPopup';
 
     $pcConfirmPopup: ConfirmPopup | undefined = inject(CONFIRMPOPUP_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
@@ -273,14 +279,7 @@ export class ConfirmPopup extends BaseComponent<ConfirmPopupPassThrough> {
 
     _componentStyle = inject(ConfirmPopupStyle);
 
-    constructor(
-        public el: ElementRef,
-        private confirmationService: ConfirmationService,
-        public renderer: Renderer2,
-        public cd: ChangeDetectorRef,
-        public overlayService: OverlayService,
-        @Inject(DOCUMENT) public document: Document
-    ) {
+    constructor() {
         super();
         this.window = this.document.defaultView as Window;
         this.subscription = this.confirmationService.requireConfirmation$.subscribe((confirmation) => {

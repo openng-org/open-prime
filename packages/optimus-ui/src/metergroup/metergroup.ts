@@ -221,10 +221,6 @@ export class MeterGroup extends BaseComponent<MeterGroupPassThrough> {
 
     _componentStyle = inject(MeterGroupStyle);
 
-    constructor() {
-        super();
-    }
-
     onAfterViewInit() {
         const _container = this.el.nativeElement;
         const height = getOuterHeight(_container);

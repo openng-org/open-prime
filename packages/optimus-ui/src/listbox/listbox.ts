@@ -357,6 +357,8 @@ export const LISTBOX_VALUE_ACCESSOR: any = {
     hostDirectives: [Bind]
 })
 export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
+    filterService = inject(FilterService);
+
     componentName = 'Listbox';
 
     @Input() hostName: any = '';
@@ -918,10 +920,6 @@ export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
         const options = this.group ? this.flatOptions(this._options()) : this._options() || [];
         return this._filterValue() ? this.filterService.filter(options, this.searchFields, this._filterValue(), this.filterMatchMode, this.filterLocale) : options;
     });
-
-    constructor(public filterService: FilterService) {
-        super();
-    }
 
     onInit() {
         this.id = this.id || uuid('pn_id_');

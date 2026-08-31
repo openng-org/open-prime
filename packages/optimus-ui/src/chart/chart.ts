@@ -38,6 +38,9 @@ const CHART_INSTANCE = new InjectionToken<UIChart>('CHART_INSTANCE');
     hostDirectives: [Bind]
 })
 export class UIChart extends BaseComponent<ChartPassThrough> {
+    el = inject(ElementRef);
+    private zone = inject(NgZone);
+
     componentName = 'Chart';
 
     $pcChart: UIChart | undefined = inject(CHART_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
@@ -122,13 +125,6 @@ export class UIChart extends BaseComponent<ChartPassThrough> {
     chart: any;
 
     _componentStyle = inject(ChartStyle);
-
-    constructor(
-        public el: ElementRef,
-        private zone: NgZone
-    ) {
-        super();
-    }
 
     onAfterViewInit() {
         this.initChart();

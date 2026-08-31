@@ -91,6 +91,8 @@ const COLORPICKER_INSTANCE = new InjectionToken<ColorPicker>('COLORPICKER_INSTAN
     }
 })
 export class ColorPicker extends BaseEditableHolder<ColorPickerPassThrough> implements AfterViewChecked {
+    overlayService = inject(OverlayService);
+
     componentName = 'ColorPicker';
 
     $pcColorPicker: ColorPicker | undefined = inject(COLORPICKER_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
@@ -224,10 +226,6 @@ export class ColorPicker extends BaseEditableHolder<ColorPickerPassThrough> impl
     hueHandleViewChild: Nullable<ElementRef>;
 
     _componentStyle = inject(ColorPickerStyle);
-
-    constructor(public overlayService: OverlayService) {
-        super();
-    }
 
     @ViewChild('colorSelector') set colorSelector(element: ElementRef) {
         this.colorSelectorViewChild = element;

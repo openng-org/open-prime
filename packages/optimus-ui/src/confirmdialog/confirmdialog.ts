@@ -151,6 +151,9 @@ const CONFIRMDIALOG_INSTANCE = new InjectionToken<ConfirmDialog>('CONFIRMDIALOG_
     hostDirectives: [Bind]
 })
 export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> implements OnInit, AfterContentInit, OnDestroy {
+    private confirmationService = inject(ConfirmationService);
+    zone = inject(NgZone);
+
     componentName = 'ConfirmDialog';
 
     $pcConfirmDialog: ConfirmDialog | undefined = inject(CONFIRMDIALOG_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
@@ -447,10 +450,7 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> imple
 
     translationSubscription: Subscription | undefined;
 
-    constructor(
-        private confirmationService: ConfirmationService,
-        public zone: NgZone
-    ) {
+    constructor() {
         super();
         this.subscription = this.confirmationService.requireConfirmation$.subscribe((confirmation) => {
             if (!confirmation) {

@@ -6,7 +6,7 @@ import { By } from '@angular/platform-browser';
 
 import { SharedModule, SortMeta } from '@openng/optimus-ui/api';
 import { Select } from '@openng/optimus-ui/select';
-import { Table, TableModule, TableService } from './table';
+import { CellEditor, Table, TableModule, TableService } from './table';
 
 describe('Table', () => {
     let component: Table;
@@ -1672,6 +1672,62 @@ describe('Table', () => {
 
             // Verify the editing cell has the correct data attribute
             expect(editingCell.querySelector('[data-p-cell-editing="true"]') || editingCell.getAttribute('data-p-cell-editing')).toBeTruthy();
+        });
+    });
+
+    describe('CellEditor', () => {
+        // EditableColumn/EditableRow are injected with { optional: true } (see [[table.ts]]), so a
+        // <p-cellEditor> rendered without a pEditableColumn/pEditableRow ancestor must resolve them
+        // to null, and CellEditor.editing must still return a real boolean rather than leaking
+        // null/undefined through the && / || chain.
+        @Component({
+            changeDetection: ChangeDetectionStrategy.Eager,
+            standalone: false,
+            template: `
+                <p-table [value]="products" [dataKey]="'id'">
+                    <ng-template #header>
+                        <tr>
+                            <th>Name</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template #body let-product>
+                        <tr>
+                            <td>
+                                <p-cellEditor>
+                                    <ng-template #input>
+                                        <input pInputText type="text" [(ngModel)]="product.name" />
+                                    </ng-template>
+                                    <ng-template #output>
+                                        {{ product.name }}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            `
+        })
+        class TestCellEditorWithoutEditableAncestorComponent {
+            products = [{ id: '1', name: 'Gaming Laptop' }];
+        }
+
+        it('should return a real boolean, not null/undefined, when there is no editable ancestor', async () => {
+            TestBed.resetTestingModule();
+            await TestBed.configureTestingModule({
+                imports: [TableModule, CommonModule, FormsModule],
+                declarations: [TestCellEditorWithoutEditableAncestorComponent],
+                providers: [TableService, provideZonelessChangeDetection()]
+            }).compileComponents();
+
+            const fixture = TestBed.createComponent(TestCellEditorWithoutEditableAncestorComponent);
+            await fixture.whenStable();
+            fixture.detectChanges();
+
+            const cellEditor = fixture.debugElement.query(By.directive(CellEditor)).componentInstance as CellEditor;
+
+            expect(cellEditor.editableColumn).toBeNull();
+            expect(cellEditor.editableRow).toBeNull();
+            expect(cellEditor.editing).toBe(false);
         });
     });
 });

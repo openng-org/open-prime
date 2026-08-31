@@ -129,6 +129,8 @@ export const CASCADESELECT_VALUE_ACCESSOR: any = {
     providers: [CascadeSelectStyle, { provide: PARENT_INSTANCE, useExisting: CascadeSelectSub }]
 })
 export class CascadeSelectSub extends BaseComponent {
+    cascadeselect = inject(CascadeSelect);
+
     @Input() selectId: string | undefined;
 
     @Input() activeOptionPath: any[];
@@ -164,10 +166,6 @@ export class CascadeSelectSub extends BaseComponent {
     @Output() onFocusEnterChange: EventEmitter<any> = new EventEmitter();
 
     _componentStyle = inject(CascadeSelectStyle);
-
-    constructor(public cascadeselect: CascadeSelect) {
-        super();
-    }
 
     getPTOptions(processedOption: any, index: number, key: string) {
         return this.ptm(key, {
@@ -406,6 +404,8 @@ export class CascadeSelectSub extends BaseComponent {
     hostDirectives: [Bind]
 })
 export class CascadeSelect extends BaseEditableHolder<CascadeSelectPassThrough> {
+    overlayService = inject(OverlayService);
+
     componentName = 'CascadeSelect';
 
     $pcCascadeSelect: CascadeSelect | undefined = inject(CASCADESELECT_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
@@ -1446,7 +1446,7 @@ export class CascadeSelect extends BaseEditableHolder<CascadeSelectPassThrough> 
         return grouped ? this.getOptionGroupLabel(processedOption.option) : this.getOptionLabel(processedOption.option);
     }
 
-    constructor(public overlayService: OverlayService) {
+    constructor() {
         super();
         effect(() => {
             const activeOptionPath = this.activeOptionPath();

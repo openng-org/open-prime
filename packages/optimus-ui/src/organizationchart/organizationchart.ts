@@ -8,8 +8,6 @@ import {
     ContentChildren,
     ElementRef,
     EventEmitter,
-    forwardRef,
-    Inject,
     inject,
     InjectionToken,
     Input,
@@ -104,6 +102,8 @@ const ORGANIZATIONCHART_INSTANCE = new InjectionToken<OrganizationChart>('ORGANI
     providers: [OrganizationChartStyle, { provide: PARENT_INSTANCE, useExisting: OrganizationChartNode }]
 })
 export class OrganizationChartNode extends BaseComponent {
+    cd = inject(ChangeDetectorRef);
+
     @Input() node: TreeNode<any> | undefined;
 
     @Input({ transform: booleanAttribute }) root: boolean | undefined;
@@ -120,10 +120,9 @@ export class OrganizationChartNode extends BaseComponent {
 
     _componentStyle = inject(OrganizationChartStyle);
 
-    constructor(
-        @Inject(forwardRef(() => OrganizationChart)) chart: OrganizationChart,
-        public cd: ChangeDetectorRef
-    ) {
+    constructor() {
+        const chart = inject(OrganizationChart);
+
         super();
         this.chart = chart as OrganizationChart;
         this.subscription = this.chart.selectionSource$.subscribe(() => {
@@ -210,6 +209,9 @@ export class OrganizationChartNode extends BaseComponent {
     hostDirectives: [Bind]
 })
 export class OrganizationChart extends BaseComponent<OrganizationChartPassThrough> {
+    el = inject(ElementRef);
+    cd = inject(ChangeDetectorRef);
+
     componentName = 'OrganizationChart';
 
     /**
@@ -303,13 +305,6 @@ export class OrganizationChart extends BaseComponent<OrganizationChartPassThroug
     bindDirectiveInstance = inject(Bind, { self: true });
 
     $pcOrganizationChart: OrganizationChart | undefined = inject(ORGANIZATIONCHART_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
-
-    constructor(
-        public el: ElementRef,
-        public cd: ChangeDetectorRef
-    ) {
-        super();
-    }
 
     ngAfterViewChecked(): void {
         this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));

@@ -159,6 +159,9 @@ import { CarouselStyle } from './style/carouselstyle';
     }
 })
 export class Carousel extends BaseComponent {
+    el = inject(ElementRef);
+    zone = inject(NgZone);
+
     componentName = 'Carousel';
 
     bindDirectiveInstance = inject(Bind, { self: true });
@@ -428,10 +431,7 @@ export class Carousel extends BaseComponent {
 
     _componentStyle = inject(CarouselStyle);
 
-    constructor(
-        public el: ElementRef,
-        public zone: NgZone
-    ) {
+    constructor() {
         super();
         this.totalShiftedItems = this.page * this.numScroll * -1;
         this.window = this.document.defaultView as Window;

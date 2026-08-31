@@ -149,6 +149,8 @@ const DOCK_INSTANCE = new InjectionToken<Dock>('DOCK_INSTANCE');
     hostDirectives: [Bind]
 })
 export class Dock extends BaseComponent<DockPassThrough> {
+    cd = inject(ChangeDetectorRef);
+
     componentName = 'Dock';
 
     /**
@@ -229,7 +231,7 @@ export class Dock extends BaseComponent<DockPassThrough> {
         return this.focusedOptionIndex !== -1 && this.focusedOptionIndex !== '-1' ? String(this.focusedOptionIndex) : null;
     }
 
-    constructor(public cd: ChangeDetectorRef) {
+    constructor() {
         super();
         this.currentIndex = -3;
     }

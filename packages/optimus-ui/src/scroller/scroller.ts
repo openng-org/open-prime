@@ -99,6 +99,8 @@ const SCROLLER_INSTANCE = new InjectionToken<Scroller>('SCROLLER_INSTANCE');
     hostDirectives: [Bind]
 })
 export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
+    private zone = inject(NgZone);
+
     componentName = 'VirtualScroller';
 
     bindDirectiveInstance = inject(Bind, { self: true });
@@ -573,10 +575,6 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
     }
 
     _componentStyle = inject(ScrollerStyle);
-
-    constructor(private zone: NgZone) {
-        super();
-    }
 
     onInit() {
         this.setInitialState();

@@ -69,6 +69,8 @@ type Meter = {
     hostDirectives: [Bind]
 })
 export class PasswordDirective extends BaseEditableHolder {
+    zone = inject(NgZone);
+
     bindDirectiveInstance = inject(Bind, { self: true });
 
     $pcPasswordDirective: PasswordDirective | undefined = inject(PASSWORD_DIRECTIVE_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
@@ -168,7 +170,7 @@ export class PasswordDirective extends BaseEditableHolder {
 
     _componentStyle = inject(PasswordStyle);
 
-    constructor(public zone: NgZone) {
+    constructor() {
         super();
 
         effect(() => {

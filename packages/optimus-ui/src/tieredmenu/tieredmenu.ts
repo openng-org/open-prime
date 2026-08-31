@@ -10,7 +10,6 @@ import {
     ElementRef,
     EventEmitter,
     forwardRef,
-    Inject,
     inject,
     InjectionToken,
     Input,
@@ -251,6 +250,10 @@ const TIEREDMENUSUB_INSTANCE = new InjectionToken<TieredMenuSub>('TIEREDMENUSUB_
     hostDirectives: [Bind]
 })
 export class TieredMenuSub extends BaseComponent<TieredMenuPassThrough> {
+    el = inject(ElementRef);
+    renderer = inject(Renderer2);
+    tieredMenu = inject(TieredMenu);
+
     @Input() get visible(): boolean {
         return this._visible;
     }
@@ -320,14 +323,6 @@ export class TieredMenuSub extends BaseComponent<TieredMenuPassThrough> {
 
     onAfterViewChecked(): void {
         this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
-    }
-
-    constructor(
-        public el: ElementRef,
-        public renderer: Renderer2,
-        @Inject(forwardRef(() => TieredMenu)) public tieredMenu: TieredMenu
-    ) {
-        super();
     }
 
     positionSubmenu(sublist) {
@@ -490,6 +485,8 @@ export class TieredMenuSub extends BaseComponent<TieredMenuPassThrough> {
     hostDirectives: [Bind]
 })
 export class TieredMenu extends BaseComponent<TieredMenuPassThrough> {
+    overlayService = inject(OverlayService);
+
     componentName = 'TieredMenu';
 
     /**
@@ -690,7 +687,7 @@ export class TieredMenu extends BaseComponent<TieredMenuPassThrough> {
         return focusedItemInfo.item?.id ? focusedItemInfo.item.id : focusedItemInfo.index !== -1 ? `${this.id}${isNotEmpty(focusedItemInfo.parentKey) ? '_' + focusedItemInfo.parentKey : ''}_${focusedItemInfo.index}` : null;
     }
 
-    constructor(public overlayService: OverlayService) {
+    constructor() {
         super();
         effect(() => {
             const path = this.activeItemPath();

@@ -338,6 +338,9 @@ export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
     hostDirectives: [Bind]
 })
 export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
+    overlayService = inject(OverlayService);
+    private zone = inject(NgZone);
+
     componentName = 'AutoComplete';
 
     $pcAutoComplete: AutoComplete | undefined = inject(AUTOCOMPLETE_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
@@ -969,13 +972,6 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
 
     chipItemClass(index) {
         return this._componentStyle.classes.chipItem({ instance: this, i: index });
-    }
-
-    constructor(
-        public overlayService: OverlayService,
-        private zone: NgZone
-    ) {
-        super();
     }
 
     onInit() {

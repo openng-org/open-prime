@@ -494,6 +494,10 @@ export class MultiSelectItem extends BaseComponent {
     }
 })
 export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
+    private zone = inject(NgZone);
+    filterService = inject(FilterService);
+    overlayService = inject(OverlayService);
+
     componentName = 'MultiSelect';
 
     /**
@@ -1313,11 +1317,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         return isNotEmpty(this.maxSelectedLabels) && this.modelValue() && this.modelValue()?.length > (this.maxSelectedLabels || 0) ? this.modelValue()?.slice(0, this.maxSelectedLabels) : this.modelValue();
     });
 
-    constructor(
-        private zone: NgZone,
-        public filterService: FilterService,
-        public overlayService: OverlayService
-    ) {
+    constructor() {
         super();
         effect(() => {
             const modelValue = this.modelValue();
