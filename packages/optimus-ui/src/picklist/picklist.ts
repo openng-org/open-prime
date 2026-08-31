@@ -800,10 +800,6 @@ export class PickList extends BaseComponent {
 
     readonly listViewTargetChild = viewChild.required<Listbox>('targetlist');
 
-    readonly sourceFilterViewChild = viewChild<Nullable<ElementRef>>('sourceFilter');
-
-    readonly targetFilterViewChild = viewChild<Nullable<ElementRef>>('targetFilter');
-
     getButtonProps(direction: string) {
         switch (direction) {
             case 'moveup':
@@ -1717,15 +1713,13 @@ export class PickList extends BaseComponent {
     resetSourceFilter() {
         this.visibleOptionsSource = null;
         this.filterValueSource = null;
-        const sourceFilterViewChild = this.sourceFilterViewChild();
-        sourceFilterViewChild && ((<HTMLInputElement>sourceFilterViewChild.nativeElement).value = '');
+        this.listViewSourceChild().resetFilter();
     }
 
     resetTargetFilter() {
         this.visibleOptionsTarget = null;
         this.filterValueTarget = null;
-        const targetFilterViewChild = this.targetFilterViewChild();
-        targetFilterViewChild && ((<HTMLInputElement>targetFilterViewChild.nativeElement).value = '');
+        this.listViewTargetChild().resetFilter();
     }
 
     resetFilter() {

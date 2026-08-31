@@ -19,6 +19,7 @@ import { PickList } from './picklist';
 
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { SharedModule } from '@openng/optimus-ui/api';
+import { Listbox } from '@openng/optimus-ui/listbox';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -1908,15 +1909,118 @@ describe('PickList Signal Query API', () => {
         await fixture.whenStable();
         const instance = fixture.debugElement.query(By.directive(PickList)).componentInstance;
 
-        for (const hook of ['sourceFilterTemplate','targetFilterTemplate','emptyMessageSourceTemplate','emptyFilterMessageSourceTemplate','emptyMessageTargetTemplate','emptyFilterMessageTargetTemplate','moveUpIconTemplate','moveTopIconTemplate','moveDownIconTemplate','moveBottomIconTemplate','moveToTargetIconTemplate','moveAllToTargetIconTemplate','moveToSourceIconTemplate','moveAllToSourceIconTemplate','targetFilterIconTemplate','sourceFilterIconTemplate']) {
+        for (const hook of [
+            'sourceFilterTemplate',
+            'targetFilterTemplate',
+            'emptyMessageSourceTemplate',
+            'emptyFilterMessageSourceTemplate',
+            'emptyMessageTargetTemplate',
+            'emptyFilterMessageTargetTemplate',
+            'moveUpIconTemplate',
+            'moveTopIconTemplate',
+            'moveDownIconTemplate',
+            'moveBottomIconTemplate',
+            'moveToTargetIconTemplate',
+            'moveAllToTargetIconTemplate',
+            'moveToSourceIconTemplate',
+            'moveAllToSourceIconTemplate',
+            'targetFilterIconTemplate',
+            'sourceFilterIconTemplate'
+        ]) {
             expect((instance as any)[hook](), `${hook} should resolve`).toBeDefined();
         }
         expect(instance.listViewSourceChild()).toBeDefined();
         expect(instance.listViewTargetChild()).toBeDefined();
-        // #sourceFilter / #targetFilter elements no longer exist in the PickList template
-        // (filtering is delegated to the inner listboxes), so these queries never resolve
-        expect(instance.sourceFilterViewChild()).toBeUndefined();
-        expect(instance.targetFilterViewChild()).toBeUndefined();
         expect(instance.templates().some((t: any) => t.getType() === 'item')).toBe(true);
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Filter reset behavior (resetSourceFilter/resetTargetFilter delegate to the
+// embedded listboxes, clearing both their filter state and the visible input)
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [PickList, SharedModule],
+    template: ` <p-picklist [source]="src" [target]="tgt" filterBy="name"></p-picklist> `
+})
+class PickListFilterResetHostComponent {
+    src = [{ name: 'apple' }, { name: 'banana' }];
+    tgt = [{ name: 'cherry' }, { name: 'date' }];
+}
+
+describe('PickList filter reset', () => {
+    async function setup() {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [PickListFilterResetHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(PickListFilterResetHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const pickList = fixture.debugElement.query(By.directive(PickList)).componentInstance;
+        const [sourceListbox, targetListbox] = fixture.debugElement.queryAll(By.directive(Listbox)).map((de) => de.componentInstance);
+        return { fixture, pickList, sourceListbox, targetListbox };
+    }
+
+    async function typeIntoFilter(fixture: any, listbox: any, text: string) {
+        const input = listbox.filterViewChild()!.nativeElement as HTMLInputElement;
+        input.value = text;
+        input.dispatchEvent(new Event('input'));
+        fixture.detectChanges();
+        await fixture.whenStable();
+        return input;
+    }
+
+    it('should clear the source listbox filter input and state on resetSourceFilter', async () => {
+        const { fixture, pickList, sourceListbox } = await setup();
+
+        const input = await typeIntoFilter(fixture, sourceListbox, 'apple');
+        expect(sourceListbox._filterValue()).toBe('apple');
+        expect(sourceListbox.visibleOptions().length).toBe(1);
+
+        pickList.resetSourceFilter();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(input.value).toBe('');
+        expect(sourceListbox._filterValue()).toBeNull();
+        expect(sourceListbox.visibleOptions().length).toBe(2);
+        expect(pickList.filterValueSource).toBeNull();
+    });
+
+    it('should clear the target listbox filter input and state on resetTargetFilter', async () => {
+        const { fixture, pickList, targetListbox } = await setup();
+
+        const input = await typeIntoFilter(fixture, targetListbox, 'cherry');
+        expect(targetListbox._filterValue()).toBe('cherry');
+        expect(targetListbox.visibleOptions().length).toBe(1);
+
+        pickList.resetTargetFilter();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(input.value).toBe('');
+        expect(targetListbox._filterValue()).toBeNull();
+        expect(targetListbox.visibleOptions().length).toBe(2);
+        expect(pickList.filterValueTarget).toBeNull();
+    });
+
+    it('should clear both filters on resetFilter', async () => {
+        const { fixture, pickList, sourceListbox, targetListbox } = await setup();
+
+        const sourceInput = await typeIntoFilter(fixture, sourceListbox, 'apple');
+        const targetInput = await typeIntoFilter(fixture, targetListbox, 'date');
+
+        pickList.resetFilter();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(sourceInput.value).toBe('');
+        expect(targetInput.value).toBe('');
+        expect(sourceListbox.visibleOptions().length).toBe(2);
+        expect(targetListbox.visibleOptions().length).toBe(2);
     });
 });

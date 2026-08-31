@@ -702,7 +702,7 @@ export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
 
     readonly headerCheckboxViewChild = viewChild<Nullable<ElementRef>>('headerchkbox');
 
-    readonly filterViewChild = viewChild<Nullable<ElementRef>>('filter');
+    readonly filterViewChild = viewChild<Nullable<ElementRef>>('filterInput');
 
     readonly lastHiddenFocusableElement = viewChild.required<ElementRef>('lastHiddenFocusableElement');
 
