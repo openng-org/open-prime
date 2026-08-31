@@ -1052,8 +1052,10 @@ describe('Slider', () => {
 
         it('should handle focus on slider handles', () => {
             component.range = true;
-            component.sliderHandleStart = { nativeElement: { focus: vi.fn() } } as any;
-            component.sliderHandleEnd = { nativeElement: { focus: vi.fn() } } as any;
+            const mockStartHandle = { nativeElement: { focus: vi.fn() } };
+            const mockEndHandle = { nativeElement: { focus: vi.fn() } };
+            (component as any).sliderHandleStart = () => mockStartHandle as any;
+            (component as any).sliderHandleEnd = () => mockEndHandle as any;
             component.values = [20, 80];
             component.handleIndex = 0;
 

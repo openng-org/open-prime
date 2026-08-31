@@ -1454,8 +1454,8 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
 
         const newValueNumber = this.validateValue(this.parseValue(this.input().nativeElement.value));
         const newValueString: any = newValueNumber?.toString();
-        input.nativeElement.value = this.formatValue(newValueString);
-        input.nativeElement.setAttribute('aria-valuenow', newValueString);
+        this.input().nativeElement.value = this.formatValue(newValueString);
+        this.input().nativeElement.setAttribute('aria-valuenow', newValueString);
         this.updateModel(event, newValueNumber);
         this.onModelTouched();
         this.onBlur.emit(event);

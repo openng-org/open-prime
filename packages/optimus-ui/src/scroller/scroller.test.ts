@@ -1761,7 +1761,7 @@ describe('Scroller', () => {
         });
 
         it('should handle resize without element', async () => {
-            scroller.elementViewChild = null as any;
+            (scroller as any).elementViewChild = () => null as any;
             expect(() => scroller.onWindowResize()).not.toThrow();
         });
 

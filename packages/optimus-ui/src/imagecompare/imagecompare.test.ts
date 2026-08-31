@@ -390,7 +390,7 @@ describe('ImageCompare', () => {
                 }
             };
 
-            imageCompareInstance.templates = mockTemplates as any;
+            (imageCompareInstance as any).templates = () => mockTemplates as any;
             imageCompareInstance.ngAfterContentInit();
 
             expect(imageCompareInstance._leftTemplate).toBe(mockLeftTemplate);

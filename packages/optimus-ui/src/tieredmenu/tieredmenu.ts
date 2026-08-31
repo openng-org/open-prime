@@ -306,7 +306,7 @@ export class TieredMenuSub extends BaseComponent<TieredMenuPassThrough> {
 
     @Output() menuKeydown: EventEmitter<any> = new EventEmitter();
 
-    readonly sublistViewChild = viewChild.required<ElementRef>('sublist');
+    readonly sublistViewChild = viewChild<ElementRef>('sublist');
 
     render = signal<boolean>(false);
 

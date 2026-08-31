@@ -87,7 +87,7 @@ describe('ToggleSwitch', () => {
 
         it('should handle onClick correctly', () => {
             // Mock the input element to prevent errors
-            component.input = { nativeElement: { focus: vi.fn() } } as any;
+            (component as any).input = () => ({ nativeElement: { focus: vi.fn() } }) as any;
 
             const mockEvent = new Event('click');
             vi.spyOn(component.onChange, 'emit').mockImplementation(() => {});
@@ -108,7 +108,7 @@ describe('ToggleSwitch', () => {
 
         it('should handle onClick when checked', () => {
             // Mock the input element to prevent errors
-            component.input = { nativeElement: { focus: vi.fn() } } as any;
+            (component as any).input = () => ({ nativeElement: { focus: vi.fn() } }) as any;
 
             const mockEvent = new Event('click');
             vi.spyOn(component.onChange, 'emit').mockImplementation(() => {});
@@ -348,13 +348,13 @@ describe('ToggleSwitch', () => {
         it('should focus input element after click', () => {
             const toggleSwitch = testFixture.debugElement.query(By.css('p-toggleswitch')).componentInstance;
 
-            if (toggleSwitch && toggleSwitch.input) {
-                vi.spyOn(toggleSwitch.input.nativeElement, 'focus').mockImplementation(() => {});
+            if (toggleSwitch && toggleSwitch.input()) {
+                vi.spyOn(toggleSwitch.input().nativeElement, 'focus').mockImplementation(() => {});
 
                 const mockEvent = new Event('click');
                 toggleSwitch.onClick(mockEvent);
 
-                expect(toggleSwitch.input.nativeElement.focus).toHaveBeenCalled();
+                expect(toggleSwitch.input().nativeElement.focus).toHaveBeenCalled();
             } else {
                 expect(toggleSwitch).toBeTruthy();
             }
@@ -508,7 +508,7 @@ describe('ToggleSwitch', () => {
         });
 
         it('should handle rapid clicks', async () => {
-            component.input = { nativeElement: { focus: vi.fn() } } as any;
+            (component as any).input = () => ({ nativeElement: { focus: vi.fn() } }) as any;
 
             const mockEvent = new Event('click');
             let changeCount = 0;
@@ -527,7 +527,7 @@ describe('ToggleSwitch', () => {
         });
 
         it('should maintain state consistency after multiple operations', () => {
-            component.input = { nativeElement: { focus: vi.fn() } } as any;
+            (component as any).input = () => ({ nativeElement: { focus: vi.fn() } }) as any;
 
             const mockEvent = new Event('click');
 

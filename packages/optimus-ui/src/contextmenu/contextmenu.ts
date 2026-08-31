@@ -311,7 +311,7 @@ export class ContextMenuSub extends BaseComponent<ContextMenuPassThrough> implem
 
     @Output() menuKeydown: EventEmitter<any> = new EventEmitter();
 
-    readonly sublistViewChild = viewChild.required<ElementRef>('sublist');
+    readonly sublistViewChild = viewChild<ElementRef>('sublist');
 
     render = signal<boolean>(false);
 

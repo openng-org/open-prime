@@ -242,7 +242,7 @@ describe('InputMask', () => {
     describe('Public Methods', () => {
         beforeEach(() => {
             component.mask = '999-99-9999';
-            component.inputViewChild = {
+            const mockInputElement = {
                 nativeElement: {
                     value: '',
                     focus: vi.fn(),
@@ -252,7 +252,8 @@ describe('InputMask', () => {
                     offsetParent: {},
                     ownerDocument: { activeElement: {} }
                 }
-            } as any;
+            };
+            (component as any).inputViewChild = () => mockInputElement as any;
             fixture.detectChanges();
         });
 
@@ -419,7 +420,7 @@ describe('InputMask', () => {
     describe('Keyboard Input Processing', () => {
         beforeEach(() => {
             component.mask = '999-99-9999';
-            component.inputViewChild = {
+            const mockInputElement = {
                 nativeElement: {
                     value: '',
                     focus: vi.fn(),
@@ -430,7 +431,8 @@ describe('InputMask', () => {
                     ownerDocument: { activeElement: {} },
                     dispatchEvent: vi.fn()
                 }
-            } as any;
+            };
+            (component as any).inputViewChild = () => mockInputElement as any;
             fixture.detectChanges();
         });
 
@@ -660,12 +662,13 @@ describe('InputMask', () => {
         });
 
         it('should handle caret positioning when input is not focused', () => {
-            component.inputViewChild = {
+            const mockInputElement1 = {
                 nativeElement: {
                     offsetParent: null,
                     ownerDocument: { activeElement: null }
                 }
-            } as any;
+            };
+            (component as any).inputViewChild = () => mockInputElement1 as any;
 
             const result = component.caret(0, 5);
             expect(result).toBeUndefined();
@@ -673,11 +676,12 @@ describe('InputMask', () => {
 
         it('should handle android chrome specific behavior', () => {
             component.androidChrome = true;
-            component.inputViewChild = {
+            const mockInputElement2 = {
                 nativeElement: {
                     value: '123'
                 }
-            } as any;
+            };
+            (component as any).inputViewChild = () => mockInputElement2 as any;
 
             vi.spyOn(component, 'handleAndroidInput').mockImplementation(() => {});
             vi.spyOn(component, 'handleInputChange').mockImplementation(() => {});
@@ -721,11 +725,12 @@ describe('InputMask', () => {
         it('should handle autoClear behavior on blur', () => {
             component.mask = '999-99-9999';
             component.autoClear = true;
-            component.inputViewChild = {
+            const mockInputElement3 = {
                 nativeElement: {
                     value: '12_-__-____'
                 }
-            } as any;
+            };
+            (component as any).inputViewChild = () => mockInputElement3 as any;
             fixture.detectChanges();
 
             vi.spyOn(component, 'clearBuffer').mockImplementation(() => {});
@@ -738,11 +743,12 @@ describe('InputMask', () => {
 
         it('should handle writeControlValue correctly', () => {
             component.mask = '999-99-9999';
-            component.inputViewChild = {
+            const mockInputElement4 = {
                 nativeElement: {
                     value: ''
                 }
-            } as any;
+            };
+            (component as any).inputViewChild = () => mockInputElement4 as any;
             fixture.detectChanges();
 
             vi.spyOn(component, 'checkVal').mockImplementation((() => {}) as any);
@@ -757,11 +763,12 @@ describe('InputMask', () => {
 
         it('should handle null value in writeControlValue', () => {
             component.mask = '999-99-9999';
-            component.inputViewChild = {
+            const mockInputElement5 = {
                 nativeElement: {
                     value: 'test'
                 }
-            } as any;
+            };
+            (component as any).inputViewChild = () => mockInputElement5 as any;
             fixture.detectChanges();
 
             const mockSetValue = vi.fn();
@@ -838,7 +845,7 @@ describe('InputMask', () => {
     describe('Complex Mask Patterns', () => {
         it('should handle phone number mask correctly', async () => {
             component.mask = '(999) 999-9999';
-            component.inputViewChild = {
+            const mockInputElement6 = {
                 nativeElement: {
                     value: '',
                     focus: vi.fn(),
@@ -848,7 +855,8 @@ describe('InputMask', () => {
                     offsetParent: {},
                     ownerDocument: { activeElement: {} }
                 }
-            } as any;
+            };
+            (component as any).inputViewChild = () => mockInputElement6 as any;
             fixture.detectChanges();
 
             expect(component.defaultBuffer).toBe('(___) ___-____');

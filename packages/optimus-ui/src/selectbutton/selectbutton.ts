@@ -14,7 +14,6 @@ import {
     NgModule,
     numberAttribute,
     Output,
-    QueryList,
     TemplateRef,
     ViewEncapsulation,
     contentChild,
@@ -319,7 +318,7 @@ export class SelectButton extends BaseEditableHolder<SelectButtonPassThrough> im
     readonly templates = contentChildren(PrimeTemplate);
 
     onAfterContentInit() {
-        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'item':
                     this._itemTemplate = item.template;

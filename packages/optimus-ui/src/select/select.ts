@@ -18,7 +18,6 @@ import {
     NgZone,
     numberAttribute,
     Output,
-    QueryList,
     Signal,
     signal,
     TemplateRef,
@@ -1117,7 +1116,7 @@ export class Select extends BaseInput<SelectPassThrough> implements AfterViewIni
     }
 
     onAfterContentInit() {
-        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'item':
                     this._itemTemplate = item.template;

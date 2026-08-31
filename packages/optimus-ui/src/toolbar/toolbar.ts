@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, InjectionToken, Input, NgModule, QueryList, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, InjectionToken, Input, NgModule, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
 import { BlockableUI, PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
 import { Bind, BindModule } from '@openng/optimus-ui/bind';
@@ -98,7 +98,7 @@ export class Toolbar extends BaseComponent<ToolbarPassThrough> implements Blocka
     _centerTemplate: TemplateRef<void> | undefined;
 
     onAfterContentInit() {
-        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'start':
                 case 'left':

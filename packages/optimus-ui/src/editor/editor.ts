@@ -238,7 +238,7 @@ export class Editor extends BaseEditableHolder<EditorPassThrough> {
         this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'header':
-                    this.headerTemplate = item.template;
+                    this._headerTemplate = item.template;
                     break;
             }
         });

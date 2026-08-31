@@ -833,7 +833,7 @@ describe('Button', () => {
                 expect(() => buttonInstance.ngAfterContentInit()).not.toThrow();
 
                 // Test that contentTemplate property exists (ContentChild)
-                expect(buttonInstance.contentTemplate).toBeDefined();
+                expect(buttonInstance.contentTemplate()).toBeDefined();
 
                 // Verify content container is rendered
                 const buttonElement = contentTemplateFixture.debugElement.query(By.css('button'));
@@ -849,8 +849,8 @@ describe('Button', () => {
                 const buttonInstance = contentTemplateFixture.debugElement.query(By.directive(Button)).componentInstance;
 
                 // @ContentChild('content') should set contentTemplate
-                expect(buttonInstance.contentTemplate).toBeDefined();
-                expect(buttonInstance.contentTemplate?.constructor.name).toBe('TemplateRef');
+                expect(buttonInstance.contentTemplate()).toBeDefined();
+                expect(buttonInstance.contentTemplate()?.constructor.name).toBe('TemplateRef');
             });
 
             it("should process loadingIconTemplate from @ContentChild('loadingicon')", async () => {
@@ -858,7 +858,7 @@ describe('Button', () => {
                 const buttonInstance = fixture.debugElement.query(By.directive(Button)).componentInstance;
 
                 // loadingIconTemplate should be undefined when not provided
-                expect(buttonInstance.loadingIconTemplate).toBeUndefined();
+                expect(buttonInstance.loadingIconTemplate()).toBeUndefined();
             });
 
             it("should process iconTemplate from @ContentChild('icon')", async () => {
@@ -866,7 +866,7 @@ describe('Button', () => {
                 const buttonInstance = fixture.debugElement.query(By.directive(Button)).componentInstance;
 
                 // iconTemplate should be undefined when not provided
-                expect(buttonInstance.iconTemplate).toBeUndefined();
+                expect(buttonInstance.iconTemplate()).toBeUndefined();
             });
         });
 
@@ -892,7 +892,7 @@ describe('Button', () => {
                 await fixture.whenStable();
 
                 const contentTemplateButton = contentTemplateFixture.debugElement.query(By.directive(Button)).componentInstance;
-                expect(contentTemplateButton.contentTemplate).toBeDefined();
+                expect(contentTemplateButton.contentTemplate()).toBeDefined();
             });
 
             it('should use default templates when custom ones are not provided', () => {

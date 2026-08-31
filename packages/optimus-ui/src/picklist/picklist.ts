@@ -13,7 +13,6 @@ import {
     NgModule,
     numberAttribute,
     Output,
-    QueryList,
     TemplateRef,
     ViewEncapsulation,
     viewChild,
@@ -949,19 +948,19 @@ export class PickList extends BaseComponent {
      * @see {@link PickListItemTemplateContext}
      * @group Templates
      */
-    readonly itemTemplate = contentChild.required<TemplateRef<PickListItemTemplateContext>>('item', { descendants: false });
+    readonly itemTemplate = contentChild<TemplateRef<PickListItemTemplateContext>>('item', { descendants: false });
 
     /**
      * Custom source header template.
      * @group Templates
      */
-    readonly sourceHeaderTemplate = contentChild.required<TemplateRef<void>>('sourceHeader', { descendants: false });
+    readonly sourceHeaderTemplate = contentChild<TemplateRef<void>>('sourceHeader', { descendants: false });
 
     /**
      * Custom target header template.
      * @group Templates
      */
-    readonly targetHeaderTemplate = contentChild.required<TemplateRef<void>>('targetHeader', { descendants: false });
+    readonly targetHeaderTemplate = contentChild<TemplateRef<void>>('targetHeader', { descendants: false });
 
     /**
      * Custom source filter template.
@@ -969,7 +968,7 @@ export class PickList extends BaseComponent {
      * @see {@link PickListFilterTemplateContext}
      * @group Templates
      */
-    readonly sourceFilterTemplate = contentChild.required<TemplateRef<PickListFilterTemplateContext>>('sourceFilter', { descendants: false });
+    readonly sourceFilterTemplate = contentChild<TemplateRef<PickListFilterTemplateContext>>('sourceFilter', { descendants: false });
 
     /**
      * Custom target filter template.
@@ -977,55 +976,55 @@ export class PickList extends BaseComponent {
      * @see {@link PickListFilterTemplateContext}
      * @group Templates
      */
-    readonly targetFilterTemplate = contentChild.required<TemplateRef<PickListFilterTemplateContext>>('targetFilter', { descendants: false });
+    readonly targetFilterTemplate = contentChild<TemplateRef<PickListFilterTemplateContext>>('targetFilter', { descendants: false });
 
     /**
      * Custom empty message when source is empty template.
      * @group Templates
      */
-    readonly emptyMessageSourceTemplate = contentChild.required<TemplateRef<void>>('emptymessagesource', { descendants: false });
+    readonly emptyMessageSourceTemplate = contentChild<TemplateRef<void>>('emptymessagesource', { descendants: false });
 
     /**
      * Custom empty filter message when source is empty template.
      * @group Templates
      */
-    readonly emptyFilterMessageSourceTemplate = contentChild.required<TemplateRef<void>>('emptyfiltermessagesource', { descendants: false });
+    readonly emptyFilterMessageSourceTemplate = contentChild<TemplateRef<void>>('emptyfiltermessagesource', { descendants: false });
 
     /**
      * Custom empty message when target is empty template.
      * @group Templates
      */
-    readonly emptyMessageTargetTemplate = contentChild.required<TemplateRef<void>>('emptymessagetarget', { descendants: false });
+    readonly emptyMessageTargetTemplate = contentChild<TemplateRef<void>>('emptymessagetarget', { descendants: false });
 
     /**
      * Custom empty filter message when target is empty template.
      * @group Templates
      */
-    readonly emptyFilterMessageTargetTemplate = contentChild.required<TemplateRef<void>>('emptyfiltermessagetarget', { descendants: false });
+    readonly emptyFilterMessageTargetTemplate = contentChild<TemplateRef<void>>('emptyfiltermessagetarget', { descendants: false });
 
     /**
      * Custom move up icon template.
      * @group Templates
      */
-    readonly moveUpIconTemplate = contentChild.required<TemplateRef<void>>('moveupicon', { descendants: false });
+    readonly moveUpIconTemplate = contentChild<TemplateRef<void>>('moveupicon', { descendants: false });
 
     /**
      * Custom move top icon template.
      * @group Templates
      */
-    readonly moveTopIconTemplate = contentChild.required<TemplateRef<void>>('movetopicon', { descendants: false });
+    readonly moveTopIconTemplate = contentChild<TemplateRef<void>>('movetopicon', { descendants: false });
 
     /**
      * Custom move down icon template.
      * @group Templates
      */
-    readonly moveDownIconTemplate = contentChild.required<TemplateRef<void>>('movedownicon', { descendants: false });
+    readonly moveDownIconTemplate = contentChild<TemplateRef<void>>('movedownicon', { descendants: false });
 
     /**
      * Custom move bottom icon template.
      * @group Templates
      */
-    readonly moveBottomIconTemplate = contentChild.required<TemplateRef<void>>('movebottomicon', { descendants: false });
+    readonly moveBottomIconTemplate = contentChild<TemplateRef<void>>('movebottomicon', { descendants: false });
 
     /**
      * Custom move to target icon template.
@@ -1033,7 +1032,7 @@ export class PickList extends BaseComponent {
      * @see {@link PickListTransferIconTemplateContext}
      * @group Templates
      */
-    readonly moveToTargetIconTemplate = contentChild.required<TemplateRef<PickListTransferIconTemplateContext>>('movetotargeticon', { descendants: false });
+    readonly moveToTargetIconTemplate = contentChild<TemplateRef<PickListTransferIconTemplateContext>>('movetotargeticon', { descendants: false });
 
     /**
      * Custom move all to target icon template.
@@ -1041,7 +1040,7 @@ export class PickList extends BaseComponent {
      * @see {@link PickListTransferIconTemplateContext}
      * @group Templates
      */
-    readonly moveAllToTargetIconTemplate = contentChild.required<TemplateRef<PickListTransferIconTemplateContext>>('movealltotargeticon', { descendants: false });
+    readonly moveAllToTargetIconTemplate = contentChild<TemplateRef<PickListTransferIconTemplateContext>>('movealltotargeticon', { descendants: false });
 
     /**
      * Custom move to source icon template.
@@ -1049,7 +1048,7 @@ export class PickList extends BaseComponent {
      * @see {@link PickListTransferIconTemplateContext}
      * @group Templates
      */
-    readonly moveToSourceIconTemplate = contentChild.required<TemplateRef<PickListTransferIconTemplateContext>>('movetosourceicon', { descendants: false });
+    readonly moveToSourceIconTemplate = contentChild<TemplateRef<PickListTransferIconTemplateContext>>('movetosourceicon', { descendants: false });
 
     /**
      * Custom move all to source icon template.
@@ -1057,19 +1056,19 @@ export class PickList extends BaseComponent {
      * @see {@link PickListTransferIconTemplateContext}
      * @group Templates
      */
-    readonly moveAllToSourceIconTemplate = contentChild.required<TemplateRef<PickListTransferIconTemplateContext>>('movealltosourceicon', { descendants: false });
+    readonly moveAllToSourceIconTemplate = contentChild<TemplateRef<PickListTransferIconTemplateContext>>('movealltosourceicon', { descendants: false });
 
     /**
      * Custom target filter icon template.
      * @group Templates
      */
-    readonly targetFilterIconTemplate = contentChild.required<TemplateRef<void>>('targetfiltericon', { descendants: false });
+    readonly targetFilterIconTemplate = contentChild<TemplateRef<void>>('targetfiltericon', { descendants: false });
 
     /**
      * Custom source filter icon template.
      * @group Templates
      */
-    readonly sourceFilterIconTemplate = contentChild.required<TemplateRef<void>>('sourcefiltericon', { descendants: false });
+    readonly sourceFilterIconTemplate = contentChild<TemplateRef<void>>('sourcefiltericon', { descendants: false });
 
     readonly templates = contentChildren(PrimeTemplate);
 
@@ -1112,7 +1111,7 @@ export class PickList extends BaseComponent {
     _sourceFilterIconTemplate: TemplateRef<void> | undefined;
 
     onAfterContentInit() {
-        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'item':
                     this._itemTemplate = item.template;
@@ -1718,12 +1717,14 @@ export class PickList extends BaseComponent {
     resetSourceFilter() {
         this.visibleOptionsSource = null;
         this.filterValueSource = null;
+        const sourceFilterViewChild = this.sourceFilterViewChild();
         sourceFilterViewChild && ((<HTMLInputElement>sourceFilterViewChild.nativeElement).value = '');
     }
 
     resetTargetFilter() {
         this.visibleOptionsTarget = null;
         this.filterValueTarget = null;
+        const targetFilterViewChild = this.targetFilterViewChild();
         targetFilterViewChild && ((<HTMLInputElement>targetFilterViewChild.nativeElement).value = '');
     }
 

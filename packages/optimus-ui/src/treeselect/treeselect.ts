@@ -14,7 +14,6 @@ import {
     Input,
     NgModule,
     Output,
-    QueryList,
     TemplateRef,
     ViewEncapsulation,
     viewChild,
@@ -692,11 +691,11 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
     }
 
     onAfterContentInit() {
-        if ((this.templates() as QueryList<PrimeTemplate>).length) {
+        if (this.templates().length) {
             this.templateMap = {};
         }
 
-        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'value':
                     this._valueTemplate = item.template;
@@ -748,7 +747,7 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
 
                 default: //TODO: @deprecated Use "value" template instead
                     if (item.name) this.templateMap[item.name] = item.template;
-                    else this.valueTemplate = item.template;
+                    else this._valueTemplate = item.template;
                     break;
             }
         });
@@ -856,6 +855,7 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
 
     onFilterInput(event: Event) {
         this.filterValue = (event.target as HTMLInputElement).value;
+        const treeViewChild = this.treeViewChild();
         treeViewChild?._filter(this.filterValue);
         this.onFilter.emit({
             filter: this.filterValue,

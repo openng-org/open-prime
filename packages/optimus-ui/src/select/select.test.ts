@@ -2693,8 +2693,8 @@ describe('Select ViewChild Properties', () => {
         const itemsContainer = viewChildFixture.debugElement.query(By.css('[role="listbox"]'));
         expect(itemsContainer).toBeTruthy();
 
-        if (selectInstance.itemsViewChild) {
-            expect(selectInstance.itemsViewChild.nativeElement).toBeTruthy();
+        if (selectInstance.itemsViewChild()) {
+            expect(selectInstance.itemsViewChild().nativeElement).toBeTruthy();
         }
     });
 
@@ -2728,11 +2728,11 @@ describe('Select ViewChild Properties', () => {
         expect(hiddenElements.length).toBeGreaterThanOrEqual(2);
 
         // First and last hidden focusable elements should be available
-        if (selectInstance.firstHiddenFocusableElementOnOverlay) {
-            expect(selectInstance.firstHiddenFocusableElementOnOverlay.nativeElement).toBeTruthy();
+        if (selectInstance.firstHiddenFocusableElementOnOverlay()) {
+            expect(selectInstance.firstHiddenFocusableElementOnOverlay().nativeElement).toBeTruthy();
         }
-        if (selectInstance.lastHiddenFocusableElementOnOverlay) {
-            expect(selectInstance.lastHiddenFocusableElementOnOverlay.nativeElement).toBeTruthy();
+        if (selectInstance.lastHiddenFocusableElementOnOverlay()) {
+            expect(selectInstance.lastHiddenFocusableElementOnOverlay().nativeElement).toBeTruthy();
         }
     });
 });

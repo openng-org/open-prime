@@ -638,7 +638,7 @@ describe('ConfirmPopup', () => {
                 expect(() => confirmPopupInstance.ngAfterContentInit()).not.toThrow();
 
                 // Test that contentTemplate property exists (ContentChild)
-                expect(confirmPopupInstance.contentTemplate).toBeDefined();
+                expect(confirmPopupInstance.contentTemplate()).toBeDefined();
             });
 
             it("should process contentTemplate from @ContentChild('content')", async () => {
@@ -649,8 +649,8 @@ describe('ConfirmPopup', () => {
                 const confirmPopupInstance = contentTemplateFixture.debugElement.query(By.directive(ConfirmPopup)).componentInstance;
 
                 // @ContentChild('content') should set contentTemplate
-                expect(confirmPopupInstance.contentTemplate).toBeDefined();
-                expect(confirmPopupInstance.contentTemplate?.constructor.name).toBe('TemplateRef');
+                expect(confirmPopupInstance.contentTemplate()).toBeDefined();
+                expect(confirmPopupInstance.contentTemplate()?.constructor.name).toBe('TemplateRef');
             });
 
             it("should process acceptIconTemplate from @ContentChild('accepticon')", async () => {
@@ -661,8 +661,8 @@ describe('ConfirmPopup', () => {
                 const confirmPopupInstance = contentTemplateFixture.debugElement.query(By.directive(ConfirmPopup)).componentInstance;
 
                 // @ContentChild('accepticon') should set acceptIconTemplate
-                expect(confirmPopupInstance.acceptIconTemplate).toBeDefined();
-                expect(confirmPopupInstance.acceptIconTemplate?.constructor.name).toBe('TemplateRef');
+                expect(confirmPopupInstance.acceptIconTemplate()).toBeDefined();
+                expect(confirmPopupInstance.acceptIconTemplate()?.constructor.name).toBe('TemplateRef');
             });
 
             it("should process rejectIconTemplate from @ContentChild('rejecticon')", async () => {
@@ -673,8 +673,8 @@ describe('ConfirmPopup', () => {
                 const confirmPopupInstance = contentTemplateFixture.debugElement.query(By.directive(ConfirmPopup)).componentInstance;
 
                 // @ContentChild('rejecticon') should set rejectIconTemplate
-                expect(confirmPopupInstance.rejectIconTemplate).toBeDefined();
-                expect(confirmPopupInstance.rejectIconTemplate?.constructor.name).toBe('TemplateRef');
+                expect(confirmPopupInstance.rejectIconTemplate()).toBeDefined();
+                expect(confirmPopupInstance.rejectIconTemplate()?.constructor.name).toBe('TemplateRef');
             });
 
             it("should process headlessTemplate from @ContentChild('headless')", async () => {
@@ -685,8 +685,8 @@ describe('ConfirmPopup', () => {
                 const confirmPopupInstance = contentTemplateFixture.debugElement.query(By.directive(ConfirmPopup)).componentInstance;
 
                 // @ContentChild('headless') should set headlessTemplate
-                expect(confirmPopupInstance.headlessTemplate).toBeDefined();
-                expect(confirmPopupInstance.headlessTemplate?.constructor.name).toBe('TemplateRef');
+                expect(confirmPopupInstance.headlessTemplate()).toBeDefined();
+                expect(confirmPopupInstance.headlessTemplate()?.constructor.name).toBe('TemplateRef');
             });
         });
 
@@ -709,7 +709,7 @@ describe('ConfirmPopup', () => {
                 await new Promise((resolve) => setTimeout(resolve, 100));
 
                 const contentTemplateConfirmPopup = contentTemplateFixture.debugElement.query(By.directive(ConfirmPopup)).componentInstance;
-                expect(contentTemplateConfirmPopup.contentTemplate).toBeDefined();
+                expect(contentTemplateConfirmPopup.contentTemplate()).toBeDefined();
             });
 
             it('should use default templates when custom ones are not provided', () => {

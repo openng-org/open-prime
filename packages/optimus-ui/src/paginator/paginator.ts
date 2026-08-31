@@ -17,7 +17,6 @@ import {
     OnChanges,
     OnInit,
     Output,
-    QueryList,
     SimpleChanges,
     TemplateRef,
     ViewEncapsulation,
@@ -401,7 +400,7 @@ export class Paginator extends BaseComponent<PaginatorPassThrough> {
     }
 
     onAfterContentInit(): void {
-        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'dropdownicon':
                     this._dropdownIconTemplate = item.template;

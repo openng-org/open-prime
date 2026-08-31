@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, inject, InjectionToken, Input, NgModule, NgZone, numberAttribute, QueryList, TemplateRef, ViewEncapsulation, viewChild, contentChild, contentChildren } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, InjectionToken, Input, NgModule, NgZone, numberAttribute, TemplateRef, ViewEncapsulation, viewChild, contentChild, contentChildren } from '@angular/core';
 import { addClass, getHeight, removeClass, uuid } from '@openng/optimus-ui-utils';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
@@ -175,7 +175,7 @@ export class ScrollPanel extends BaseComponent<ScrollPanelPassThrough> {
     }
 
     onAfterContentInit() {
-        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'content':
                     this._contentTemplate = item.template;
@@ -324,6 +324,7 @@ export class ScrollPanel extends BaseComponent<ScrollPanelPassThrough> {
     }
 
     repeat(bar, step) {
+        const contentViewChild = this.contentViewChild();
         contentViewChild?.nativeElement && (contentViewChild.nativeElement[bar] += step);
         this.moveBar();
     }
@@ -371,6 +372,7 @@ export class ScrollPanel extends BaseComponent<ScrollPanelPassThrough> {
 
     onYBarMouseDown(e: MouseEvent) {
         this.isYBarClicked = true;
+        const yBarViewChild = this.yBarViewChild();
         yBarViewChild?.nativeElement?.focus();
         this.lastPageY = e.pageY;
 
@@ -385,6 +387,7 @@ export class ScrollPanel extends BaseComponent<ScrollPanelPassThrough> {
 
     onXBarMouseDown(e: MouseEvent) {
         this.isXBarClicked = true;
+        const xBarViewChild = this.xBarViewChild();
         xBarViewChild?.nativeElement?.focus();
         this.lastPageX = e.pageX;
 
@@ -452,8 +455,10 @@ export class ScrollPanel extends BaseComponent<ScrollPanelPassThrough> {
     }
 
     onDocumentMouseUp(e: Event) {
+        const yBarViewChild = this.yBarViewChild();
         yBarViewChild?.nativeElement?.setAttribute('data-p-scrollpanel-grabbed', 'false');
         !this.$unstyled() && removeClass((yBarViewChild as ElementRef).nativeElement, 'p-scrollpanel-grabbed');
+        const xBarViewChild = this.xBarViewChild();
         xBarViewChild?.nativeElement?.setAttribute('data-p-scrollpanel-grabbed', 'false');
         !this.$unstyled() && removeClass((xBarViewChild as ElementRef).nativeElement, 'p-scrollpanel-grabbed');
         this.document.body.setAttribute('data-p-scrollpanel-grabbed', 'false');

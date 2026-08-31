@@ -15,7 +15,6 @@ import {
     NgModule,
     numberAttribute,
     Output,
-    QueryList,
     signal,
     SimpleChanges,
     TemplateRef,
@@ -1257,11 +1256,11 @@ export class Tree extends BaseComponent<TreePassThrough> implements BlockableUI 
     _filterTemplate: TemplateRef<TreeFilterTemplateContext> | undefined;
 
     onAfterContentInit() {
-        if ((this.templates() as QueryList<PrimeTemplate>).length) {
+        if (this.templates().length) {
             this._templateMap = {};
         }
 
-        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'header':
                     this._headerTemplate = item.template;

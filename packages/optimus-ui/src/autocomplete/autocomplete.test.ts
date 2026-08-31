@@ -994,11 +994,11 @@ describe('AutoComplete', () => {
                 { getType: () => 'group', template: {} }
             ];
 
-            autocompleteInstance.templates = {
+            autocompleteInstance.templates = (() => ({
                 forEach: (callback: (template: any) => void) => {
                     mockTemplates.forEach(callback);
                 }
-            } as any;
+            })) as any;
 
             autocompleteInstance.ngAfterContentInit();
 

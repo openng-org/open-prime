@@ -12,7 +12,6 @@ import {
     Input,
     NgModule,
     Output,
-    QueryList,
     TemplateRef,
     ViewEncapsulation,
     contentChild,
@@ -370,7 +369,7 @@ export class Panel extends BaseComponent<PanelPassThrough> implements BlockableU
     readonly templates = contentChildren(PrimeTemplate);
 
     onAfterContentInit() {
-        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'header':
                     this._headerTemplate = item.template;

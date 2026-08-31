@@ -11,7 +11,6 @@ import {
     Input,
     NgModule,
     Output,
-    QueryList,
     TemplateRef,
     ViewEncapsulation,
     contentChildren,
@@ -315,11 +314,11 @@ export class OrganizationChart extends BaseComponent<OrganizationChartPassThroug
     }
 
     onAfterContentInit() {
-        if ((this.templates() as QueryList<PrimeTemplate>).length) {
+        if (this.templates().length) {
             this.templateMap = {};
         }
 
-        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
+        this.templates().forEach((item) => {
             if (item.getType() === 'togglericon') {
                 this._togglerIconTemplate = item.template;
             } else {

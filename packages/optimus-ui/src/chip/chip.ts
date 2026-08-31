@@ -10,7 +10,6 @@ import {
     Input,
     NgModule,
     Output,
-    QueryList,
     SimpleChanges,
     TemplateRef,
     ViewEncapsulation,
@@ -182,7 +181,7 @@ export class Chip extends BaseComponent<ChipPassThrough> {
     _removeIconTemplate: TemplateRef<void> | undefined;
 
     onAfterContentInit() {
-        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'removeicon':
                     this._removeIconTemplate = item.template;

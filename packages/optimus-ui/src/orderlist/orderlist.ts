@@ -12,7 +12,6 @@ import {
     NgModule,
     numberAttribute,
     Output,
-    QueryList,
     TemplateRef,
     ViewEncapsulation,
     viewChild,
@@ -566,7 +565,7 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
     _filterIconTemplate: TemplateRef<void> | undefined;
 
     onAfterContentInit() {
-        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'item':
                     this._itemTemplate = item.template;
@@ -646,6 +645,7 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
      */
     public resetFilter() {
         this.filterValue = '';
+        const filterViewChild = this.filterViewChild();
         filterViewChild && ((<HTMLInputElement>filterViewChild.nativeElement).value = '');
     }
 

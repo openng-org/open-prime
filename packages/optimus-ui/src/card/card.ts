@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, InjectionToken, Input, NgModule, QueryList, signal, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, InjectionToken, Input, NgModule, signal, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
 import { equals } from '@openng/optimus-ui-utils';
 import { BlockableUI, Footer, Header, PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
@@ -165,7 +165,7 @@ export class Card extends BaseComponent<CardPassThrough> implements BlockableUI 
     readonly templates = contentChildren(PrimeTemplate);
 
     onAfterContentInit() {
-        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'header':
                     this._headerTemplate = item.template;

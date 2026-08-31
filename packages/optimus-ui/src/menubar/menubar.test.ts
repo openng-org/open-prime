@@ -628,11 +628,12 @@ describe('Menubar', () => {
             menubarInstance.focusedItemInfo.set({ index: 0, level: 0, parentKey: '', item: null });
 
             // Mock the rootmenu property to prevent undefined errors
-            menubarInstance.rootmenu = {
-                el: {
-                    nativeElement: document.createElement('ul')
-                }
-            } as any;
+            (menubarInstance as any).rootmenu = () =>
+                ({
+                    el: {
+                        nativeElement: document.createElement('ul')
+                    }
+                }) as any;
         });
 
         it('should handle arrow right key', () => {

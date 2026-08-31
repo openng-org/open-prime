@@ -18,7 +18,6 @@ import {
     NgZone,
     numberAttribute,
     Output,
-    QueryList,
     signal,
     SimpleChanges,
     TemplateRef,
@@ -1050,100 +1049,100 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     filteredValue: any[] | undefined | null;
 
     // @todo will be refactored later
-    readonly _headerTemplate = contentChild.required<TemplateRef<any>>('header', { descendants: false });
+    readonly _headerTemplate = contentChild<TemplateRef<any>>('header', { descendants: false });
     headerTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _headerGroupedTemplate = contentChild.required<TemplateRef<any>>('headergrouped', { descendants: false });
+    readonly _headerGroupedTemplate = contentChild<TemplateRef<any>>('headergrouped', { descendants: false });
     headerGroupedTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _bodyTemplate = contentChild.required<TemplateRef<any>>('body', { descendants: false });
+    readonly _bodyTemplate = contentChild<TemplateRef<any>>('body', { descendants: false });
     bodyTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _loadingBodyTemplate = contentChild.required<TemplateRef<any>>('loadingbody', { descendants: false });
+    readonly _loadingBodyTemplate = contentChild<TemplateRef<any>>('loadingbody', { descendants: false });
     loadingBodyTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _captionTemplate = contentChild.required<TemplateRef<any>>('caption', { descendants: false });
+    readonly _captionTemplate = contentChild<TemplateRef<any>>('caption', { descendants: false });
     captionTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _footerTemplate = contentChild.required<TemplateRef<any>>('footer', { descendants: false });
+    readonly _footerTemplate = contentChild<TemplateRef<any>>('footer', { descendants: false });
     footerTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _footerGroupedTemplate = contentChild.required<TemplateRef<any>>('footergrouped', { descendants: false });
+    readonly _footerGroupedTemplate = contentChild<TemplateRef<any>>('footergrouped', { descendants: false });
     footerGroupedTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _summaryTemplate = contentChild.required<TemplateRef<any>>('summary', { descendants: false });
+    readonly _summaryTemplate = contentChild<TemplateRef<any>>('summary', { descendants: false });
     summaryTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _colGroupTemplate = contentChild.required<TemplateRef<any>>('colgroup', { descendants: false });
+    readonly _colGroupTemplate = contentChild<TemplateRef<any>>('colgroup', { descendants: false });
     colGroupTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _expandedRowTemplate = contentChild.required<TemplateRef<any>>('expandedrow', { descendants: false });
+    readonly _expandedRowTemplate = contentChild<TemplateRef<any>>('expandedrow', { descendants: false });
     expandedRowTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _groupHeaderTemplate = contentChild.required<TemplateRef<any>>('groupheader', { descendants: false });
+    readonly _groupHeaderTemplate = contentChild<TemplateRef<any>>('groupheader', { descendants: false });
     groupHeaderTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _groupFooterTemplate = contentChild.required<TemplateRef<any>>('groupfooter', { descendants: false });
+    readonly _groupFooterTemplate = contentChild<TemplateRef<any>>('groupfooter', { descendants: false });
     groupFooterTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _frozenExpandedRowTemplate = contentChild.required<TemplateRef<any>>('frozenexpandedrow', { descendants: false });
+    readonly _frozenExpandedRowTemplate = contentChild<TemplateRef<any>>('frozenexpandedrow', { descendants: false });
     frozenExpandedRowTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _frozenHeaderTemplate = contentChild.required<TemplateRef<any>>('frozenheader', { descendants: false });
+    readonly _frozenHeaderTemplate = contentChild<TemplateRef<any>>('frozenheader', { descendants: false });
     frozenHeaderTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _frozenBodyTemplate = contentChild.required<TemplateRef<any>>('frozenbody', { descendants: false });
+    readonly _frozenBodyTemplate = contentChild<TemplateRef<any>>('frozenbody', { descendants: false });
     frozenBodyTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _frozenFooterTemplate = contentChild.required<TemplateRef<any>>('frozenfooter', { descendants: false });
+    readonly _frozenFooterTemplate = contentChild<TemplateRef<any>>('frozenfooter', { descendants: false });
     frozenFooterTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _frozenColGroupTemplate = contentChild.required<TemplateRef<any>>('frozencolgroup', { descendants: false });
+    readonly _frozenColGroupTemplate = contentChild<TemplateRef<any>>('frozencolgroup', { descendants: false });
     frozenColGroupTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _emptyMessageTemplate = contentChild.required<TemplateRef<any>>('emptymessage', { descendants: false });
+    readonly _emptyMessageTemplate = contentChild<TemplateRef<any>>('emptymessage', { descendants: false });
     emptyMessageTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _paginatorLeftTemplate = contentChild.required<TemplateRef<any>>('paginatorleft', { descendants: false });
+    readonly _paginatorLeftTemplate = contentChild<TemplateRef<any>>('paginatorleft', { descendants: false });
     paginatorLeftTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _paginatorRightTemplate = contentChild.required<TemplateRef<any>>('paginatorright', { descendants: false });
+    readonly _paginatorRightTemplate = contentChild<TemplateRef<any>>('paginatorright', { descendants: false });
     paginatorRightTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _paginatorDropdownItemTemplate = contentChild.required<TemplateRef<any>>('paginatordropdownitem', { descendants: false });
+    readonly _paginatorDropdownItemTemplate = contentChild<TemplateRef<any>>('paginatordropdownitem', { descendants: false });
     paginatorDropdownItemTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _loadingIconTemplate = contentChild.required<TemplateRef<any>>('loadingicon', { descendants: false });
+    readonly _loadingIconTemplate = contentChild<TemplateRef<any>>('loadingicon', { descendants: false });
     loadingIconTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _reorderIndicatorUpIconTemplate = contentChild.required<TemplateRef<any>>('reorderindicatorupicon', { descendants: false });
+    readonly _reorderIndicatorUpIconTemplate = contentChild<TemplateRef<any>>('reorderindicatorupicon', { descendants: false });
     reorderIndicatorUpIconTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _reorderIndicatorDownIconTemplate = contentChild.required<TemplateRef<any>>('reorderindicatordownicon', { descendants: false });
+    readonly _reorderIndicatorDownIconTemplate = contentChild<TemplateRef<any>>('reorderindicatordownicon', { descendants: false });
     reorderIndicatorDownIconTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _sortIconTemplate = contentChild.required<TemplateRef<any>>('sorticon', { descendants: false });
+    readonly _sortIconTemplate = contentChild<TemplateRef<any>>('sorticon', { descendants: false });
     sortIconTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _checkboxIconTemplate = contentChild.required<TemplateRef<any>>('checkboxicon', { descendants: false });
+    readonly _checkboxIconTemplate = contentChild<TemplateRef<any>>('checkboxicon', { descendants: false });
     checkboxIconTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _headerCheckboxIconTemplate = contentChild.required<TemplateRef<any>>('headercheckboxicon', { descendants: false });
+    readonly _headerCheckboxIconTemplate = contentChild<TemplateRef<any>>('headercheckboxicon', { descendants: false });
     headerCheckboxIconTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _paginatorDropdownIconTemplate = contentChild.required<TemplateRef<any>>('paginatordropdownicon', { descendants: false });
+    readonly _paginatorDropdownIconTemplate = contentChild<TemplateRef<any>>('paginatordropdownicon', { descendants: false });
     paginatorDropdownIconTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _paginatorFirstPageLinkIconTemplate = contentChild.required<TemplateRef<any>>('paginatorfirstpagelinkicon', { descendants: false });
+    readonly _paginatorFirstPageLinkIconTemplate = contentChild<TemplateRef<any>>('paginatorfirstpagelinkicon', { descendants: false });
     paginatorFirstPageLinkIconTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _paginatorLastPageLinkIconTemplate = contentChild.required<TemplateRef<any>>('paginatorlastpagelinkicon', { descendants: false });
+    readonly _paginatorLastPageLinkIconTemplate = contentChild<TemplateRef<any>>('paginatorlastpagelinkicon', { descendants: false });
     paginatorLastPageLinkIconTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _paginatorPreviousPageLinkIconTemplate = contentChild.required<TemplateRef<any>>('paginatorpreviouspagelinkicon', { descendants: false });
+    readonly _paginatorPreviousPageLinkIconTemplate = contentChild<TemplateRef<any>>('paginatorpreviouspagelinkicon', { descendants: false });
     paginatorPreviousPageLinkIconTemplate: Nullable<TemplateRef<any>>;
 
-    readonly _paginatorNextPageLinkIconTemplate = contentChild.required<TemplateRef<any>>('paginatornextpagelinkicon', { descendants: false });
+    readonly _paginatorNextPageLinkIconTemplate = contentChild<TemplateRef<any>>('paginatornextpagelinkicon', { descendants: false });
     paginatorNextPageLinkIconTemplate: Nullable<TemplateRef<any>>;
 
     selectionKeys: any = {};
@@ -1259,7 +1258,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     }
 
     onAfterContentInit() {
-        (this._templates() as QueryList<PrimeTemplate>).forEach((item) => {
+        this._templates().forEach((item) => {
             switch (item.getType()) {
                 case 'caption':
                     this.captionTemplate = item.template;
@@ -2524,6 +2523,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
      * @group Method
      */
     public scrollToVirtualIndex(index: number) {
+        const scroller = this.scroller();
         scroller && scroller.scrollToIndex(index);
     }
     /**
@@ -4978,16 +4978,16 @@ export class CellEditor extends BaseComponent {
 
     readonly _templates = contentChildren(PrimeTemplate);
 
-    readonly _inputTemplate = contentChild.required<TemplateRef<any>>('input');
+    readonly _inputTemplate = contentChild<TemplateRef<any>>('input');
 
-    readonly _outputTemplate = contentChild.required<TemplateRef<any>>('output');
+    readonly _outputTemplate = contentChild<TemplateRef<any>>('output');
 
     inputTemplate: Nullable<TemplateRef<any>>;
 
     outputTemplate: Nullable<TemplateRef<any>>;
 
     onAfterContentInit() {
-        (this._templates() as QueryList<PrimeTemplate>).forEach((item) => {
+        this._templates().forEach((item) => {
             switch (item.getType()) {
                 case 'input':
                     this.inputTemplate = item.template;
@@ -5860,44 +5860,44 @@ export class ColumnFilter extends BaseComponent {
      * Custom header template.
      * @group Templates
      */
-    readonly headerTemplate = contentChild.required<TemplateRef<any>>('header', { descendants: false });
+    readonly headerTemplate = contentChild<TemplateRef<any>>('header', { descendants: false });
     _headerTemplate: Nullable<TemplateRef<any>>;
 
     /**
      * Custom filter template.
      * @group Templates
      */
-    readonly filterTemplate = contentChild.required<TemplateRef<any>>('filter', { descendants: false });
+    readonly filterTemplate = contentChild<TemplateRef<any>>('filter', { descendants: false });
     _filterTemplate: Nullable<TemplateRef<any>>;
 
     /**
      * Custom footer template.
      * @group Templates
      */
-    readonly footerTemplate = contentChild.required<TemplateRef<any>>('footer', { descendants: false });
+    readonly footerTemplate = contentChild<TemplateRef<any>>('footer', { descendants: false });
     _footerTemplate: Nullable<TemplateRef<any>>;
     /**
      * Custom filter icon template.
      * @group Templates
      */
-    readonly filterIconTemplate = contentChild.required<TemplateRef<any>>('filtericon', { descendants: false });
+    readonly filterIconTemplate = contentChild<TemplateRef<any>>('filtericon', { descendants: false });
     _filterIconTemplate: Nullable<TemplateRef<any>>;
 
     /**
      * Custom remove rule button icon template.
      * @group Templates
      */
-    readonly removeRuleIconTemplate = contentChild.required<TemplateRef<any>>('removeruleicon', { descendants: false });
+    readonly removeRuleIconTemplate = contentChild<TemplateRef<any>>('removeruleicon', { descendants: false });
     _removeRuleIconTemplate: Nullable<TemplateRef<any>>;
 
     /**
      * Custom add rule button icon template.
      * @group Templates
      */
-    readonly addRuleIconTemplate = contentChild.required<TemplateRef<any>>('addruleicon', { descendants: false });
+    readonly addRuleIconTemplate = contentChild<TemplateRef<any>>('addruleicon', { descendants: false });
     _addRuleIconTemplate: Nullable<TemplateRef<any>>;
 
-    readonly clearFilterIconTemplate = contentChild.required<TemplateRef<any>>('clearfiltericon', { descendants: false });
+    readonly clearFilterIconTemplate = contentChild<TemplateRef<any>>('clearfiltericon', { descendants: false });
     _clearFilterIconTemplate: Nullable<TemplateRef<any>>;
 
     operatorOptions: any[] | undefined;
@@ -6028,7 +6028,7 @@ export class ColumnFilter extends BaseComponent {
     }
 
     onAfterContentInit() {
-        (this._templates() as QueryList<PrimeTemplate>).forEach((item) => {
+        this._templates().forEach((item) => {
             switch (item.getType()) {
                 case 'header':
                     this._headerTemplate = item.template;

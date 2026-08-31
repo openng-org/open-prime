@@ -943,7 +943,7 @@ describe('Password', () => {
 
                 // Templates should be available for context binding
                 if (passwordComponent.templates) {
-                    passwordComponent.templates.forEach((template: any) => {
+                    passwordComponent.templates().forEach((template: any) => {
                         expect(template).toBeTruthy();
                     });
                 }

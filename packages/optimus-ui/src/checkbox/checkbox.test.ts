@@ -497,11 +497,11 @@ describe('Checkbox', () => {
         });
 
         it('should focus programmatically', async () => {
-            vi.spyOn(checkboxInstance.inputViewChild.nativeElement, 'focus').mockImplementation(() => {});
+            vi.spyOn(checkboxInstance.inputViewChild().nativeElement, 'focus').mockImplementation(() => {});
 
             checkboxInstance.focus();
 
-            expect(checkboxInstance.inputViewChild.nativeElement.focus).toHaveBeenCalled();
+            expect(checkboxInstance.inputViewChild().nativeElement.focus).toHaveBeenCalled();
         });
 
         it('should update model programmatically', async () => {

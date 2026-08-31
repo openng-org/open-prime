@@ -968,7 +968,7 @@ describe('Carousel', () => {
             });
 
             it('should apply string class to header', () => {
-                carouselInstance.headerTemplate = {} as any;
+                (carouselInstance as any).headerFacet = () => ({}) as any;
                 fixture.componentRef.setInput('pt', { header: 'HEADER_CLASS' });
                 fixture.detectChanges();
 
@@ -979,7 +979,7 @@ describe('Carousel', () => {
             });
 
             it('should apply string class to footer', () => {
-                carouselInstance.footerTemplate = {} as any;
+                (carouselInstance as any).footerFacet = () => ({}) as any;
                 fixture.componentRef.setInput('pt', { footer: 'FOOTER_CLASS' });
                 fixture.detectChanges();
 
@@ -1115,7 +1115,7 @@ describe('Carousel', () => {
             });
 
             it('should apply mixed PT values', () => {
-                carouselInstance.headerTemplate = {} as any;
+                (carouselInstance as any).headerFacet = () => ({}) as any;
                 fixture.componentRef.setInput('pt', {
                     root: {
                         class: 'ROOT_MIXED_CLASS'

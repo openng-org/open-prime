@@ -17,7 +17,6 @@ import {
     NgZone,
     numberAttribute,
     Output,
-    QueryList,
     signal,
     TemplateRef,
     ViewEncapsulation,
@@ -982,7 +981,7 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
     readonly templates = contentChildren(PrimeTemplate);
 
     onAfterContentInit() {
-        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'item':
                     this._itemTemplate = item.template;
@@ -1542,6 +1541,7 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
                 if (inputValue && !this.isSelected(inputValue)) {
                     this.updateModel([...(this.modelValue() || []), inputValue]);
                     this.onAdd.emit({ originalEvent: event, value: inputValue });
+                    const inputEL = this.inputEL();
                     inputEL?.nativeElement && (inputEL.nativeElement.value = '');
                 }
             }
@@ -1639,6 +1639,7 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
 
     onOptionSelect(event, option, isHide = true) {
         if (this.multiple) {
+            const inputEL = this.inputEL();
             inputEL?.nativeElement && (inputEL.nativeElement.value = '');
 
             if (!this.isSelected(option)) {
@@ -1803,6 +1804,7 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
 
     clear() {
         this.updateModel(null);
+        const inputEL = this.inputEL();
         inputEL?.nativeElement && (inputEL.nativeElement.value = '');
         this.onClear.emit();
     }

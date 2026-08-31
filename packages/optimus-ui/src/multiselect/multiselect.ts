@@ -16,7 +16,6 @@ import {
     NgZone,
     numberAttribute,
     Output,
-    QueryList,
     Signal,
     signal,
     TemplateRef,
@@ -1123,7 +1122,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     }
 
     onAfterContentInit() {
-        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'item':
                     this._itemTemplate = item.template;

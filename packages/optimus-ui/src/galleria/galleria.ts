@@ -753,7 +753,7 @@ export class GalleriaContent extends BaseComponent<GalleriaPassThrough> {
 export class GalleriaItemSlot extends BaseComponent<GalleriaPassThrough> {
     hostName: string = 'Galleria';
 
-    @Input() templates: QueryList<PrimeTemplate> | undefined;
+    @Input() templates: readonly PrimeTemplate[] | undefined;
 
     @Input({ transform: numberAttribute }) index: number | undefined;
 
@@ -782,7 +782,7 @@ export class GalleriaItemSlot extends BaseComponent<GalleriaPassThrough> {
 
     set item(item: any) {
         this._item = item;
-        if (this.templates && this.templates?.toArray().length > 0) {
+        if (this.templates && this.templates.length > 0) {
             this.templates.forEach((item) => {
                 if (item.getType() === this.type) {
                     switch (this.type) {
@@ -845,7 +845,7 @@ export class GalleriaItemSlot extends BaseComponent<GalleriaPassThrough> {
     _item: any;
 
     onAfterContentInit() {
-        if (this.templates && this.templates.toArray().length > 0) {
+        if (this.templates && this.templates.length > 0) {
             this.templates?.forEach((item) => {
                 if (item.getType() === this.type) {
                     switch (this.type) {
@@ -975,7 +975,7 @@ export class GalleriaItem extends BaseComponent<GalleriaPassThrough> {
 
     @Input({ transform: booleanAttribute }) autoPlay: boolean = false;
 
-    @Input() templates: QueryList<PrimeTemplate> | undefined;
+    @Input() templates: readonly PrimeTemplate[] | undefined;
 
     @Input() indicatorFacet: any;
 

@@ -986,7 +986,7 @@ describe('SplitButton', () => {
                 expect(() => splitButtonInstance.ngAfterContentInit()).not.toThrow();
 
                 // Test that contentTemplate property exists (ContentChild)
-                expect(splitButtonInstance.contentTemplate).toBeDefined();
+                expect(splitButtonInstance.contentTemplate()).toBeDefined();
 
                 // Verify content container is rendered
                 const buttonElements = contentTemplateFixture.debugElement.queryAll(By.css('button'));
@@ -1002,8 +1002,8 @@ describe('SplitButton', () => {
                 const splitButtonInstance = contentTemplateFixture.debugElement.query(By.directive(SplitButton)).componentInstance;
 
                 // @ContentChild('content') should set contentTemplate
-                expect(splitButtonInstance.contentTemplate).toBeDefined();
-                expect(splitButtonInstance.contentTemplate?.constructor.name).toBe('TemplateRef');
+                expect(splitButtonInstance.contentTemplate()).toBeDefined();
+                expect(splitButtonInstance.contentTemplate()?.constructor.name).toBe('TemplateRef');
             });
 
             it("should process dropdownIconTemplate from @ContentChild('dropdownicon')", async () => {
@@ -1015,8 +1015,8 @@ describe('SplitButton', () => {
                 const splitButtonInstance = contentTemplateFixture.debugElement.query(By.directive(SplitButton)).componentInstance;
 
                 // @ContentChild('dropdownicon') should set dropdownIconTemplate
-                expect(splitButtonInstance.dropdownIconTemplate).toBeDefined();
-                expect(splitButtonInstance.dropdownIconTemplate?.constructor.name).toBe('TemplateRef');
+                expect(splitButtonInstance.dropdownIconTemplate()).toBeDefined();
+                expect(splitButtonInstance.dropdownIconTemplate()?.constructor.name).toBe('TemplateRef');
             });
         });
 
@@ -1042,8 +1042,8 @@ describe('SplitButton', () => {
                 await contentTemplateFixture.whenStable();
 
                 const contentTemplateSplitButton = contentTemplateFixture.debugElement.query(By.directive(SplitButton)).componentInstance;
-                expect(contentTemplateSplitButton.contentTemplate).toBeDefined();
-                expect(contentTemplateSplitButton.dropdownIconTemplate).toBeDefined();
+                expect(contentTemplateSplitButton.contentTemplate()).toBeDefined();
+                expect(contentTemplateSplitButton.dropdownIconTemplate()).toBeDefined();
             });
 
             it('should use default templates when custom ones are not provided', () => {

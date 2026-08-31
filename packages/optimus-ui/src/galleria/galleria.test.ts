@@ -747,9 +747,10 @@ describe('Galleria', () => {
             const galleriaInstance = galleriaEl.componentInstance as Galleria;
 
             // Mock container element
-            galleriaInstance.container = {
-                nativeElement: document.createElement('div')
-            } as any;
+            (galleriaInstance as any).container = () =>
+                ({
+                    nativeElement: document.createElement('div')
+                }) as any;
 
             // Add a mock close button element
             const closeButton = document.createElement('button');

@@ -789,9 +789,10 @@ describe('DynamicDialog', () => {
                 }))
             };
 
-            component.insertionPoint = {
-                viewContainerRef: mockViewContainer as any
-            } as any;
+            (component as any).insertionPoint = () =>
+                ({
+                    viewContainerRef: mockViewContainer as any
+                }) as any;
 
             component.loadChildComponent(TestDialogContentComponent);
 

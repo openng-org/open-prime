@@ -1053,7 +1053,7 @@ describe('SpeedDial', () => {
                 expect(() => speedDialInstance.ngAfterContentInit()).not.toThrow();
 
                 // Test that buttonTemplate property exists (ContentChild)
-                expect(speedDialInstance.buttonTemplate).toBeDefined();
+                expect(speedDialInstance.buttonTemplate()).toBeDefined();
 
                 // Verify container is rendered
                 const container = contentTemplateFixture.debugElement.query(By.css('[data-pc-name="speeddial"]'));
@@ -1069,8 +1069,8 @@ describe('SpeedDial', () => {
                 const speedDialInstance = contentTemplateFixture.debugElement.query(By.directive(SpeedDial)).componentInstance;
 
                 // @ContentChild('button') should set buttonTemplate
-                expect(speedDialInstance.buttonTemplate).toBeDefined();
-                expect(speedDialInstance.buttonTemplate?.constructor.name).toBe('TemplateRef');
+                expect(speedDialInstance.buttonTemplate()).toBeDefined();
+                expect(speedDialInstance.buttonTemplate()?.constructor.name).toBe('TemplateRef');
             });
 
             it("should process itemTemplate from @ContentChild('item')", async () => {
@@ -1082,8 +1082,8 @@ describe('SpeedDial', () => {
                 const speedDialInstance = contentTemplateFixture.debugElement.query(By.directive(SpeedDial)).componentInstance;
 
                 // @ContentChild('item') should set itemTemplate
-                expect(speedDialInstance.itemTemplate).toBeDefined();
-                expect(speedDialInstance.itemTemplate?.constructor.name).toBe('TemplateRef');
+                expect(speedDialInstance.itemTemplate()).toBeDefined();
+                expect(speedDialInstance.itemTemplate()?.constructor.name).toBe('TemplateRef');
             });
 
             it("should process iconTemplate from @ContentChild('icon')", async () => {
@@ -1095,8 +1095,8 @@ describe('SpeedDial', () => {
                 const speedDialInstance = contentTemplateFixture.debugElement.query(By.directive(SpeedDial)).componentInstance;
 
                 // @ContentChild('icon') should set iconTemplate
-                expect(speedDialInstance.iconTemplate).toBeDefined();
-                expect(speedDialInstance.iconTemplate?.constructor.name).toBe('TemplateRef');
+                expect(speedDialInstance.iconTemplate()).toBeDefined();
+                expect(speedDialInstance.iconTemplate()?.constructor.name).toBe('TemplateRef');
             });
         });
 
@@ -1122,9 +1122,9 @@ describe('SpeedDial', () => {
                 await contentTemplateFixture.whenStable();
 
                 const contentTemplateSpeedDial = contentTemplateFixture.debugElement.query(By.directive(SpeedDial)).componentInstance;
-                expect(contentTemplateSpeedDial.buttonTemplate).toBeDefined();
-                expect(contentTemplateSpeedDial.itemTemplate).toBeDefined();
-                expect(contentTemplateSpeedDial.iconTemplate).toBeDefined();
+                expect(contentTemplateSpeedDial.buttonTemplate()).toBeDefined();
+                expect(contentTemplateSpeedDial.itemTemplate()).toBeDefined();
+                expect(contentTemplateSpeedDial.iconTemplate()).toBeDefined();
             });
 
             it('should use default templates when custom ones are not provided', () => {
@@ -1383,7 +1383,7 @@ describe('SpeedDial', () => {
         });
 
         it('should handle missing container element gracefully', () => {
-            speedDialInstance.container = undefined as any;
+            (speedDialInstance as any).container = () => undefined as any;
 
             expect(() => {
                 speedDialInstance.isOutsideClicked(new Event('click'));

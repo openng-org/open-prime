@@ -346,55 +346,55 @@ export class DataView extends BaseComponent<DataViewPassThrough> implements Bloc
      * @param {DataViewGridTemplateContext} context - grid template context.
      * @group Templates
      */
-    readonly gridTemplate = contentChild.required<TemplateRef<DataViewGridTemplateContext>>('grid');
+    readonly gridTemplate = contentChild<TemplateRef<DataViewGridTemplateContext>>('grid');
     /**
      * Template for the header section.
      * @group Templates
      */
-    readonly headerTemplate = contentChild.required<TemplateRef<void>>('header');
+    readonly headerTemplate = contentChild<TemplateRef<void>>('header');
     /**
      * Template for the empty message section.
      * @group Templates
      */
-    readonly emptymessageTemplate = contentChild.required<TemplateRef<void>>('emptymessage');
+    readonly emptymessageTemplate = contentChild<TemplateRef<void>>('emptymessage');
     /**
      * Template for the footer section.
      * @group Templates
      */
-    readonly footerTemplate = contentChild.required<TemplateRef<void>>('footer');
+    readonly footerTemplate = contentChild<TemplateRef<void>>('footer');
     /**
      * Template for the left side of paginator.
      * @param {DataViewPaginatorLeftTemplateContext} context - paginator left template context.
      * @group Templates
      */
-    readonly paginatorleft = contentChild.required<TemplateRef<DataViewPaginatorLeftTemplateContext>>('paginatorleft');
+    readonly paginatorleft = contentChild<TemplateRef<DataViewPaginatorLeftTemplateContext>>('paginatorleft');
     /**
      * Template for the right side of paginator.
      * @param {DataViewPaginatorRightTemplateContext} context - paginator right template context.
      * @group Templates
      */
-    readonly paginatorright = contentChild.required<TemplateRef<DataViewPaginatorRightTemplateContext>>('paginatorright');
+    readonly paginatorright = contentChild<TemplateRef<DataViewPaginatorRightTemplateContext>>('paginatorright');
     /**
      * Template for items in paginator dropdown.
      * @param {DataViewPaginatorDropdownItemTemplateContext} context - paginator dropdown item template context.
      * @group Templates
      */
-    readonly paginatordropdownitem = contentChild.required<TemplateRef<DataViewPaginatorDropdownItemTemplateContext>>('paginatordropdownitem');
+    readonly paginatordropdownitem = contentChild<TemplateRef<DataViewPaginatorDropdownItemTemplateContext>>('paginatordropdownitem');
     /**
      * Template for loading icon.
      * @group Templates
      */
-    readonly loadingicon = contentChild.required<TemplateRef<void>>('loadingicon');
+    readonly loadingicon = contentChild<TemplateRef<void>>('loadingicon');
     /**
      * Template for list icon.
      * @group Templates
      */
-    readonly listicon = contentChild.required<TemplateRef<void>>('listicon');
+    readonly listicon = contentChild<TemplateRef<void>>('listicon');
     /**
      * Template for grid icon.
      * @group Templates
      */
-    readonly gridicon = contentChild.required<TemplateRef<void>>('gridicon');
+    readonly gridicon = contentChild<TemplateRef<void>>('gridicon');
 
     readonly header = contentChild(Header);
 

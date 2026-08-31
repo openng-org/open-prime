@@ -777,7 +777,7 @@ describe('PanelMenu', () => {
         it('should handle Arrow Down key navigation', () => {
             const keyboardFixture = TestBed.createComponent(TestKeyboardPanelMenuComponent);
             const keyboardPanelMenu = keyboardFixture.debugElement.query(By.directive(PanelMenu)).componentInstance;
-            keyboardPanelMenu.containerViewChild = { nativeElement: { firstElementChild: null } };
+            keyboardPanelMenu.containerViewChild = () => ({ nativeElement: { firstElementChild: null } });
             keyboardFixture.detectChanges();
 
             const panelHeader = keyboardFixture.debugElement.query(By.css('[data-pc-section="header"]'));
@@ -801,7 +801,7 @@ describe('PanelMenu', () => {
         it('should handle Arrow Up key navigation', () => {
             const keyboardFixture = TestBed.createComponent(TestKeyboardPanelMenuComponent);
             const keyboardPanelMenu = keyboardFixture.debugElement.query(By.directive(PanelMenu)).componentInstance;
-            keyboardPanelMenu.containerViewChild = { nativeElement: { lastElementChild: null } };
+            keyboardPanelMenu.containerViewChild = () => ({ nativeElement: { lastElementChild: null } });
             keyboardFixture.detectChanges();
 
             const panelHeaders = keyboardFixture.debugElement.queryAll(By.css('[data-pc-section="header"]'));
@@ -829,7 +829,7 @@ describe('PanelMenu', () => {
         it('should handle Home key navigation', () => {
             const keyboardFixture = TestBed.createComponent(TestKeyboardPanelMenuComponent);
             const keyboardPanelMenu = keyboardFixture.debugElement.query(By.directive(PanelMenu)).componentInstance;
-            keyboardPanelMenu.containerViewChild = { nativeElement: { firstElementChild: null } };
+            keyboardPanelMenu.containerViewChild = () => ({ nativeElement: { firstElementChild: null } });
             keyboardFixture.detectChanges();
 
             const panelHeader = keyboardFixture.debugElement.query(By.css('[data-pc-section="header"]'));
@@ -852,7 +852,7 @@ describe('PanelMenu', () => {
         it('should handle End key navigation', () => {
             const keyboardFixture = TestBed.createComponent(TestKeyboardPanelMenuComponent);
             const keyboardPanelMenu = keyboardFixture.debugElement.query(By.directive(PanelMenu)).componentInstance;
-            keyboardPanelMenu.containerViewChild = { nativeElement: { lastElementChild: null } };
+            keyboardPanelMenu.containerViewChild = () => ({ nativeElement: { lastElementChild: null } });
             keyboardFixture.detectChanges();
 
             const panelHeader = keyboardFixture.debugElement.query(By.css('[data-pc-section="header"]'));

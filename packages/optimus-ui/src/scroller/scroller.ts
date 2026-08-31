@@ -11,7 +11,6 @@ import {
     NgModule,
     NgZone,
     Output,
-    QueryList,
     SimpleChanges,
     TemplateRef,
     ViewEncapsulation,
@@ -629,7 +628,7 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
     }
 
     onAfterContentInit() {
-        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'content':
                     this._contentTemplate = item.template;

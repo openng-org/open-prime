@@ -686,11 +686,12 @@ describe('ContextMenu', () => {
             contextMenuInstance.focusedItemInfo.set({ index: 0, level: 0, parentKey: '', item: null });
 
             // Mock the rootmenu property to prevent undefined errors
-            contextMenuInstance.rootmenu = {
-                el: {
-                    nativeElement: document.createElement('div')
-                }
-            } as any;
+            (contextMenuInstance as any).rootmenu = () =>
+                ({
+                    el: {
+                        nativeElement: document.createElement('div')
+                    }
+                }) as any;
 
             // Create mock menu items structure
             const mockMenuDiv = document.createElement('div');

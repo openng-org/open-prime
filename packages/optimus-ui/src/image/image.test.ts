@@ -500,7 +500,7 @@ describe('Image', () => {
                 }
             };
 
-            imageInstance.templates = mockQueryList as any;
+            (imageInstance as any).templates = () => mockQueryList as any;
             imageInstance.ngAfterContentInit();
 
             expect(imageInstance._indicatorTemplate).toBe(mockIndicatorTemplate);

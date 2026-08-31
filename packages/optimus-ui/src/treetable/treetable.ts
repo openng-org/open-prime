@@ -16,7 +16,6 @@ import {
     NgZone,
     numberAttribute,
     Output,
-    QueryList,
     SimpleChanges,
     TemplateRef,
     ViewEncapsulation,
@@ -964,7 +963,7 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
     readonly templates = contentChildren(PrimeTemplate);
 
     onAfterContentInit() {
-        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'caption':
                     this.captionTemplate = item.template;
@@ -3805,7 +3804,7 @@ export class TreeTableCellEditor extends BaseComponent {
     outputTemplate: Nullable<TemplateRef<any>>;
 
     onAfterContentInit() {
-        (this.templates() as QueryList<PrimeTemplate>).forEach((item) => {
+        this.templates().forEach((item) => {
             switch (item.getType()) {
                 case 'input':
                     this.inputTemplate = item.template;

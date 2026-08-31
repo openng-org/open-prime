@@ -1161,6 +1161,8 @@ export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
     onFirstHiddenFocus(event: FocusEvent) {
         focus(this.listViewChild()?.nativeElement);
         const firstFocusableEl = getFirstFocusableElement(this.el?.nativeElement, ':not([data-p-hidden-focusable="true"])');
+        const lastHiddenFocusableElement = this.lastHiddenFocusableElement();
+        const firstHiddenFocusableElement = this.firstHiddenFocusableElement();
         lastHiddenFocusableElement?.nativeElement && (lastHiddenFocusableElement.nativeElement.tabIndex = isEmpty(firstFocusableEl) ? -1 : undefined);
         firstHiddenFocusableElement?.nativeElement && (firstHiddenFocusableElement.nativeElement.tabIndex = -1);
     }
@@ -1172,10 +1174,12 @@ export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
             const firstFocusableEl = <any>getFirstFocusableElement(this.el?.nativeElement, ':not([data-p-hidden-focusable="true"])');
 
             focus(firstFocusableEl);
+            const firstHiddenFocusableElement = this.firstHiddenFocusableElement();
             firstHiddenFocusableElement?.nativeElement && (firstHiddenFocusableElement.nativeElement.tabIndex = undefined);
         } else {
             focus(this.firstHiddenFocusableElement()?.nativeElement);
         }
+        const lastHiddenFocusableElement = this.lastHiddenFocusableElement();
         lastHiddenFocusableElement?.nativeElement && (lastHiddenFocusableElement.nativeElement.tabIndex = -1);
     }
 

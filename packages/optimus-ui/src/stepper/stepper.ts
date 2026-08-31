@@ -287,7 +287,7 @@ export class Step extends BaseComponent<StepPassThrough> {
      * @type {TemplateRef<StepContentTemplateContext>}
      * @group Templates
      */
-    readonly content = contentChild.required<TemplateRef<StepContentTemplateContext>>('content', { descendants: false });
+    readonly content = contentChild<TemplateRef<StepContentTemplateContext>>('content', { descendants: false });
 
     readonly templates = contentChildren(PrimeTemplate);
 
@@ -395,7 +395,7 @@ export class StepPanel extends BaseComponent<StepPanelPassThrough> {
      * @see {@link StepPanelContentTemplateContext}
      * @group Templates
      */
-    readonly contentTemplate = contentChild.required<TemplateRef<StepPanelContentTemplateContext>>('content');
+    readonly contentTemplate = contentChild<TemplateRef<StepPanelContentTemplateContext>>('content');
 
     readonly templates = contentChildren(PrimeTemplate);
 

@@ -416,7 +416,7 @@ describe('ScrollTop', () => {
 
             // Mock the templates property to simulate template processing
             const mockTemplate = { getType: () => 'icon', template: {} };
-            scrollTop.templates = { first: () => mockTemplate, forEach: (fn: Function) => fn(mockTemplate) };
+            scrollTop.templates = () => ({ first: () => mockTemplate, forEach: (fn: Function) => fn(mockTemplate) });
 
             expect(() => scrollTop.ngAfterContentInit()).not.toThrow();
             if (scrollTop._iconTemplate) {

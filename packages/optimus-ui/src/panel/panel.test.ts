@@ -708,7 +708,7 @@ describe('Panel', () => {
         });
 
         it('should handle missing contentWrapper in updateTabIndex', () => {
-            panelInstance.contentWrapperViewChild = undefined as any;
+            (panelInstance as any).contentWrapperViewChild = () => undefined as any;
 
             expect(() => panelInstance.updateTabIndex()).not.toThrow();
         });
@@ -793,7 +793,7 @@ describe('Panel', () => {
             const panel = fixture.debugElement.query(By.directive(Panel)).componentInstance;
 
             // Get the focusable div inside the panel content wrapper
-            const contentWrapper = panel.contentWrapperViewChild.nativeElement;
+            const contentWrapper = panel.contentWrapperViewChild().nativeElement;
             const focusableDiv = contentWrapper.querySelector('div[tabindex]');
 
             // Initially should have tabindex="0"
