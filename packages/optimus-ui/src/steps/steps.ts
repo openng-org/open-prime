@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { booleanAttribute, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, inject, Input, NgModule, numberAttribute, OnDestroy, OnInit, Output, ViewEncapsulation, viewChild } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, ElementRef, inject, Input, NgModule, numberAttribute, OnDestroy, OnInit, ViewEncapsulation, viewChild, output } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { find, findSingle } from '@openng/optimus-ui-utils';
 import { MenuItem, SharedModule } from '@openng/optimus-ui/api';
@@ -128,7 +128,7 @@ export class Steps extends BaseComponent {
      * @param {number} number - current index.
      * @group Emits
      */
-    @Output() activeIndexChange: EventEmitter<number> = new EventEmitter<number>();
+    readonly activeIndexChange = output<number>();
 
     readonly listViewChild = viewChild.required<ElementRef>('list');
 

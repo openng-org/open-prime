@@ -6,7 +6,6 @@ import {
     Component,
     computed,
     ElementRef,
-    EventEmitter,
     inject,
     InjectionToken,
     input,
@@ -16,11 +15,11 @@ import {
     numberAttribute,
     OnDestroy,
     OnInit,
-    Output,
     TemplateRef,
     ViewEncapsulation,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { findSingle, setAttribute, uuid } from '@openng/optimus-ui-utils';
 import { Confirmation, ConfirmationService, ConfirmEventType, PrimeTemplate, SharedModule, TranslationKeys } from '@openng/optimus-ui/api';
@@ -30,7 +29,7 @@ import { Button } from '@openng/optimus-ui/button';
 import { Dialog } from '@openng/optimus-ui/dialog';
 import { Nullable } from '@openng/optimus-ui/ts-helpers';
 import { ConfirmDialogHeadlessTemplateContext, ConfirmDialogMessageTemplateContext, ConfirmDialogPassThrough } from '@openng/optimus-ui/types/confirmdialog';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { ConfirmDialogStyle } from './style/confirmdialogstyle';
 
 const CONFIRMDIALOG_INSTANCE = new InjectionToken<ConfirmDialog>('CONFIRMDIALOG_INSTANCE');
@@ -357,7 +356,7 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> imple
      * @param {ConfirmEventType} enum - Custom confirm event.
      * @group Emits
      */
-    @Output() onHide: EventEmitter<ConfirmEventType> = new EventEmitter<ConfirmEventType>();
+    readonly onHide = output<ConfirmEventType | undefined>();
 
     _componentStyle = inject(ConfirmDialogStyle);
 
@@ -458,13 +457,13 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> imple
                 this.confirmation = confirmation;
 
                 if (this.confirmation.accept) {
-                    this.confirmation.acceptEvent = new EventEmitter();
-                    this.confirmation.acceptEvent.subscribe(this.confirmation.accept);
+                    this.confirmation.acceptEvent = new Subject();
+                    this.confirmation.acceptEvent.subscribe(this.confirmation.accept as () => void);
                 }
 
                 if (this.confirmation.reject) {
-                    this.confirmation.rejectEvent = new EventEmitter();
-                    this.confirmation.rejectEvent.subscribe(this.confirmation.reject);
+                    this.confirmation.rejectEvent = new Subject();
+                    this.confirmation.rejectEvent.subscribe(this.confirmation.reject as () => void);
                 }
 
                 this.visible = true;
@@ -587,7 +586,7 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> imple
 
     close() {
         if (this.confirmation?.rejectEvent) {
-            this.confirmation.rejectEvent.emit(ConfirmEventType.CANCEL);
+            this.confirmation.rejectEvent.next(ConfirmEventType.CANCEL);
         }
 
         this.hide(ConfirmEventType.CANCEL);
@@ -633,14 +632,14 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> imple
 
     onAccept() {
         if (this.confirmation && this.confirmation.acceptEvent) {
-            this.confirmation.acceptEvent.emit();
+            this.confirmation.acceptEvent.next(undefined);
         }
         this.hide(ConfirmEventType.ACCEPT);
     }
 
     onReject() {
         if (this.confirmation && this.confirmation.rejectEvent) {
-            this.confirmation.rejectEvent.emit(ConfirmEventType.REJECT);
+            this.confirmation.rejectEvent.next(ConfirmEventType.REJECT);
         }
 
         this.hide(ConfirmEventType.REJECT);

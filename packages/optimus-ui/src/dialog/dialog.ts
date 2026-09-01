@@ -6,7 +6,6 @@ import {
     Component,
     computed,
     ElementRef,
-    EventEmitter,
     inject,
     InjectionToken,
     input,
@@ -16,14 +15,14 @@ import {
     numberAttribute,
     OnDestroy,
     OnInit,
-    Output,
     signal,
     TemplateRef,
     ViewEncapsulation,
     ViewRef,
     viewChild,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { MotionEvent, MotionOptions } from '@openng/optimus-ui-motion';
 import { addStyle, appendChild, getOuterHeight, getOuterWidth, getViewport, hasClass, removeClass, setAttribute, uuid } from '@openng/optimus-ui-utils';
@@ -427,41 +426,41 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
      * Callback to invoke when dialog is shown.
      * @group Emits
      */
-    @Output() onShow: EventEmitter<any> = new EventEmitter<any>();
+    readonly onShow = output<any>();
     /**
      * Callback to invoke when dialog is hidden.
      * @group Emits
      */
-    @Output() onHide: EventEmitter<any> = new EventEmitter<any>();
+    readonly onHide = output<any>();
     /**
      * This EventEmitter is used to notify changes in the visibility state of a component.
      * @param {boolean} value - New value.
      * @group Emits
      */
-    @Output() visibleChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+    readonly visibleChange = output<boolean>();
     /**
      * Callback to invoke when dialog resizing is initiated.
      * @param {MouseEvent} event - Mouse event.
      * @group Emits
      */
-    @Output() onResizeInit: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
+    readonly onResizeInit = output<MouseEvent>();
     /**
      * Callback to invoke when dialog resizing is completed.
      * @param {MouseEvent} event - Mouse event.
      * @group Emits
      */
-    @Output() onResizeEnd: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
+    readonly onResizeEnd = output<MouseEvent>();
     /**
      * Callback to invoke when dialog dragging is completed.
      * @param {DragEvent} event - Drag event.
      * @group Emits
      */
-    @Output() onDragEnd: EventEmitter<DragEvent> = new EventEmitter<DragEvent>();
+    readonly onDragEnd = output<DragEvent>();
     /**
      * Callback to invoke when dialog maximized or unmaximized.
      * @group Emits
      */
-    @Output() onMaximize: EventEmitter<any> = new EventEmitter<any>();
+    readonly onMaximize = output<any>();
 
     readonly headerViewChild = viewChild<Nullable<ElementRef>>('titlebar');
 

@@ -4,7 +4,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     ElementRef,
-    EventEmitter,
     forwardRef,
     inject,
     InjectionToken,
@@ -12,13 +11,13 @@ import {
     Input,
     NgModule,
     numberAttribute,
-    Output,
     SimpleChanges,
     TemplateRef,
     ViewEncapsulation,
     contentChild,
     contentChildren,
-    viewChild
+    viewChild,
+    output
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { getSelection } from '@openng/optimus-ui-utils';
@@ -405,30 +404,30 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
      * @param {InputNumberInputEvent} event - Custom input event.
      * @group Emits
      */
-    @Output() onInput: EventEmitter<InputNumberInputEvent> = new EventEmitter<InputNumberInputEvent>();
+    readonly onInput = output<InputNumberInputEvent>();
     /**
      * Callback to invoke when the component receives focus.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onFocus: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onFocus = output<Event>();
     /**
      * Callback to invoke when the component loses focus.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onBlur: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onBlur = output<Event>();
     /**
      * Callback to invoke on input key press.
      * @param {KeyboardEvent} event - Keyboard event.
      * @group Emits
      */
-    @Output() onKeyDown: EventEmitter<KeyboardEvent> = new EventEmitter<KeyboardEvent>();
+    readonly onKeyDown = output<KeyboardEvent>();
     /**
      * Callback to invoke when clear token is clicked.
      * @group Emits
      */
-    @Output() onClear: EventEmitter<void> = new EventEmitter<void>();
+    readonly onClear = output<void>();
 
     /**
      * Custom clear icon template.

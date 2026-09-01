@@ -4,12 +4,10 @@ import {
     ChangeDetectionStrategy,
     Component,
     ElementRef,
-    EventEmitter,
     HostListener,
     InjectionToken,
     Input,
     NgModule,
-    Output,
     TemplateRef,
     ViewEncapsulation,
     booleanAttribute,
@@ -21,7 +19,8 @@ import {
     signal,
     viewChild,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { equals, findLastIndex, findSingle, focus, getFirstFocusableElement, isEmpty, isFunction, isNotEmpty, isPrintableCharacter, resolveFieldData, uuid } from '@openng/optimus-ui-utils';
@@ -650,55 +649,55 @@ export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
      * @param {ListboxChangeEvent} event - Custom change event.
      * @group Emits
      */
-    @Output() onChange: EventEmitter<ListboxChangeEvent> = new EventEmitter<ListboxChangeEvent>();
+    readonly onChange = output<ListboxChangeEvent>();
     /**
      * Callback to invoke when option is clicked.
      * @param {ListboxClickEvent} event - Custom click event.
      * @group Emits
      */
-    @Output() onClick: EventEmitter<ListboxClickEvent> = new EventEmitter<ListboxClickEvent>();
+    readonly onClick = output<ListboxClickEvent>();
     /**
      * Callback to invoke when option is double clicked.
      * @param {ListboxDoubleClickEvent} event - Custom double click event.
      * @group Emits
      */
-    @Output() onDblClick: EventEmitter<ListboxDoubleClickEvent> = new EventEmitter<ListboxDoubleClickEvent>();
+    readonly onDblClick = output<ListboxDoubleClickEvent>();
     /**
      * Callback to invoke when data is filtered.
      * @param {ListboxFilterEvent} event - Custom filter event.
      * @group Emits
      */
-    @Output() onFilter: EventEmitter<ListboxFilterEvent> = new EventEmitter<ListboxFilterEvent>();
+    readonly onFilter = output<ListboxFilterEvent>();
     /**
      * Callback to invoke when component receives focus.
      * @param {FocusEvent} event - Focus event.
      * @group Emits
      */
-    @Output() onFocus: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
+    readonly onFocus = output<FocusEvent>();
     /**
      * Callback to invoke when component loses focus.
      * @param {FocusEvent} event - Blur event.
      * @group Emits
      */
-    @Output() onBlur: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
+    readonly onBlur = output<FocusEvent>();
     /**
      * Callback to invoke when all data is selected.
      * @param {ListboxSelectAllChangeEvent} event - Custom select event.
      * @group Emits
      */
-    @Output() onSelectAllChange: EventEmitter<ListboxSelectAllChangeEvent> = new EventEmitter<ListboxSelectAllChangeEvent>();
+    readonly onSelectAllChange = output<ListboxSelectAllChangeEvent>();
     /**
      * Emits on lazy load.
      * @param {ScrollerLazyLoadEvent} event - Scroller lazy load event.
      * @group Emits
      */
-    @Output() onLazyLoad: EventEmitter<ScrollerLazyLoadEvent> = new EventEmitter<ScrollerLazyLoadEvent>();
+    readonly onLazyLoad = output<ScrollerLazyLoadEvent>();
     /**
      * Emits on item is dropped.
      * @param {CdkDragDrop<string[]>} event - Scroller lazy load event.
      * @group Emits
      */
-    @Output() onDrop: EventEmitter<CdkDragDrop<string[]>> = new EventEmitter<CdkDragDrop<string[]>>();
+    readonly onDrop = output<CdkDragDrop<string[]>>();
 
     readonly headerCheckboxViewChild = viewChild<Nullable<ElementRef>>('headerchkbox');
 

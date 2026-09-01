@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, EventEmitter, inject, InjectionToken, input, Input, NgModule, Output, signal, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, InjectionToken, input, Input, NgModule, signal, TemplateRef, ViewEncapsulation, contentChild, contentChildren, output } from '@angular/core';
 import { MotionOptions } from '@openng/optimus-ui-motion';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
@@ -184,7 +184,9 @@ export class Message extends BaseComponent<MessagePassThrough> {
      * @param {{ originalEvent: Event }} event - The event object containing the original event.
      * @group Emits
      */
-    @Output() onClose: EventEmitter<{ originalEvent: Event }> = new EventEmitter<{ originalEvent: Event }>();
+    readonly onClose = output<{
+        originalEvent: Event;
+    }>();
 
     get closeAriaLabel() {
         return this.config.translation.aria ? this.config.translation.aria.close : undefined;

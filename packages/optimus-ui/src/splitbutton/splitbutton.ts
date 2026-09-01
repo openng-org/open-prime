@@ -5,20 +5,19 @@ import {
     Component,
     computed,
     ElementRef,
-    EventEmitter,
     inject,
     InjectionToken,
     input,
     Input,
     NgModule,
     numberAttribute,
-    Output,
     signal,
     TemplateRef,
     ViewEncapsulation,
     viewChild,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { MotionOptions } from '@openng/optimus-ui-motion';
 import { uuid } from '@openng/optimus-ui-utils';
@@ -331,23 +330,23 @@ export class SplitButton extends BaseComponent<SplitButtonPassThrough> {
      * @param {MouseEvent} event - Mouse event.
      * @group Emits
      */
-    @Output() onClick: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
+    readonly onClick = output<MouseEvent>();
     /**
      * Callback to invoke when overlay menu is hidden.
      * @group Emits
      */
-    @Output() onMenuHide: EventEmitter<any> = new EventEmitter<any>();
+    readonly onMenuHide = output<any>();
     /**
      * Callback to invoke when overlay menu is shown.
      * @group Emits
      */
-    @Output() onMenuShow: EventEmitter<any> = new EventEmitter<any>();
+    readonly onMenuShow = output<any>();
     /**
      * Callback to invoke when dropdown button is clicked.
      * @param {MouseEvent} event - Mouse event.
      * @group Emits
      */
-    @Output() onDropdownClick: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
+    readonly onDropdownClick = output<MouseEvent | undefined>();
 
     readonly menu = viewChild.required<TieredMenu>('menu');
     /**
@@ -418,12 +417,12 @@ export class SplitButton extends BaseComponent<SplitButtonPassThrough> {
 
     onHide() {
         this.isExpanded.set(false);
-        this.onMenuHide.emit();
+        this.onMenuHide.emit(undefined);
     }
 
     onShow() {
         this.isExpanded.set(true);
-        this.onMenuShow.emit();
+        this.onMenuShow.emit(undefined);
     }
 }
 

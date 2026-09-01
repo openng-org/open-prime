@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { booleanAttribute, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, inject, InjectionToken, Input, NgModule, NgZone, Output, ViewEncapsulation } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, ElementRef, inject, InjectionToken, Input, NgModule, NgZone, ViewEncapsulation, output } from '@angular/core';
 import Chart from 'chart.js/auto';
 import { SharedModule } from '@openng/optimus-ui/api';
 import { BaseComponent } from '@openng/optimus-ui/basecomponent';
@@ -112,7 +112,7 @@ export class UIChart extends BaseComponent<ChartPassThrough> {
      * Callback to execute when an element on chart is clicked.
      * @group Emits
      */
-    @Output() onDataSelect: EventEmitter<any> = new EventEmitter<any>();
+    readonly onDataSelect = output<any>();
 
     isBrowser: boolean = false;
 

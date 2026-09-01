@@ -7,7 +7,6 @@ import {
     computed,
     effect,
     ElementRef,
-    EventEmitter,
     HostListener,
     inject,
     InjectionToken,
@@ -36,7 +35,7 @@ import { MotionModule } from '@openng/optimus-ui/motion';
 import { Nullable, VoidListener } from '@openng/optimus-ui/ts-helpers';
 import { ConfirmPopupContentTemplateContext, ConfirmPopupHeadlessTemplateContext, ConfirmPopupPassThrough } from '@openng/optimus-ui/types/confirmpopup';
 import { ZIndexUtils } from '@openng/optimus-ui/utils';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { ConfirmPopupStyle } from './style/confirmpopupstyle';
 
 const CONFIRMPOPUP_INSTANCE = new InjectionToken<ConfirmPopup>('CONFIRMPOPUP_INSTANCE');
@@ -298,13 +297,13 @@ export class ConfirmPopup extends BaseComponent<ConfirmPopupPassThrough> {
                 this.confirmation = confirmation;
 
                 if (this.confirmation.accept) {
-                    this.confirmation.acceptEvent = new EventEmitter();
-                    this.confirmation.acceptEvent.subscribe(this.confirmation.accept);
+                    this.confirmation.acceptEvent = new Subject();
+                    this.confirmation.acceptEvent.subscribe(this.confirmation.accept as () => void);
                 }
 
                 if (this.confirmation.reject) {
-                    this.confirmation.rejectEvent = new EventEmitter();
-                    this.confirmation.rejectEvent.subscribe(this.confirmation.reject);
+                    this.confirmation.rejectEvent = new Subject();
+                    this.confirmation.rejectEvent.subscribe(this.confirmation.reject as () => void);
                 }
 
                 this._visible.set(true);
@@ -463,7 +462,7 @@ export class ConfirmPopup extends BaseComponent<ConfirmPopupPassThrough> {
 
     onAccept() {
         if (this.confirmation?.acceptEvent) {
-            this.confirmation.acceptEvent.emit();
+            this.confirmation.acceptEvent.next(undefined);
         }
 
         this.hide();
@@ -472,7 +471,7 @@ export class ConfirmPopup extends BaseComponent<ConfirmPopupPassThrough> {
 
     onReject() {
         if (this.confirmation?.rejectEvent) {
-            this.confirmation.rejectEvent.emit();
+            this.confirmation.rejectEvent.next(undefined);
         }
 
         this.hide();

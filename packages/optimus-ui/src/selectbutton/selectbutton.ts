@@ -5,7 +5,6 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
-    EventEmitter,
     forwardRef,
     inject,
     InjectionToken,
@@ -13,11 +12,11 @@ import {
     Input,
     NgModule,
     numberAttribute,
-    Output,
     TemplateRef,
     ViewEncapsulation,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { equals, resolveFieldData } from '@openng/optimus-ui-utils';
@@ -169,13 +168,13 @@ export class SelectButton extends BaseEditableHolder<SelectButtonPassThrough> im
      * @param {SelectButtonOptionClickEvent} event - Custom click event.
      * @group Emits
      */
-    @Output() onOptionClick: EventEmitter<SelectButtonOptionClickEvent> = new EventEmitter<SelectButtonOptionClickEvent>();
+    readonly onOptionClick = output<SelectButtonOptionClickEvent>();
     /**
      * Callback to invoke on selection change.
      * @param {SelectButtonChangeEvent} event - Custom change event.
      * @group Emits
      */
-    @Output() onChange: EventEmitter<SelectButtonChangeEvent> = new EventEmitter<SelectButtonChangeEvent>();
+    readonly onChange = output<SelectButtonChangeEvent>();
     /**
      * Custom item template.
      * @param {SelectButtonItemTemplateContext} context - item context.

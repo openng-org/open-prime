@@ -6,7 +6,6 @@ import {
     computed,
     effect,
     ElementRef,
-    EventEmitter,
     forwardRef,
     inject,
     InjectionToken,
@@ -15,14 +14,14 @@ import {
     NgModule,
     NgZone,
     numberAttribute,
-    Output,
     Signal,
     signal,
     TemplateRef,
     ViewEncapsulation,
     viewChild,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MotionOptions } from '@openng/optimus-ui-motion';
@@ -154,9 +153,9 @@ export class MultiSelectItem extends BaseComponent {
 
     @Input({ transform: booleanAttribute }) highlightOnSelect: boolean | undefined;
 
-    @Output() onClick: EventEmitter<any> = new EventEmitter();
+    readonly onClick = output<any>();
 
-    @Output() onMouseEnter: EventEmitter<any> = new EventEmitter();
+    readonly onMouseEnter = output<any>();
 
     _componentStyle = inject(MultiSelectStyle);
 
@@ -868,66 +867,66 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
      * @param {MultiSelectChangeEvent} event - Custom change event.
      * @group Emits
      */
-    @Output() onChange: EventEmitter<MultiSelectChangeEvent> = new EventEmitter<MultiSelectChangeEvent>();
+    readonly onChange = output<MultiSelectChangeEvent>();
     /**
      * Callback to invoke when data is filtered.
      * @param {MultiSelectFilterEvent} event - Custom filter event.
      * @group Emits
      */
-    @Output() onFilter: EventEmitter<MultiSelectFilterEvent> = new EventEmitter<MultiSelectFilterEvent>();
+    readonly onFilter = output<MultiSelectFilterEvent>();
     /**
      * Callback to invoke when multiselect receives focus.
      * @param {MultiSelectFocusEvent} event - Custom focus event.
      * @group Emits
      */
-    @Output() onFocus: EventEmitter<MultiSelectFocusEvent> = new EventEmitter<MultiSelectFocusEvent>();
+    readonly onFocus = output<MultiSelectFocusEvent>();
     /**
      * Callback to invoke when multiselect loses focus.
      * @param {MultiSelectBlurEvent} event - Custom blur event.
      * @group Emits
      */
-    @Output() onBlur: EventEmitter<MultiSelectBlurEvent> = new EventEmitter<MultiSelectBlurEvent>();
+    readonly onBlur = output<MultiSelectBlurEvent>();
     /**
      * Callback to invoke when component is clicked.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onClick: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onClick = output<Event>();
     /**
      * Callback to invoke when input field is cleared.
      * @group Emits
      */
-    @Output() onClear: EventEmitter<void> = new EventEmitter<void>();
+    readonly onClear = output<void>();
     /**
      * Callback to invoke when overlay panel becomes visible.
      * @param {AnimationEvent} event - Animation event.
      * @group Emits
      */
-    @Output() onPanelShow: EventEmitter<AnimationEvent> = new EventEmitter<AnimationEvent>();
+    readonly onPanelShow = output<AnimationEvent>();
     /**
      * Callback to invoke when overlay panel becomes hidden.
      * @param {AnimationEvent} event - Animation event.
      * @group Emits
      */
-    @Output() onPanelHide: EventEmitter<AnimationEvent> = new EventEmitter<AnimationEvent>();
+    readonly onPanelHide = output<AnimationEvent>();
     /**
      * Callback to invoke in lazy mode to load new data.
      * @param {MultiSelectLazyLoadEvent} event - Lazy load event.
      * @group Emits
      */
-    @Output() onLazyLoad: EventEmitter<MultiSelectLazyLoadEvent> = new EventEmitter<MultiSelectLazyLoadEvent>();
+    readonly onLazyLoad = output<MultiSelectLazyLoadEvent>();
     /**
      * Callback to invoke in lazy mode to load new data.
      * @param {MultiSelectRemoveEvent} event - Remove event.
      * @group Emits
      */
-    @Output() onRemove: EventEmitter<MultiSelectRemoveEvent> = new EventEmitter<MultiSelectRemoveEvent>();
+    readonly onRemove = output<MultiSelectRemoveEvent>();
     /**
      * Callback to invoke when all data is selected.
      * @param {MultiSelectSelectAllChangeEvent} event - Custom select event.
      * @group Emits
      */
-    @Output() onSelectAllChange: EventEmitter<MultiSelectSelectAllChangeEvent> = new EventEmitter<MultiSelectSelectAllChangeEvent>();
+    readonly onSelectAllChange = output<MultiSelectSelectAllChangeEvent>();
 
     readonly overlayViewChild = viewChild.required<Overlay>('overlay');
 

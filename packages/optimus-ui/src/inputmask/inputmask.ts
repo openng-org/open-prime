@@ -34,7 +34,6 @@ import {
     Directive,
     effect,
     ElementRef,
-    EventEmitter,
     forwardRef,
     inject,
     InjectionToken,
@@ -42,7 +41,6 @@ import {
     Input,
     NgModule,
     output,
-    Output,
     TemplateRef,
     ViewEncapsulation,
     contentChild,
@@ -875,36 +873,36 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
      * Callback to invoke when the mask is completed.
      * @group Emits
      */
-    @Output() onComplete: EventEmitter<any> = new EventEmitter<any>();
+    readonly onComplete = output<any>();
     /**
      * Callback to invoke when the component receives focus.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onFocus: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onFocus = output<Event>();
     /**
      * Callback to invoke when the component loses focus.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onBlur: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onBlur = output<Event>();
     /**
      * Callback to invoke on input.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onInput: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onInput = output<Event>();
     /**
      * Callback to invoke on input key press.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onKeydown: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onKeydown = output<Event>();
     /**
      * Callback to invoke when input field is cleared.
      * @group Emits
      */
-    @Output() onClear: EventEmitter<any> = new EventEmitter<any>();
+    readonly onClear = output<any>();
     /**
      * Custom clear icon template.
      * @group Templates
@@ -1129,7 +1127,7 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
                 this.caret(pos.begin, pos.begin);
                 this.updateModel(e);
                 if (this.isCompleted()) {
-                    this.onComplete.emit();
+                    this.onComplete.emit(undefined);
                 }
             }, 0);
         } else {
@@ -1140,7 +1138,7 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
                 this.caret(pos.begin, pos.begin);
                 this.updateModel(e);
                 if (this.isCompleted()) {
-                    this.onComplete.emit();
+                    this.onComplete.emit(undefined);
                 }
             }, 0);
         }
@@ -1269,7 +1267,7 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
         this.updateModel(e);
 
         if (completed) {
-            this.onComplete.emit();
+            this.onComplete.emit(undefined);
         }
     }
 
@@ -1394,7 +1392,7 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
             this.caret(pos);
             this.updateModel(event);
             if (this.isCompleted()) {
-                this.onComplete.emit();
+                this.onComplete.emit(undefined);
             }
         }, 0);
     }
@@ -1433,7 +1431,7 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
         (this.inputViewChild() as ElementRef).nativeElement.value = '';
         this.value = null;
         this.onModelChange(this.value);
-        this.onClear.emit();
+        this.onClear.emit(undefined);
     }
 
     /**

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, InjectionToken, Input, NgModule, Output, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, InjectionToken, Input, NgModule, TemplateRef, ViewEncapsulation, contentChild, contentChildren, output } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterModule } from '@angular/router';
 import { MenuItem, PrimeTemplate, SharedModule, TranslationKeys } from '@openng/optimus-ui/api';
 import { Badge } from '@openng/optimus-ui/badge';
@@ -245,7 +245,7 @@ export class Breadcrumb extends BaseComponent<BreadcrumbPassThrough> {
      * @param {BreadcrumbItemClickEvent} event - custom click event.
      * @group Emits
      */
-    @Output() onItemClick: EventEmitter<BreadcrumbItemClickEvent> = new EventEmitter<BreadcrumbItemClickEvent>();
+    readonly onItemClick = output<BreadcrumbItemClickEvent>();
 
     _componentStyle = inject(BreadCrumbStyle);
 

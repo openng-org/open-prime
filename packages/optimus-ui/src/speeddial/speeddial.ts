@@ -1,23 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import {
-    booleanAttribute,
-    ChangeDetectionStrategy,
-    Component,
-    ElementRef,
-    EventEmitter,
-    inject,
-    InjectionToken,
-    Input,
-    NgModule,
-    numberAttribute,
-    Output,
-    signal,
-    TemplateRef,
-    ViewEncapsulation,
-    viewChild,
-    contentChild,
-    contentChildren
-} from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, ElementRef, inject, InjectionToken, Input, NgModule, numberAttribute, signal, TemplateRef, ViewEncapsulation, viewChild, contentChild, contentChildren, output } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { find, findSingle, focus, hasClass, uuid } from '@openng/optimus-ui-utils';
 import { MenuItem, PrimeTemplate, SharedModule, TooltipOptions } from '@openng/optimus-ui/api';
@@ -279,31 +261,31 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
      * @param {boolean} boolean - Visibility value.
      * @group Emits
      */
-    @Output() onVisibleChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+    readonly onVisibleChange = output<boolean>();
     /**
      * Fired when the visibility of element changed.
      * @param {boolean} boolean - Visibility value.
      * @group Emits
      */
-    @Output() visibleChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+    readonly visibleChange = output<boolean>();
     /**
      * Fired when the button element clicked.
      * @param {MouseEvent} event - Mouse event.
      * @group Emits
      */
-    @Output() onClick: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
+    readonly onClick = output<MouseEvent>();
     /**
      * Fired when the actions are visible.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onShow: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onShow = output<Event | undefined>();
     /**
      * Fired when the actions are hidden.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onHide: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onHide = output<Event | undefined>();
 
     readonly container = viewChild.required<ElementRef>('container');
 
@@ -410,7 +392,7 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
         this.onVisibleChange.emit(true);
         this.visibleChange.emit(true);
         this._visible = true;
-        this.onShow.emit();
+        this.onShow.emit(undefined);
         this.bindDocumentClickListener();
         this.cd.markForCheck();
     }
@@ -419,7 +401,7 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
         this.onVisibleChange.emit(false);
         this.visibleChange.emit(false);
         this._visible = false;
-        this.onHide.emit();
+        this.onHide.emit(undefined);
         this.unbindDocumentClickListener();
         this.cd.markForCheck();
     }

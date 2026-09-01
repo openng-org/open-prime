@@ -5,14 +5,12 @@ import {
     Component,
     computed,
     ElementRef,
-    EventEmitter,
     inject,
     InjectionToken,
     input,
     Input,
     NgModule,
     numberAttribute,
-    Output,
     Pipe,
     PipeTransform,
     PLATFORM_ID,
@@ -22,7 +20,8 @@ import {
     ViewEncapsulation,
     ViewRef,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
@@ -138,7 +137,7 @@ export class MenuItemContent extends BaseComponent {
 
     idx = input<number>(0);
 
-    @Output() onMenuItemClick: EventEmitter<any> = new EventEmitter<any>();
+    readonly onMenuItemClick = output<any>();
 
     menu: Menu;
 
@@ -401,24 +400,24 @@ export class Menu extends BaseComponent<MenuPassThrough> {
      * Callback to invoke when overlay menu is shown.
      * @group Emits
      */
-    @Output() onShow: EventEmitter<any> = new EventEmitter<any>();
+    readonly onShow = output<any>();
     /**
      * Callback to invoke when overlay menu is hidden.
      * @group Emits
      */
-    @Output() onHide: EventEmitter<any> = new EventEmitter<any>();
+    readonly onHide = output<any>();
     /**
      * Callback to invoke when the list loses focus.
      * @param {Event} event - blur event.
      * @group Emits
      */
-    @Output() onBlur: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onBlur = output<Event>();
     /**
      * Callback to invoke when the list receives focus.
      * @param {Event} event - focus event.
      * @group Emits
      */
-    @Output() onFocus: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onFocus = output<Event | undefined>();
 
     listViewChild = viewChild<ElementRef>('list');
 
@@ -790,7 +789,7 @@ export class Menu extends BaseComponent<MenuPassThrough> {
 
         if (!this.focused) {
             this.focused = true;
-            this.onFocus.emit();
+            this.onFocus.emit(undefined);
         }
 
         if (item.disabled) {

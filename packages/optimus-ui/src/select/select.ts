@@ -8,7 +8,6 @@ import {
     computed,
     effect,
     ElementRef,
-    EventEmitter,
     forwardRef,
     inject,
     InjectionToken,
@@ -17,14 +16,14 @@ import {
     NgModule,
     NgZone,
     numberAttribute,
-    Output,
     Signal,
     signal,
     TemplateRef,
     ViewEncapsulation,
     viewChild,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MotionOptions } from '@openng/optimus-ui-motion';
@@ -143,9 +142,9 @@ export class SelectItem extends BaseComponent {
 
     @Input() scrollerOptions: any;
 
-    @Output() onClick: EventEmitter<any> = new EventEmitter();
+    readonly onClick = output<any>();
 
-    @Output() onMouseEnter: EventEmitter<any> = new EventEmitter();
+    readonly onMouseEnter = output<any>();
 
     _componentStyle = inject(SelectStyle);
 
@@ -734,55 +733,55 @@ export class Select extends BaseInput<SelectPassThrough> implements AfterViewIni
      * @param {SelectChangeEvent} event - custom change event.
      * @group Emits
      */
-    @Output() onChange: EventEmitter<SelectChangeEvent> = new EventEmitter<SelectChangeEvent>();
+    readonly onChange = output<SelectChangeEvent>();
     /**
      * Callback to invoke when data is filtered.
      * @param {SelectFilterEvent} event - custom filter event.
      * @group Emits
      */
-    @Output() onFilter: EventEmitter<SelectFilterEvent> = new EventEmitter<SelectFilterEvent>();
+    readonly onFilter = output<SelectFilterEvent>();
     /**
      * Callback to invoke when select gets focus.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onFocus: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onFocus = output<Event>();
     /**
      * Callback to invoke when select loses focus.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onBlur: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onBlur = output<Event>();
     /**
      * Callback to invoke when component is clicked.
      * @param {MouseEvent} event - Mouse event.
      * @group Emits
      */
-    @Output() onClick: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
+    readonly onClick = output<MouseEvent>();
     /**
      * Callback to invoke when select overlay gets visible.
      * @param {AnimationEvent} event - Animation event.
      * @group Emits
      */
-    @Output() onShow: EventEmitter<AnimationEvent> = new EventEmitter<AnimationEvent>();
+    readonly onShow = output<AnimationEvent>();
     /**
      * Callback to invoke when select overlay gets hidden.
      * @param {AnimationEvent} event - Animation event.
      * @group Emits
      */
-    @Output() onHide: EventEmitter<AnimationEvent> = new EventEmitter<AnimationEvent>();
+    readonly onHide = output<AnimationEvent>();
     /**
      * Callback to invoke when select clears the value.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onClear: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onClear = output<Event | undefined>();
     /**
      * Callback to invoke in lazy mode to load new data.
      * @param {SelectLazyLoadEvent} event - Lazy load event.
      * @group Emits
      */
-    @Output() onLazyLoad: EventEmitter<SelectLazyLoadEvent> = new EventEmitter<SelectLazyLoadEvent>();
+    readonly onLazyLoad = output<SelectLazyLoadEvent>();
 
     _componentStyle = inject(SelectStyle);
 

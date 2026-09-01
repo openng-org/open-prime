@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { booleanAttribute, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, inject, InjectionToken, Input, NgModule, numberAttribute, Output, SimpleChanges, TemplateRef, ViewEncapsulation, contentChild } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, ElementRef, inject, InjectionToken, Input, NgModule, numberAttribute, SimpleChanges, TemplateRef, ViewEncapsulation, contentChild, output } from '@angular/core';
 import { resolveFieldData } from '@openng/optimus-ui-utils';
 import { BlockableUI, FilterService, Footer, Header, SharedModule, TranslationKeys } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
@@ -316,25 +316,25 @@ export class DataView extends BaseComponent<DataViewPassThrough> implements Bloc
      * @param {DataViewLazyLoadEvent} event - Custom lazy load event.
      * @group Emits
      */
-    @Output() onLazyLoad: EventEmitter<DataViewLazyLoadEvent> = new EventEmitter<DataViewLazyLoadEvent>();
+    readonly onLazyLoad = output<DataViewLazyLoadEvent>();
     /**
      * Callback to invoke when pagination occurs.
      * @param {DataViewPageEvent} event - Custom page event.
      * @group Emits
      */
-    @Output() onPage: EventEmitter<DataViewPageEvent> = new EventEmitter<DataViewPageEvent>();
+    readonly onPage = output<DataViewPageEvent>();
     /**
      * Callback to invoke when sorting occurs.
      * @param {DataViewSortEvent} event - Custom sort event.
      * @group Emits
      */
-    @Output() onSort: EventEmitter<DataViewSortEvent> = new EventEmitter<DataViewSortEvent>();
+    readonly onSort = output<DataViewSortEvent>();
     /**
      * Callback to invoke when changing layout.
      * @param {DataViewLayoutChangeEvent} event - Custom layout change event.
      * @group Emits
      */
-    @Output() onChangeLayout: EventEmitter<DataViewLayoutChangeEvent> = new EventEmitter<DataViewLayoutChangeEvent>();
+    readonly onChangeLayout = output<DataViewLayoutChangeEvent>();
     /**
      * Template for the list layout.
      * @param {DataViewListTemplateContext} context - list template context.

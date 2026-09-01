@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, forwardRef, HostListener, inject, InjectionToken, input, Input, NgModule, numberAttribute, Output, TemplateRef, contentChild, contentChildren } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, forwardRef, HostListener, inject, InjectionToken, input, Input, NgModule, numberAttribute, TemplateRef, contentChild, contentChildren, output } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
@@ -172,7 +172,7 @@ export class ToggleButton extends BaseEditableHolder<ToggleButtonPassThrough> {
      * @param {ToggleButtonChangeEvent} event - Custom change event.
      * @group Emits
      */
-    @Output() onChange: EventEmitter<ToggleButtonChangeEvent> = new EventEmitter<ToggleButtonChangeEvent>();
+    readonly onChange = output<ToggleButtonChangeEvent>();
     /**
      * Custom icon template.
      * @param {ToggleButtonIconTemplateContext} context - icon context.

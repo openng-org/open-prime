@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, inject, InjectionToken, Input, NgModule, Output, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
+import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, Component, inject, InjectionToken, Input, NgModule, TemplateRef, ViewEncapsulation, contentChild, contentChildren, output } from '@angular/core';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
 import { Bind } from '@openng/optimus-ui/bind';
@@ -128,13 +128,13 @@ export class Inplace extends BaseComponent<InplacePassThrough> {
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onActivate: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onActivate = output<Event | undefined>();
     /**
      * Callback to invoke when inplace is closed.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onDeactivate: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onDeactivate = output<Event | undefined>();
 
     hover!: boolean;
     /**

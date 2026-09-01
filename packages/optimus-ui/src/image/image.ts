@@ -5,20 +5,19 @@ import {
     Component,
     computed,
     ElementRef,
-    EventEmitter,
     HostListener,
     inject,
     InjectionToken,
     input,
     Input,
     NgModule,
-    Output,
     signal,
     TemplateRef,
     ViewEncapsulation,
     viewChild,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
 import { MotionEvent, MotionOptions } from '@openng/optimus-ui-motion';
@@ -294,18 +293,18 @@ export class Image extends BaseComponent<ImagePassThrough> {
      * Triggered when the preview overlay is shown.
      * @group Emits
      */
-    @Output() onShow: EventEmitter<any> = new EventEmitter<any>();
+    readonly onShow = output<any>();
     /**
      * Triggered when the preview overlay is hidden.
      * @group Emits
      */
-    @Output() onHide: EventEmitter<any> = new EventEmitter<any>();
+    readonly onHide = output<any>();
     /**
      * This event is triggered if an error occurs while loading an image file.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onImageError: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onImageError = output<Event>();
 
     readonly previewButton = viewChild<ElementRef>('previewButton');
 

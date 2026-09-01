@@ -1,23 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-    booleanAttribute,
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    ElementRef,
-    EventEmitter,
-    inject,
-    InjectionToken,
-    input,
-    Input,
-    NgModule,
-    Output,
-    TemplateRef,
-    ViewEncapsulation,
-    viewChild,
-    contentChild,
-    contentChildren
-} from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, ElementRef, inject, InjectionToken, input, Input, NgModule, TemplateRef, ViewEncapsulation, viewChild, contentChild, contentChildren, output } from '@angular/core';
 import { MotionEvent, MotionOptions } from '@openng/optimus-ui-motion';
 import { uuid } from '@openng/optimus-ui-utils';
 import { BlockableUI, PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
@@ -178,19 +160,19 @@ export class Fieldset extends BaseComponent<FieldsetPassThrough> implements Bloc
      * @param {boolean} value - New value.
      * @group Emits
      */
-    @Output() collapsedChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+    readonly collapsedChange = output<boolean>();
     /**
      * Callback to invoke before panel toggle.
      * @param {PanelBeforeToggleEvent} event - Custom toggle event
      * @group Emits
      */
-    @Output() onBeforeToggle: EventEmitter<FieldsetBeforeToggleEvent> = new EventEmitter<FieldsetBeforeToggleEvent>();
+    readonly onBeforeToggle = output<FieldsetBeforeToggleEvent>();
     /**
      * Callback to invoke after panel toggle.
      * @param {PanelAfterToggleEvent} event - Custom toggle event
      * @group Emits
      */
-    @Output() onAfterToggle: EventEmitter<FieldsetAfterToggleEvent> = new EventEmitter<FieldsetAfterToggleEvent>();
+    readonly onAfterToggle = output<FieldsetAfterToggleEvent>();
 
     readonly contentWrapperViewChild = viewChild.required<ElementRef>('contentWrapper');
 

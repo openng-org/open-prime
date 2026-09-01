@@ -1,23 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import {
-    ChangeDetectionStrategy,
-    Component,
-    ElementRef,
-    EventEmitter,
-    HostBinding,
-    inject,
-    InjectionToken,
-    Input,
-    NgModule,
-    NgZone,
-    Output,
-    SimpleChanges,
-    TemplateRef,
-    ViewEncapsulation,
-    viewChild,
-    contentChild,
-    contentChildren
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostBinding, inject, InjectionToken, Input, NgModule, NgZone, SimpleChanges, TemplateRef, ViewEncapsulation, viewChild, contentChild, contentChildren, output } from '@angular/core';
 import { findSingle, getHeight, getWidth, isTouchDevice, isVisible } from '@openng/optimus-ui-utils';
 import { PrimeTemplate, ScrollerOptions, SharedModule } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
@@ -367,19 +349,19 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
      * @param {ScrollerLazyLoadEvent} event - Custom lazy load event.
      * @group Emits
      */
-    @Output() onLazyLoad: EventEmitter<ScrollerLazyLoadEvent> = new EventEmitter<ScrollerLazyLoadEvent>();
+    readonly onLazyLoad = output<ScrollerLazyLoadEvent>();
     /**
      * Callback to invoke when scroll position changes.
      * @param {ScrollerScrollEvent} event - Custom scroll event.
      * @group Emits
      */
-    @Output() onScroll: EventEmitter<ScrollerScrollEvent> = new EventEmitter<ScrollerScrollEvent>();
+    readonly onScroll = output<ScrollerScrollEvent>();
     /**
      * Callback to invoke when scroll position and item's range in view changes.
      * @param {ScrollerScrollEvent} event - Custom scroll index change event.
      * @group Emits
      */
-    @Output() onScrollIndexChange: EventEmitter<ScrollerScrollIndexChangeEvent> = new EventEmitter<ScrollerScrollIndexChangeEvent>();
+    readonly onScrollIndexChange = output<ScrollerScrollIndexChangeEvent>();
 
     readonly elementViewChild = viewChild<Nullable<ElementRef>>('element');
 

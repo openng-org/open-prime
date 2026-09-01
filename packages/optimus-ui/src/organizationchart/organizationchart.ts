@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { booleanAttribute, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, inject, InjectionToken, Input, NgModule, Output, TemplateRef, ViewEncapsulation, contentChildren, contentChild } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, inject, InjectionToken, Input, NgModule, TemplateRef, ViewEncapsulation, contentChildren, contentChild, output } from '@angular/core';
 import { hasClass, isAttributeEquals } from '@openng/optimus-ui-utils';
 import { PrimeTemplate, SharedModule, TreeNode } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
@@ -241,31 +241,31 @@ export class OrganizationChart extends BaseComponent<OrganizationChartPassThroug
      * @param {*} any - selected value.
      * @group Emits
      */
-    @Output() selectionChange: EventEmitter<any> = new EventEmitter();
+    readonly selectionChange = output<any>();
     /**
      * Callback to invoke when a node is selected.
      * @param {OrganizationChartNodeSelectEvent} event - custom node select event.
      * @group Emits
      */
-    @Output() onNodeSelect: EventEmitter<OrganizationChartNodeSelectEvent> = new EventEmitter<OrganizationChartNodeSelectEvent>();
+    readonly onNodeSelect = output<OrganizationChartNodeSelectEvent>();
     /**
      * Callback to invoke when a node is unselected.
      * @param {OrganizationChartNodeUnSelectEvent} event - custom node unselect event.
      * @group Emits
      */
-    @Output() onNodeUnselect: EventEmitter<OrganizationChartNodeUnSelectEvent> = new EventEmitter<OrganizationChartNodeUnSelectEvent>();
+    readonly onNodeUnselect = output<OrganizationChartNodeUnSelectEvent>();
     /**
      * Callback to invoke when a node is expanded.
      * @param {OrganizationChartNodeExpandEvent} event - custom node expand event.
      * @group Emits
      */
-    @Output() onNodeExpand: EventEmitter<OrganizationChartNodeExpandEvent> = new EventEmitter<OrganizationChartNodeExpandEvent>();
+    readonly onNodeExpand = output<OrganizationChartNodeExpandEvent>();
     /**
      * Callback to invoke when a node is collapsed.
      * @param {OrganizationChartNodeCollapseEvent} event - custom node collapse event.
      * @group Emits
      */
-    @Output() onNodeCollapse: EventEmitter<OrganizationChartNodeCollapseEvent> = new EventEmitter<OrganizationChartNodeCollapseEvent>();
+    readonly onNodeCollapse = output<OrganizationChartNodeCollapseEvent>();
 
     readonly templates = contentChildren(PrimeTemplate);
 

@@ -7,14 +7,12 @@ import {
     computed,
     effect,
     ElementRef,
-    EventEmitter,
     inject,
     InjectionToken,
     input,
     Input,
     NgModule,
     numberAttribute,
-    Output,
     Renderer2,
     signal,
     TemplateRef,
@@ -22,7 +20,8 @@ import {
     ViewRef,
     viewChild,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MotionEvent, MotionOptions } from '@openng/optimus-ui-motion';
@@ -301,15 +300,15 @@ export class ContextMenuSub extends BaseComponent<ContextMenuPassThrough> implem
 
     @Input({ transform: numberAttribute }) tabindex: number = 0;
 
-    @Output() itemClick: EventEmitter<any> = new EventEmitter();
+    readonly itemClick = output<any>();
 
-    @Output() itemMouseEnter: EventEmitter<any> = new EventEmitter();
+    readonly itemMouseEnter = output<any>();
 
-    @Output() menuFocus: EventEmitter<any> = new EventEmitter();
+    readonly menuFocus = output<any>();
 
-    @Output() menuBlur: EventEmitter<any> = new EventEmitter();
+    readonly menuBlur = output<any>();
 
-    @Output() menuKeydown: EventEmitter<any> = new EventEmitter();
+    readonly menuKeydown = output<any>();
 
     readonly sublistViewChild = viewChild<ElementRef>('sublist');
 
@@ -584,12 +583,12 @@ export class ContextMenu extends BaseComponent<ContextMenuPassThrough> {
      * Callback to invoke when overlay menu is shown.
      * @group Emits
      */
-    @Output() onShow: EventEmitter<null> = new EventEmitter<null>();
+    readonly onShow = output<void>();
     /**
      * Callback to invoke when overlay menu is hidden.
      * @group Emits
      */
-    @Output() onHide: EventEmitter<null> = new EventEmitter<null>();
+    readonly onHide = output<void>();
 
     readonly rootmenu = viewChild<ContextMenuSub>('rootmenu');
 

@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, contentChild, ElementRef, EventEmitter, forwardRef, inject, InjectionToken, Input, NgModule, numberAttribute, Output, ViewEncapsulation, contentChildren } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, contentChild, ElementRef, forwardRef, inject, InjectionToken, Input, NgModule, numberAttribute, ViewEncapsulation, contentChildren, output } from '@angular/core';
 import { addClass, getHeight, getOuterHeight, getOuterWidth, getWidth, hasClass, isRTL, removeClass } from '@openng/optimus-ui-utils';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
@@ -144,13 +144,13 @@ export class Splitter extends BaseComponent<SplitterPassThrough> {
      * @param {SplitterResizeEndEvent} event - Custom panel resize end event
      * @group Emits
      */
-    @Output() onResizeEnd: EventEmitter<SplitterResizeEndEvent> = new EventEmitter<SplitterResizeEndEvent>();
+    readonly onResizeEnd = output<SplitterResizeEndEvent>();
     /**
      * Callback to invoke when resize starts.
      * @param {SplitterResizeStartEvent} event - Custom panel resize start event
      * @group Emits
      */
-    @Output() onResizeStart: EventEmitter<SplitterResizeStartEvent> = new EventEmitter<SplitterResizeStartEvent>();
+    readonly onResizeStart = output<SplitterResizeStartEvent>();
 
     readonly templates = contentChildren(PrimeTemplate);
 

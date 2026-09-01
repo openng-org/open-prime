@@ -5,7 +5,6 @@ import {
     Component,
     computed,
     ElementRef,
-    EventEmitter,
     HostListener,
     inject,
     InjectionToken,
@@ -14,14 +13,14 @@ import {
     KeyValueDiffers,
     NgModule,
     numberAttribute,
-    Output,
     signal,
     SimpleChanges,
     TemplateRef,
     ViewEncapsulation,
     viewChild,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { MotionEvent, MotionOptions } from '@openng/optimus-ui-motion';
 import { addClass, find, findSingle, focus, getAttribute, removeClass, setAttribute, uuid } from '@openng/optimus-ui-utils';
@@ -300,13 +299,13 @@ export class Galleria extends BaseComponent<GalleriaPassThrough> {
      * @param {number} number - Active index.
      * @group Emits
      */
-    @Output() activeIndexChange: EventEmitter<number> = new EventEmitter<number>();
+    readonly activeIndexChange = output<number>();
     /**
      * Callback to invoke on visiblity change.
      * @param {boolean} boolean - Visible value.
      * @group Emits
      */
-    @Output() visibleChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+    readonly visibleChange = output<boolean>();
 
     readonly container = viewChild<ElementRef>('container');
 
@@ -627,9 +626,9 @@ export class GalleriaContent extends BaseComponent<GalleriaPassThrough> {
 
     @Input({ transform: booleanAttribute }) fullScreen: boolean;
 
-    @Output() maskHide: EventEmitter<boolean> = new EventEmitter();
+    readonly maskHide = output<boolean>();
 
-    @Output() activeItemChange: EventEmitter<number> = new EventEmitter();
+    readonly activeItemChange = output<number>();
 
     _componentStyle = inject(GalleriaStyle);
 
@@ -978,11 +977,11 @@ export class GalleriaItem extends BaseComponent<GalleriaPassThrough> {
 
     @Input() captionFacet: any;
 
-    @Output() startSlideShow: EventEmitter<Event> = new EventEmitter();
+    readonly startSlideShow = output<Event | undefined>();
 
-    @Output() stopSlideShow: EventEmitter<Event> = new EventEmitter();
+    readonly stopSlideShow = output<Event | undefined>();
 
-    @Output() onActiveIndexChange: EventEmitter<number> = new EventEmitter();
+    readonly onActiveIndexChange = output<number>();
 
     _componentStyle = inject(GalleriaStyle);
 
@@ -1014,7 +1013,7 @@ export class GalleriaItem extends BaseComponent<GalleriaPassThrough> {
 
     onChanges({ autoPlay }: SimpleChanges): void {
         if (autoPlay?.currentValue) {
-            this.startSlideShow.emit();
+            this.startSlideShow.emit(undefined);
         }
 
         if (autoPlay && autoPlay.currentValue === false) {
@@ -1048,7 +1047,7 @@ export class GalleriaItem extends BaseComponent<GalleriaPassThrough> {
 
     stopTheSlideShow() {
         if (this.slideShowActive && this.stopSlideShow) {
-            this.stopSlideShow.emit();
+            this.stopSlideShow.emit(undefined);
         }
     }
 
@@ -1224,9 +1223,9 @@ export class GalleriaThumbnails extends BaseComponent<GalleriaPassThrough> {
 
     @Input() templates: readonly PrimeTemplate[] | undefined;
 
-    @Output() onActiveIndexChange: EventEmitter<number> = new EventEmitter();
+    readonly onActiveIndexChange = output<number>();
 
-    @Output() stopSlideShow: EventEmitter<Event> = new EventEmitter();
+    readonly stopSlideShow = output<Event | undefined>();
 
     readonly itemsContainer = viewChild<ElementRef>('itemsContainer');
 
@@ -1580,7 +1579,7 @@ export class GalleriaThumbnails extends BaseComponent<GalleriaPassThrough> {
 
     stopTheSlideShow() {
         if (this.slideShowActive && this.stopSlideShow) {
-            this.stopSlideShow.emit();
+            this.stopSlideShow.emit(undefined);
         }
     }
 

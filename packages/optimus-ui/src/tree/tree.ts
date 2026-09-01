@@ -5,7 +5,6 @@ import {
     Component,
     computed,
     ElementRef,
-    EventEmitter,
     forwardRef,
     HostListener,
     inject,
@@ -14,14 +13,14 @@ import {
     model,
     NgModule,
     numberAttribute,
-    Output,
     signal,
     SimpleChanges,
     TemplateRef,
     ViewEncapsulation,
     contentChild,
     viewChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { find, findSingle, focus, getOuterHeight, getOuterWidth, removeAccents, resolveFieldData } from '@openng/optimus-ui-utils';
@@ -1107,67 +1106,67 @@ export class Tree extends BaseComponent<TreePassThrough> implements BlockableUI 
      * @param {TreeNodeSelectEvent} event - Node select event.
      * @group Emits
      */
-    @Output() onNodeSelect: EventEmitter<TreeNodeSelectEvent> = new EventEmitter<TreeNodeSelectEvent>();
+    readonly onNodeSelect = output<TreeNodeSelectEvent>();
     /**
      * Callback to invoke when a node is unselected.
      * @param {TreeNodeUnSelectEvent} event - Node unselect event.
      * @group Emits
      */
-    @Output() onNodeUnselect: EventEmitter<TreeNodeUnSelectEvent> = new EventEmitter<TreeNodeUnSelectEvent>();
+    readonly onNodeUnselect = output<TreeNodeUnSelectEvent>();
     /**
      * Callback to invoke when a node is expanded.
      * @param {TreeNodeExpandEvent} event - Node expand event.
      * @group Emits
      */
-    @Output() onNodeExpand: EventEmitter<TreeNodeExpandEvent> = new EventEmitter<TreeNodeExpandEvent>();
+    readonly onNodeExpand = output<TreeNodeExpandEvent>();
     /**
      * Callback to invoke when a node is collapsed.
      * @param {TreeNodeCollapseEvent} event - Node collapse event.
      * @group Emits
      */
-    @Output() onNodeCollapse: EventEmitter<TreeNodeCollapseEvent> = new EventEmitter<TreeNodeCollapseEvent>();
+    readonly onNodeCollapse = output<TreeNodeCollapseEvent>();
     /**
      * Callback to invoke when a node is selected with right click.
      * @param {onNodeContextMenuSelect} event - Node context menu select event.
      * @group Emits
      */
-    @Output() onNodeContextMenuSelect: EventEmitter<TreeNodeContextMenuSelectEvent> = new EventEmitter<TreeNodeContextMenuSelectEvent>();
+    readonly onNodeContextMenuSelect = output<TreeNodeContextMenuSelectEvent>();
     /**
      * Callback to invoke when a node is double clicked.
      * @param {TreeNodeDoubleClickEvent} event - Node double click event.
      * @group Emits
      */
-    @Output() onNodeDoubleClick: EventEmitter<TreeNodeDoubleClickEvent> = new EventEmitter<TreeNodeDoubleClickEvent>();
+    readonly onNodeDoubleClick = output<TreeNodeDoubleClickEvent>();
     /**
      * Callback to invoke when a node is dropped.
      * @param {TreeNodeDropEvent} event - Node drop event.
      * @group Emits
      */
-    @Output() onNodeDrop: EventEmitter<TreeNodeDropEvent> = new EventEmitter<TreeNodeDropEvent>();
+    readonly onNodeDrop = output<TreeNodeDropEvent>();
     /**
      * Callback to invoke in lazy mode to load new data.
      * @param {TreeLazyLoadEvent} event - Custom lazy load event.
      * @group Emits
      */
-    @Output() onLazyLoad: EventEmitter<TreeLazyLoadEvent> = new EventEmitter<TreeLazyLoadEvent>();
+    readonly onLazyLoad = output<TreeLazyLoadEvent>();
     /**
      * Callback to invoke in virtual scroll mode when scroll position changes.
      * @param {TreeScrollEvent} event - Custom scroll event.
      * @group Emits
      */
-    @Output() onScroll: EventEmitter<TreeScrollEvent> = new EventEmitter<TreeScrollEvent>();
+    readonly onScroll = output<TreeScrollEvent>();
     /**
      * Callback to invoke in virtual scroll mode when scroll position and item's range in view changes.
      * @param {TreeScrollIndexChangeEvent} event - Scroll index change event.
      * @group Emits
      */
-    @Output() onScrollIndexChange: EventEmitter<TreeScrollIndexChangeEvent> = new EventEmitter<TreeScrollIndexChangeEvent>();
+    readonly onScrollIndexChange = output<TreeScrollIndexChangeEvent>();
     /**
      * Callback to invoke when data is filtered.
      * @param {TreeFilterEvent} event - Custom filter event.
      * @group Emits
      */
-    @Output() onFilter: EventEmitter<TreeFilterEvent> = new EventEmitter<TreeFilterEvent>();
+    readonly onFilter = output<TreeFilterEvent>();
     /**
      * Custom filter template.
      * @param {TreeFilterTemplateContext} context - filter context.

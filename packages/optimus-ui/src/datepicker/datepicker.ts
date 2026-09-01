@@ -5,7 +5,6 @@ import {
     Component,
     computed,
     ElementRef,
-    EventEmitter,
     forwardRef,
     inject,
     InjectionToken,
@@ -14,13 +13,13 @@ import {
     NgModule,
     NgZone,
     numberAttribute,
-    Output,
     TemplateRef,
     ViewChild,
     ViewEncapsulation,
     viewChild,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MotionEvent, MotionOptions } from '@openng/optimus-ui-motion';
@@ -973,71 +972,71 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
      * @param {Event} event - browser event.
      * @group Emits
      */
-    @Output() onFocus: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onFocus = output<Event>();
     /**
      * Callback to invoke on blur of input field.
      * @param {Event} event - browser event.
      * @group Emits
      */
-    @Output() onBlur: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onBlur = output<Event>();
     /**
      * Callback to invoke when date panel closed.
      * @param {HTMLDivElement} element - The element being transitioned/animated.
      * @group Emits
      */
-    @Output() onClose: EventEmitter<HTMLElement> = new EventEmitter<HTMLElement>();
+    readonly onClose = output<HTMLElement>();
     /**
      * Callback to invoke on date select.
      * @param {Date} date - date value.
      * @group Emits
      */
-    @Output() onSelect: EventEmitter<Date> = new EventEmitter<Date>();
+    readonly onSelect = output<Date>();
     /**
      * Callback to invoke when input field cleared.
      * @group Emits
      */
-    @Output() onClear: EventEmitter<any> = new EventEmitter<any>();
+    readonly onClear = output<any>();
     /**
      * Callback to invoke when input field is being typed.
      * @param {Event} event - browser event
      * @group Emits
      */
-    @Output() onInput: EventEmitter<any> = new EventEmitter<any>();
+    readonly onInput = output<any>();
     /**
      * Callback to invoke when today button is clicked.
      * @param {Date} date - today as a date instance.
      * @group Emits
      */
-    @Output() onTodayClick: EventEmitter<Date> = new EventEmitter<Date>();
+    readonly onTodayClick = output<Date>();
     /**
      * Callback to invoke when clear button is clicked.
      * @param {Event} event - browser event.
      * @group Emits
      */
-    @Output() onClearClick: EventEmitter<any> = new EventEmitter<any>();
+    readonly onClearClick = output<any>();
     /**
      * Callback to invoke when a month is changed using the navigators.
      * @param {DatePickerMonthChangeEvent} event - custom month change event.
      * @group Emits
      */
-    @Output() onMonthChange: EventEmitter<DatePickerMonthChangeEvent> = new EventEmitter<DatePickerMonthChangeEvent>();
+    readonly onMonthChange = output<DatePickerMonthChangeEvent>();
     /**
      * Callback to invoke when a year is changed using the navigators.
      * @param {DatePickerYearChangeEvent} event - custom year change event.
      * @group Emits
      */
-    @Output() onYearChange: EventEmitter<DatePickerYearChangeEvent> = new EventEmitter<DatePickerYearChangeEvent>();
+    readonly onYearChange = output<DatePickerYearChangeEvent>();
     /**
      * Callback to invoke when clicked outside of the date panel.
      * @group Emits
      */
-    @Output() onClickOutside: EventEmitter<any> = new EventEmitter<any>();
+    readonly onClickOutside = output<any>();
     /**
      * Callback to invoke when datepicker panel is shown.
      * @param {HTMLDivElement} element - The element being transitioned/animated.
      * @group Emits
      */
-    @Output() onShow: EventEmitter<HTMLElement> = new EventEmitter<HTMLElement>();
+    readonly onShow = output<HTMLElement>();
 
     readonly inputfieldViewChild = viewChild<Nullable<ElementRef>>('inputfield');
 
@@ -2166,7 +2165,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         this.writeModelValue(this.value);
         this.onModelChange(this.value);
         this.updateInputfield();
-        this.onClear.emit();
+        this.onClear.emit(undefined);
     }
 
     onOverlayClick(event: Event) {
@@ -3343,7 +3342,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             formatName = (match: string, value: any, shortNames: any, longNames: any) => {
                 return lookAhead(match) ? longNames[value] : shortNames[value];
             };
-        let output = '';
+        let formattedDate = '';
         let literal = false;
 
         if (date) {
@@ -3352,48 +3351,48 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                     if (format.charAt(iFormat) === "'" && !lookAhead("'")) {
                         literal = false;
                     } else {
-                        output += format.charAt(iFormat);
+                        formattedDate += format.charAt(iFormat);
                     }
                 } else {
                     switch (format.charAt(iFormat)) {
                         case 'd':
-                            output += formatNumber('d', date.getDate(), 2);
+                            formattedDate += formatNumber('d', date.getDate(), 2);
                             break;
                         case 'D':
-                            output += formatName('D', date.getDay(), this.getTranslation(TranslationKeys.DAY_NAMES_SHORT), this.getTranslation(TranslationKeys.DAY_NAMES));
+                            formattedDate += formatName('D', date.getDay(), this.getTranslation(TranslationKeys.DAY_NAMES_SHORT), this.getTranslation(TranslationKeys.DAY_NAMES));
                             break;
                         case 'o':
-                            output += formatNumber('o', Math.round((new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / 86400000), 3);
+                            formattedDate += formatNumber('o', Math.round((new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / 86400000), 3);
                             break;
                         case 'm':
-                            output += formatNumber('m', date.getMonth() + 1, 2);
+                            formattedDate += formatNumber('m', date.getMonth() + 1, 2);
                             break;
                         case 'M':
-                            output += formatName('M', date.getMonth(), this.getTranslation(TranslationKeys.MONTH_NAMES_SHORT), this.getTranslation(TranslationKeys.MONTH_NAMES));
+                            formattedDate += formatName('M', date.getMonth(), this.getTranslation(TranslationKeys.MONTH_NAMES_SHORT), this.getTranslation(TranslationKeys.MONTH_NAMES));
                             break;
                         case 'y':
-                            output += lookAhead('y') ? date.getFullYear() : (date.getFullYear() % 100 < 10 ? '0' : '') + (date.getFullYear() % 100);
+                            formattedDate += lookAhead('y') ? date.getFullYear() : (date.getFullYear() % 100 < 10 ? '0' : '') + (date.getFullYear() % 100);
                             break;
                         case '@':
-                            output += date.getTime();
+                            formattedDate += date.getTime();
                             break;
                         case '!':
-                            output += date.getTime() * 10000 + <number>this.ticksTo1970;
+                            formattedDate += date.getTime() * 10000 + <number>this.ticksTo1970;
                             break;
                         case "'":
                             if (lookAhead("'")) {
-                                output += "'";
+                                formattedDate += "'";
                             } else {
                                 literal = true;
                             }
                             break;
                         default:
-                            output += format.charAt(iFormat);
+                            formattedDate += format.charAt(iFormat);
                     }
                 }
             }
         }
-        return output;
+        return formattedDate;
     }
 
     formatTime(date: any) {
@@ -3401,7 +3400,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             return '';
         }
 
-        let output = '';
+        let formattedTime = '';
         let hours = date.getHours();
         let minutes = date.getMinutes();
         let seconds = date.getSeconds();
@@ -3411,23 +3410,23 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         }
 
         if (this.hourFormat == '12') {
-            output += hours === 0 ? 12 : hours < 10 ? '0' + hours : hours;
+            formattedTime += hours === 0 ? 12 : hours < 10 ? '0' + hours : hours;
         } else {
-            output += hours < 10 ? '0' + hours : hours;
+            formattedTime += hours < 10 ? '0' + hours : hours;
         }
-        output += ':';
-        output += minutes < 10 ? '0' + minutes : minutes;
+        formattedTime += ':';
+        formattedTime += minutes < 10 ? '0' + minutes : minutes;
 
         if (this.showSeconds) {
-            output += ':';
-            output += seconds < 10 ? '0' + seconds : seconds;
+            formattedTime += ':';
+            formattedTime += seconds < 10 ? '0' + seconds : seconds;
         }
 
         if (this.hourFormat == '12') {
-            output += date.getHours() > 11 ? ' PM' : ' AM';
+            formattedTime += date.getHours() > 11 ? ' PM' : ' AM';
         }
 
-        return output;
+        return formattedTime;
     }
 
     parseTime(value: any) {

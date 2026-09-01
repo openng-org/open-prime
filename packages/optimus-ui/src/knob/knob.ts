@@ -1,4 +1,4 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, forwardRef, inject, InjectionToken, Input, NgModule, numberAttribute, Output, signal, ViewEncapsulation } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, forwardRef, inject, InjectionToken, Input, NgModule, numberAttribute, signal, ViewEncapsulation, output } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { $dt } from '@openng/optimus-ui-styled';
 import { SharedModule } from '@openng/optimus-ui/api';
@@ -155,7 +155,7 @@ export class Knob extends BaseEditableHolder<KnobPassThrough> {
      * @param {number} value - New value.
      * @group Emits
      */
-    @Output() onChange: EventEmitter<number> = new EventEmitter<number>();
+    readonly onChange = output<number>();
 
     radius: number = 40;
 

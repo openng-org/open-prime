@@ -1,5 +1,5 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { booleanAttribute, Directive, ElementRef, EventEmitter, forwardRef, HostListener, Input, NgModule, Output, PLATFORM_ID, Provider, inject } from '@angular/core';
+import { booleanAttribute, Directive, ElementRef, forwardRef, HostListener, Input, NgModule, PLATFORM_ID, Provider, inject, output } from '@angular/core';
 import { AbstractControl, NG_VALIDATORS, Validator } from '@angular/forms';
 import { getBrowser, isAndroid } from '@openng/optimus-ui-utils';
 
@@ -106,7 +106,7 @@ export class KeyFilter implements Validator {
      * @param {(string | number)} modelValue - Custom model change event.
      * @group Emits
      */
-    @Output() ngModelChange: EventEmitter<string | number> = new EventEmitter<string | number>();
+    readonly ngModelChange = output<string | number>();
 
     regex: RegExp = /./;
 

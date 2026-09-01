@@ -1,23 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import {
-    booleanAttribute,
-    ChangeDetectionStrategy,
-    Component,
-    ElementRef,
-    EventEmitter,
-    inject,
-    Input,
-    NgModule,
-    NgZone,
-    numberAttribute,
-    Output,
-    SimpleChanges,
-    TemplateRef,
-    ViewEncapsulation,
-    viewChild,
-    contentChild,
-    contentChildren
-} from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, ElementRef, inject, Input, NgModule, NgZone, numberAttribute, SimpleChanges, TemplateRef, ViewEncapsulation, viewChild, contentChild, contentChildren, output } from '@angular/core';
 import { addClass, find, findSingle, getAttribute, removeClass, setAttribute, uuid } from '@openng/optimus-ui-utils';
 import { Footer, Header, PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
@@ -324,7 +306,7 @@ export class Carousel extends BaseComponent {
      * @param {CarouselPageEvent} event - Custom page event.
      * @group Emits
      */
-    @Output() onPage: EventEmitter<CarouselPageEvent> = new EventEmitter<CarouselPageEvent>();
+    readonly onPage = output<CarouselPageEvent>();
 
     readonly itemsContainer = viewChild<ElementRef>('itemsContainer');
 

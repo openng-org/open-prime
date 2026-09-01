@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, ElementRef, EventEmitter, inject, InjectionToken, input, Input, NgModule, NgZone, Output, signal, TemplateRef, ViewEncapsulation, viewChild, contentChild, contentChildren } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, InjectionToken, input, Input, NgModule, NgZone, signal, TemplateRef, ViewEncapsulation, viewChild, contentChild, contentChildren, output } from '@angular/core';
 import { MotionEvent, MotionOptions } from '@openng/optimus-ui-motion';
 import { absolutePosition, addClass, appendChild, focus, getOuterWidth, getTargetElement, isTouchDevice, relativePosition, removeClass } from '@openng/optimus-ui-utils';
 import { OverlayModeType, OverlayOnBeforeHideEvent, OverlayOnBeforeShowEvent, OverlayOnHideEvent, OverlayOnShowEvent, OverlayOptions, OverlayService, PrimeTemplate, ResponsiveOverlayOptions, SharedModule } from '@openng/optimus-ui/api';
@@ -260,81 +260,81 @@ export class Overlay extends BaseComponent {
      * @param {Boolean} boolean - Value of visibility as boolean.
      * @group Emits
      */
-    @Output() visibleChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+    readonly visibleChange = output<boolean>();
     /**
      * Callback to invoke before the overlay is shown.
      * @param {OverlayOnBeforeShowEvent} event - Custom overlay before show event.
      * @group Emits
      */
-    @Output() onBeforeShow: EventEmitter<OverlayOnBeforeShowEvent> = new EventEmitter<OverlayOnBeforeShowEvent>();
+    readonly onBeforeShow = output<OverlayOnBeforeShowEvent>();
     /**
      * Callback to invoke when the overlay is shown.
      * @param {OverlayOnShowEvent} event - Custom overlay show event.
      * @group Emits
      */
-    @Output() onShow: EventEmitter<OverlayOnShowEvent> = new EventEmitter<OverlayOnShowEvent>();
+    readonly onShow = output<OverlayOnShowEvent>();
     /**
      * Callback to invoke before the overlay is hidden.
      * @param {OverlayOnBeforeHideEvent} event - Custom overlay before hide event.
      * @group Emits
      */
-    @Output() onBeforeHide: EventEmitter<OverlayOnBeforeHideEvent> = new EventEmitter<OverlayOnBeforeHideEvent>();
+    readonly onBeforeHide = output<OverlayOnBeforeHideEvent>();
     /**
      * Callback to invoke when the overlay is hidden
      * @param {OverlayOnHideEvent} event - Custom hide event.
      * @group Emits
      */
-    @Output() onHide: EventEmitter<OverlayOnHideEvent> = new EventEmitter<OverlayOnHideEvent>();
+    readonly onHide = output<OverlayOnHideEvent>();
     /**
      * Callback to invoke when the animation is started.
      * @param {AnimationEvent} event - Animation event.
      * @group Emits
      * @deprecated since v21.0.0. Use onOverlayBeforeEnter and onOverlayBeforeLeave instead.
      */
-    @Output() onAnimationStart: EventEmitter<AnimationEvent> = new EventEmitter<AnimationEvent>();
+    readonly onAnimationStart = output<AnimationEvent>();
     /**
      * Callback to invoke when the animation is done.
      * @param {AnimationEvent} event - Animation event.
      * @group Emits
      * @deprecated since v21.0.0. Use onOverlayAfterEnter and onOverlayAfterLeave instead.
      */
-    @Output() onAnimationDone: EventEmitter<AnimationEvent> = new EventEmitter<AnimationEvent>();
+    readonly onAnimationDone = output<AnimationEvent>();
     /**
      * Callback to invoke before the overlay enters.
      * @param {MotionEvent} event - Event before enter.
      * @group Emits
      */
-    @Output() onBeforeEnter: EventEmitter<MotionEvent> = new EventEmitter<MotionEvent>();
+    readonly onBeforeEnter = output<MotionEvent>();
     /**
      * Callback to invoke when the overlay enters.
      * @param {MotionEvent} event - Event on enter.
      * @group Emits
      */
-    @Output() onEnter: EventEmitter<MotionEvent> = new EventEmitter<MotionEvent>();
+    readonly onEnter = output<MotionEvent>();
     /**
      * Callback to invoke after the overlay has entered.
      * @param {MotionEvent} event - Event after enter.
      * @group Emits
      */
-    @Output() onAfterEnter: EventEmitter<MotionEvent> = new EventEmitter<MotionEvent>();
+    readonly onAfterEnter = output<MotionEvent>();
     /**
      * Callback to invoke before the overlay leaves.
      * @param {MotionEvent} event - Event before leave.
      * @group Emits
      */
-    @Output() onBeforeLeave: EventEmitter<MotionEvent> = new EventEmitter<MotionEvent>();
+    readonly onBeforeLeave = output<MotionEvent>();
     /**
      * Callback to invoke when the overlay leaves.
      * @param {MotionEvent} event - Event on leave.
      * @group Emits
      */
-    @Output() onLeave: EventEmitter<MotionEvent> = new EventEmitter<MotionEvent>();
+    readonly onLeave = output<MotionEvent>();
     /**
      * Callback to invoke after the overlay has left.
      * @param {MotionEvent} event - Event after leave.
      * @group Emits
      */
-    @Output() onAfterLeave: EventEmitter<MotionEvent> = new EventEmitter<MotionEvent>();
+    readonly onAfterLeave = output<MotionEvent>();
 
     readonly overlayViewChild = viewChild<ElementRef>('overlay');
 

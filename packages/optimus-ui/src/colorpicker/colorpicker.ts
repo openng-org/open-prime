@@ -1,23 +1,4 @@
-import {
-    AfterViewChecked,
-    booleanAttribute,
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    ElementRef,
-    EventEmitter,
-    forwardRef,
-    inject,
-    InjectionToken,
-    input,
-    Input,
-    NgModule,
-    Output,
-    TemplateRef,
-    ViewChild,
-    ViewEncapsulation,
-    viewChild
-} from '@angular/core';
+import { AfterViewChecked, booleanAttribute, ChangeDetectionStrategy, Component, computed, ElementRef, forwardRef, inject, InjectionToken, input, Input, NgModule, TemplateRef, ViewChild, ViewEncapsulation, viewChild, output } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MotionOptions } from '@openng/optimus-ui-motion';
 import { OverlayOptions, OverlayService, SharedModule, TranslationKeys } from '@openng/optimus-ui/api';
@@ -196,17 +177,17 @@ export class ColorPicker extends BaseEditableHolder<ColorPickerPassThrough> impl
      * @param {ColorPickerChangeEvent} event - Custom value change event.
      * @group Emits
      */
-    @Output() onChange: EventEmitter<ColorPickerChangeEvent> = new EventEmitter<ColorPickerChangeEvent>();
+    readonly onChange = output<ColorPickerChangeEvent>();
     /**
      * Callback to invoke on panel is shown.
      * @group Emits
      */
-    @Output() onShow: EventEmitter<any> = new EventEmitter<any>();
+    readonly onShow = output<any>();
     /**
      * Callback to invoke on panel is hidden.
      * @group Emits
      */
-    @Output() onHide: EventEmitter<any> = new EventEmitter<any>();
+    readonly onHide = output<any>();
 
     readonly overlayViewChild = viewChild.required<ElementRef<HTMLDivElement>>('overlay');
 

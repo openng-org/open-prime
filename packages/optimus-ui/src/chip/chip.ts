@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, inject, InjectionToken, Input, NgModule, Output, SimpleChanges, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
+import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, Component, inject, InjectionToken, Input, NgModule, SimpleChanges, TemplateRef, ViewEncapsulation, contentChild, contentChildren, output } from '@angular/core';
 import { PrimeTemplate, SharedModule, TranslationKeys } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
 import { Bind } from '@openng/optimus-ui/bind';
@@ -121,13 +121,13 @@ export class Chip extends BaseComponent<ChipPassThrough> {
      * @param {MouseEvent} event - Mouse event.
      * @group Emits
      */
-    @Output() onRemove: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
+    readonly onRemove = output<MouseEvent>();
     /**
      * This event is triggered if an error occurs while loading an image file.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onImageError: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onImageError = output<Event>();
 
     visible: boolean = true;
 

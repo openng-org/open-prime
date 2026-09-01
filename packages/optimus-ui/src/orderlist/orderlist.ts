@@ -1,23 +1,6 @@
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import {
-    booleanAttribute,
-    ChangeDetectionStrategy,
-    Component,
-    ElementRef,
-    EventEmitter,
-    inject,
-    InjectionToken,
-    Input,
-    NgModule,
-    numberAttribute,
-    Output,
-    TemplateRef,
-    ViewEncapsulation,
-    viewChild,
-    contentChild,
-    contentChildren
-} from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, ElementRef, inject, InjectionToken, Input, NgModule, numberAttribute, TemplateRef, ViewEncapsulation, viewChild, contentChild, contentChildren, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { findIndexInList, setAttribute, uuid } from '@openng/optimus-ui-utils';
 import { FilterService, PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
@@ -364,42 +347,42 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
      * @param {*} any - selection instance.
      * @group Emits
      */
-    @Output() selectionChange: EventEmitter<any> = new EventEmitter();
+    readonly selectionChange = output<any>();
 
     /**
      * Callback to invoke when list is reordered.
      * @param {*} any - list instance.
      * @group Emits
      */
-    @Output() onReorder: EventEmitter<any> = new EventEmitter();
+    readonly onReorder = output<any>();
 
     /**
      * Callback to invoke when selection changes.
      * @param {OrderListSelectionChangeEvent} event - Custom change event.
      * @group Emits
      */
-    @Output() onSelectionChange: EventEmitter<OrderListSelectionChangeEvent> = new EventEmitter<OrderListSelectionChangeEvent>();
+    readonly onSelectionChange = output<OrderListSelectionChangeEvent>();
 
     /**
      * Callback to invoke when filtering occurs.
      * @param {OrderListFilterEvent} event - Custom filter event.
      * @group Emits
      */
-    @Output() onFilterEvent: EventEmitter<OrderListFilterEvent> = new EventEmitter<OrderListFilterEvent>();
+    readonly onFilterEvent = output<OrderListFilterEvent>();
 
     /**
      * Callback to invoke when the list is focused
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onFocus: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onFocus = output<Event>();
 
     /**
      * Callback to invoke when the list is blurred
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onBlur: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onBlur = output<Event>();
 
     readonly listViewChild = viewChild.required<Listbox>('listelement');
 

@@ -6,7 +6,6 @@ import {
     Component,
     Directive,
     ElementRef,
-    EventEmitter,
     HostListener,
     inject,
     Injectable,
@@ -15,13 +14,13 @@ import {
     NgModule,
     NgZone,
     numberAttribute,
-    Output,
     SimpleChanges,
     TemplateRef,
     ViewEncapsulation,
     viewChild,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
@@ -701,115 +700,115 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
      * @param {TreeTableNode} object - Node instance.
      * @group Emits
      */
-    @Output() selectionChange: EventEmitter<TreeTableNode<any> | TreeTableNode<any>[] | null> = new EventEmitter<TreeTableNode<any> | TreeTableNode<any>[] | null>();
+    readonly selectionChange = output<TreeTableNode<any> | TreeTableNode<any>[] | null>();
     /**
      * Callback to invoke on context menu selection change.
      * @param {TreeTableNode} object - Node instance.
      * @group Emits
      */
-    @Output() contextMenuSelectionChange: EventEmitter<TreeTableNode> = new EventEmitter<TreeTableNode>();
+    readonly contextMenuSelectionChange = output<TreeTableNode | null>();
     /**
      * Callback to invoke when data is filtered.
      * @param {TreeTableFilterEvent} event - Custom filter event.
      * @group Emits
      */
-    @Output() onFilter: EventEmitter<TreeTableFilterEvent> = new EventEmitter<TreeTableFilterEvent>();
+    readonly onFilter = output<TreeTableFilterEvent>();
     /**
      * Callback to invoke when a node is expanded.
      * @param {TreeTableNodeExpandEvent} event - Node expand event.
      * @group Emits
      */
-    @Output() onNodeExpand: EventEmitter<TreeTableNodeExpandEvent> = new EventEmitter<TreeTableNodeExpandEvent>();
+    readonly onNodeExpand = output<TreeTableNodeExpandEvent>();
     /**
      * Callback to invoke when a node is collapsed.
      * @param {TreeTableNodeCollapseEvent} event - Node collapse event.
      * @group Emits
      */
-    @Output() onNodeCollapse: EventEmitter<TreeTableNodeCollapseEvent> = new EventEmitter<TreeTableNodeCollapseEvent>();
+    readonly onNodeCollapse = output<TreeTableNodeCollapseEvent>();
     /**
      * Callback to invoke when pagination occurs.
      * @param {TreeTablePaginatorState} object - Paginator state.
      * @group Emits
      */
-    @Output() onPage: EventEmitter<TreeTablePaginatorState> = new EventEmitter<TreeTablePaginatorState>();
+    readonly onPage = output<TreeTablePaginatorState>();
     /**
      * Callback to invoke when a column gets sorted.
      * @param {Object} Object - Sort data.
      * @group Emits
      */
-    @Output() onSort: EventEmitter<any> = new EventEmitter<any>();
+    readonly onSort = output<any>();
     /**
      * Callback to invoke when paging, sorting or filtering happens in lazy mode.
      * @param {TreeTableLazyLoadEvent} event - Custom lazy load event.
      * @group Emits
      */
-    @Output() onLazyLoad: EventEmitter<TreeTableLazyLoadEvent> = new EventEmitter<TreeTableLazyLoadEvent>();
+    readonly onLazyLoad = output<TreeTableLazyLoadEvent>();
     /**
      * An event emitter to invoke on custom sorting, refer to sorting section for details.
      * @param {TreeTableSortEvent} event - Custom sort event.
      * @group Emits
      */
-    @Output() sortFunction: EventEmitter<TreeTableSortEvent> = new EventEmitter<TreeTableSortEvent>();
+    readonly sortFunction = output<TreeTableSortEvent>();
     /**
      * Callback to invoke when a column is resized.
      * @param {TreeTableColResizeEvent} event - Custom column resize event.
      * @group Emits
      */
-    @Output() onColResize: EventEmitter<TreeTableColResizeEvent> = new EventEmitter<TreeTableColResizeEvent>();
+    readonly onColResize = output<TreeTableColResizeEvent>();
     /**
      * Callback to invoke when a column is reordered.
      * @param {TreeTableColumnReorderEvent} event - Custom column reorder.
      * @group Emits
      */
-    @Output() onColReorder: EventEmitter<TreeTableColumnReorderEvent> = new EventEmitter<TreeTableColumnReorderEvent>();
+    readonly onColReorder = output<TreeTableColumnReorderEvent>();
     /**
      * Callback to invoke when a node is selected.
      * @param {TreeTableNode} object - Node instance.
      * @group Emits
      */
-    @Output() onNodeSelect: EventEmitter<TreeTableNode> = new EventEmitter<TreeTableNode>();
+    readonly onNodeSelect = output<TreeTableNode>();
     /**
      * Callback to invoke when a node is unselected.
      * @param {TreeTableNodeUnSelectEvent} event - Custom node unselect event.
      * @group Emits
      */
-    @Output() onNodeUnselect: EventEmitter<TreeTableNodeUnSelectEvent> = new EventEmitter<TreeTableNodeUnSelectEvent>();
+    readonly onNodeUnselect = output<TreeTableNodeUnSelectEvent>();
     /**
      * Callback to invoke when a node is selected with right click.
      * @param {TreeTableContextMenuSelectEvent} event - Custom context menu select event.
      * @group Emits
      */
-    @Output() onContextMenuSelect: EventEmitter<TreeTableContextMenuSelectEvent> = new EventEmitter<TreeTableContextMenuSelectEvent>();
+    readonly onContextMenuSelect = output<TreeTableContextMenuSelectEvent>();
     /**
      * Callback to invoke when state of header checkbox changes.
      * @param {TreeTableHeaderCheckboxToggleEvent} event - Custom checkbox toggle event.
      * @group Emits
      */
-    @Output() onHeaderCheckboxToggle: EventEmitter<TreeTableHeaderCheckboxToggleEvent> = new EventEmitter<TreeTableHeaderCheckboxToggleEvent>();
+    readonly onHeaderCheckboxToggle = output<TreeTableHeaderCheckboxToggleEvent>();
     /**
      * Callback to invoke when a cell switches to edit mode.
      * @param {TreeTableEditEvent} event - Custom edit event.
      * @group Emits
      */
-    @Output() onEditInit: EventEmitter<TreeTableEditEvent> = new EventEmitter<TreeTableEditEvent>();
+    readonly onEditInit = output<TreeTableEditEvent>();
     /**
      * Callback to invoke when cell edit is completed.
      * @param {TreeTableEditEvent} event - Custom edit event.
      * @group Emits
      */
-    @Output() onEditComplete: EventEmitter<TreeTableEditEvent> = new EventEmitter<TreeTableEditEvent>();
+    readonly onEditComplete = output<TreeTableEditEvent>();
     /**
      * Callback to invoke when cell edit is cancelled with escape key.
      * @param {TreeTableEditEvent} event - Custom edit event.
      * @group Emits
      */
-    @Output() onEditCancel: EventEmitter<TreeTableEditEvent> = new EventEmitter<TreeTableEditEvent>();
+    readonly onEditCancel = output<TreeTableEditEvent>();
     /**
      * Callback to invoke when selectionKeys are changed.
      * @param {Object} object - updated value of the selectionKeys.
      * @group Emits
      */
-    @Output() selectionKeysChange: EventEmitter<any> = new EventEmitter();
+    readonly selectionKeysChange = output<any>();
 
     readonly resizeHelperViewChild = viewChild<Nullable<ElementRef>>('resizeHelper');
 
@@ -1827,7 +1826,7 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 this.contextMenu.show(event.originalEvent);
                 this.contextMenu.hideCallback = () => {
                     this.contextMenuSelection = null;
-                    this.contextMenuSelectionChange.emit();
+                    this.contextMenuSelectionChange.emit(null);
                     this.tableService.onContextMenu(null);
                 };
             };

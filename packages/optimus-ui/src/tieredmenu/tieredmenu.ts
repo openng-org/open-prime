@@ -6,7 +6,6 @@ import {
     computed,
     effect,
     ElementRef,
-    EventEmitter,
     forwardRef,
     inject,
     InjectionToken,
@@ -14,7 +13,6 @@ import {
     input,
     NgModule,
     numberAttribute,
-    Output,
     Renderer2,
     signal,
     TemplateRef,
@@ -22,7 +20,8 @@ import {
     ViewRef,
     viewChild,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MotionEvent, MotionOptions } from '@openng/optimus-ui-motion';
@@ -296,15 +295,15 @@ export class TieredMenuSub extends BaseComponent<TieredMenuPassThrough> {
 
     @Input() inlineStyles: { [klass: string]: any } | null | undefined;
 
-    @Output() itemClick: EventEmitter<any> = new EventEmitter();
+    readonly itemClick = output<any>();
 
-    @Output() itemMouseEnter: EventEmitter<any> = new EventEmitter();
+    readonly itemMouseEnter = output<any>();
 
-    @Output() menuFocus: EventEmitter<any> = new EventEmitter();
+    readonly menuFocus = output<any>();
 
-    @Output() menuBlur: EventEmitter<any> = new EventEmitter();
+    readonly menuBlur = output<any>();
 
-    @Output() menuKeydown: EventEmitter<any> = new EventEmitter();
+    readonly menuKeydown = output<any>();
 
     readonly sublistViewChild = viewChild<ElementRef>('sublist');
 
@@ -594,12 +593,12 @@ export class TieredMenu extends BaseComponent<TieredMenuPassThrough> {
      * Callback to invoke when overlay menu is shown.
      * @group Emits
      */
-    @Output() onShow: EventEmitter<any> = new EventEmitter<any>();
+    readonly onShow = output<any>();
     /**
      * Callback to invoke when overlay menu is hidden.
      * @group Emits
      */
-    @Output() onHide: EventEmitter<any> = new EventEmitter<any>();
+    readonly onHide = output<any>();
 
     readonly rootmenu = viewChild<TieredMenuSub>('rootmenu');
 

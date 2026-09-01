@@ -5,20 +5,19 @@ import {
     Component,
     effect,
     ElementRef,
-    EventEmitter,
     forwardRef,
     inject,
     InjectionToken,
     Input,
     NgModule,
     numberAttribute,
-    Output,
     signal,
     TemplateRef,
     ViewEncapsulation,
     contentChild,
     contentChildren,
-    viewChild
+    viewChild,
+    output
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { findLastIndex, findSingle, focus, isEmpty, isNotEmpty, isPrintableCharacter, isTouchDevice, resolve, uuid } from '@openng/optimus-ui-utils';
@@ -283,17 +282,17 @@ export class MegaMenuSub extends BaseComponent<MegaMenuPassThrough> {
 
     @Input({ transform: booleanAttribute }) root: boolean = false;
 
-    @Output() itemClick: EventEmitter<any> = new EventEmitter();
+    readonly itemClick = output<any>();
 
-    @Output() itemMouseEnter: EventEmitter<any> = new EventEmitter();
+    readonly itemMouseEnter = output<any>();
 
-    @Output() menuFocus: EventEmitter<any> = new EventEmitter();
+    readonly menuFocus = output<any>();
 
-    @Output() menuBlur: EventEmitter<any> = new EventEmitter();
+    readonly menuBlur = output<any>();
 
-    @Output() menuKeydown: EventEmitter<any> = new EventEmitter();
+    readonly menuKeydown = output<any>();
 
-    @Output() menuMouseDown: EventEmitter<any> = new EventEmitter();
+    readonly menuMouseDown = output<any>();
 
     megaMenu: MegaMenu = inject(forwardRef(() => MegaMenu));
 

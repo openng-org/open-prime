@@ -5,7 +5,6 @@ import {
     Component,
     computed,
     ElementRef,
-    EventEmitter,
     forwardRef,
     inject,
     InjectionToken,
@@ -13,14 +12,14 @@ import {
     Input,
     NgModule,
     numberAttribute,
-    Output,
     signal,
     SimpleChanges,
     TemplateRef,
     ViewEncapsulation,
     viewChild,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { FormControl, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { contains, equals } from '@openng/optimus-ui-utils';
@@ -200,19 +199,19 @@ export class Checkbox extends BaseEditableHolder<CheckboxPassThrough> {
      * @param {CheckboxChangeEvent} event - Custom value change event.
      * @group Emits
      */
-    @Output() onChange: EventEmitter<CheckboxChangeEvent> = new EventEmitter();
+    readonly onChange = output<CheckboxChangeEvent>();
     /**
      * Callback to invoke when the receives focus.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onFocus: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onFocus = output<Event>();
     /**
      * Callback to invoke when the loses focus.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onBlur: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onBlur = output<Event>();
 
     readonly inputViewChild = viewChild.required<ElementRef>('input');
 

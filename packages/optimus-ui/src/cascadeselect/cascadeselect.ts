@@ -6,7 +6,6 @@ import {
     computed,
     effect,
     ElementRef,
-    EventEmitter,
     forwardRef,
     HostListener,
     inject,
@@ -15,14 +14,14 @@ import {
     Input,
     NgModule,
     numberAttribute,
-    Output,
     signal,
     SimpleChanges,
     TemplateRef,
     ViewEncapsulation,
     viewChild,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MotionOptions } from '@openng/optimus-ui-motion';
@@ -158,11 +157,11 @@ export class CascadeSelectSub extends BaseComponent {
 
     @Input({ transform: booleanAttribute }) root: boolean | undefined;
 
-    @Output() onChange: EventEmitter<any> = new EventEmitter();
+    readonly onChange = output<any>();
 
-    @Output() onFocusChange: EventEmitter<any> = new EventEmitter();
+    readonly onFocusChange = output<any>();
 
-    @Output() onFocusEnterChange: EventEmitter<any> = new EventEmitter();
+    readonly onFocusEnterChange = output<any>();
 
     _componentStyle = inject(CascadeSelectStyle);
 
@@ -619,54 +618,54 @@ export class CascadeSelect extends BaseEditableHolder<CascadeSelectPassThrough> 
      * @param {CascadeSelectChangeEvent} event - Custom change event.
      * @group Emits
      */
-    @Output() onChange: EventEmitter<CascadeSelectChangeEvent> = new EventEmitter<CascadeSelectChangeEvent>();
+    readonly onChange = output<CascadeSelectChangeEvent>();
     /**
      * Callback to invoke when a group changes.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onGroupChange: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onGroupChange = output<Event>();
     /**
      * Callback to invoke when the overlay is shown.
      * @param {CascadeSelectShowEvent} event - Custom overlay show event.
      * @group Emits
      */
-    @Output() onShow: EventEmitter<CascadeSelectShowEvent> = new EventEmitter<CascadeSelectShowEvent>();
+    readonly onShow = output<CascadeSelectShowEvent>();
     /**
      * Callback to invoke when the overlay is hidden.
      * @param {CascadeSelectHideEvent} event - Custom overlay hide event.
      * @group Emits
      */
-    @Output() onHide: EventEmitter<CascadeSelectHideEvent> = new EventEmitter<CascadeSelectHideEvent>();
+    readonly onHide = output<CascadeSelectHideEvent>();
     /**
      * Callback to invoke when the clear token is clicked.
      * @group Emits
      */
-    @Output() onClear: EventEmitter<any> = new EventEmitter();
+    readonly onClear = output<any>();
     /**
      * Callback to invoke before overlay is shown.
      * @param {CascadeSelectBeforeShowEvent} event - Custom overlay show event.
      * @group Emits
      */
-    @Output() onBeforeShow: EventEmitter<CascadeSelectBeforeShowEvent> = new EventEmitter<CascadeSelectBeforeShowEvent>();
+    readonly onBeforeShow = output<CascadeSelectBeforeShowEvent>();
     /**
      * Callback to invoke before overlay is hidden.
      * @param {CascadeSelectBeforeHideEvent} event - Custom overlay hide event.
      * @group Emits
      */
-    @Output() onBeforeHide: EventEmitter<CascadeSelectBeforeHideEvent> = new EventEmitter<CascadeSelectBeforeHideEvent>();
+    readonly onBeforeHide = output<CascadeSelectBeforeHideEvent>();
     /**
      * Callback to invoke when input receives focus.
      * @param {FocusEvent} event - Focus event.
      * @group Emits
      */
-    @Output() onFocus: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
+    readonly onFocus = output<FocusEvent>();
     /**
      * Callback to invoke when input loses focus.
      * @param {FocusEvent} event - Focus event.
      * @group Emits
      */
-    @Output() onBlur: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
+    readonly onBlur = output<FocusEvent>();
 
     readonly focusInputViewChild = viewChild.required<ElementRef>('focusInput');
 

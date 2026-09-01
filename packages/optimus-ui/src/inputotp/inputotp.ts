@@ -6,18 +6,17 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    EventEmitter,
     forwardRef,
     inject,
     InjectionToken,
     input,
     Input,
     NgModule,
-    Output,
     TemplateRef,
     ViewEncapsulation,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
@@ -155,19 +154,19 @@ export class InputOtp extends BaseEditableHolder<InputOtpPassThrough> implements
      * Callback to invoke on value change.
      * @group Emits
      */
-    @Output() onChange: EventEmitter<InputOtpChangeEvent> = new EventEmitter<InputOtpChangeEvent>();
+    readonly onChange = output<InputOtpChangeEvent>();
     /**
      * Callback to invoke when the component receives focus.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onFocus: EventEmitter<Event> = new EventEmitter();
+    readonly onFocus = output<Event>();
     /**
      * Callback to invoke when the component loses focus.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onBlur: EventEmitter<Event> = new EventEmitter();
+    readonly onBlur = output<Event>();
     /**
      * Custom input template.
      * @param {InputOtpInputTemplateContext} context - Context of the template

@@ -5,7 +5,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     ElementRef,
-    EventEmitter,
     inject,
     InjectionToken,
     input,
@@ -14,7 +13,6 @@ import {
     NgZone,
     numberAttribute,
     output,
-    Output,
     TemplateRef,
     ViewEncapsulation,
     contentChild,
@@ -533,67 +531,67 @@ export class FileUpload extends BaseComponent<FileUploadPassThrough> implements 
      * @param {FileBeforeUploadEvent} event - Custom upload event.
      * @group Emits
      */
-    @Output() onBeforeUpload: EventEmitter<FileBeforeUploadEvent> = new EventEmitter<FileBeforeUploadEvent>();
+    readonly onBeforeUpload = output<FileBeforeUploadEvent>();
     /**
      * An event indicating that the request was sent to the server. Useful when a request may be retried multiple times, to distinguish between retries on the final event stream.
      * @param {FileSendEvent} event - Custom send event.
      * @group Emits
      */
-    @Output() onSend: EventEmitter<FileSendEvent> = new EventEmitter<FileSendEvent>();
+    readonly onSend = output<FileSendEvent>();
     /**
      * Callback to invoke when file upload is complete.
      * @param {FileUploadEvent} event - Custom upload event.
      * @group Emits
      */
-    @Output() onUpload: EventEmitter<FileUploadEvent> = new EventEmitter<FileUploadEvent>();
+    readonly onUpload = output<FileUploadEvent>();
     /**
      * Callback to invoke if file upload fails.
      * @param {FileUploadErrorEvent} event - Custom error event.
      * @group Emits
      */
-    @Output() onError: EventEmitter<FileUploadErrorEvent> = new EventEmitter<FileUploadErrorEvent>();
+    readonly onError = output<FileUploadErrorEvent>();
     /**
      * Callback to invoke when files in queue are removed without uploading using clear all button.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onClear: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onClear = output<Event | undefined>();
     /**
      * Callback to invoke when a file is removed without uploading using clear button of a file.
      * @param {FileRemoveEvent} event - Remove event.
      * @group Emits
      */
-    @Output() onRemove: EventEmitter<FileRemoveEvent> = new EventEmitter<FileRemoveEvent>();
+    readonly onRemove = output<FileRemoveEvent>();
     /**
      * Callback to invoke when files are selected.
      * @param {FileSelectEvent} event - Select event.
      * @group Emits
      */
-    @Output() onSelect: EventEmitter<FileSelectEvent> = new EventEmitter<FileSelectEvent>();
+    readonly onSelect = output<FileSelectEvent>();
     /**
      * Callback to invoke when files are being uploaded.
      * @param {FileProgressEvent} event - Progress event.
      * @group Emits
      */
-    @Output() onProgress: EventEmitter<FileProgressEvent> = new EventEmitter<FileProgressEvent>();
+    readonly onProgress = output<FileProgressEvent>();
     /**
      * Callback to invoke in custom upload mode to upload the files manually.
      * @param {FileUploadHandlerEvent} event - Upload handler event.
      * @group Emits
      */
-    @Output() uploadHandler: EventEmitter<FileUploadHandlerEvent> = new EventEmitter<FileUploadHandlerEvent>();
+    readonly uploadHandler = output<FileUploadHandlerEvent>();
     /**
      * This event is triggered if an error occurs while loading an image file.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onImageError: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onImageError = output<Event>();
     /**
      * This event is triggered if an error occurs while loading an image file.
      * @param {RemoveUploadedFileEvent} event - Remove event.
      * @group Emits
      */
-    @Output() onRemoveUploadedFile: EventEmitter<RemoveUploadedFileEvent> = new EventEmitter<RemoveUploadedFileEvent>();
+    readonly onRemoveUploadedFile = output<RemoveUploadedFileEvent>();
 
     /**
      * Custom file template.
@@ -1037,7 +1035,7 @@ export class FileUpload extends BaseComponent<FileUploadPassThrough> implements 
      */
     clear() {
         this.files = [];
-        this.onClear.emit();
+        this.onClear.emit(undefined);
         this.clearInputElement();
         this.msgs = [];
         this.cd.markForCheck();

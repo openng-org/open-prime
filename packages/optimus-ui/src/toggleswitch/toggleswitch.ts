@@ -4,7 +4,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     ElementRef,
-    EventEmitter,
     forwardRef,
     HostListener,
     inject,
@@ -13,12 +12,12 @@ import {
     Input,
     NgModule,
     numberAttribute,
-    Output,
     TemplateRef,
     ViewEncapsulation,
     viewChild,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
@@ -152,7 +151,7 @@ export class ToggleSwitch extends BaseEditableHolder<ToggleSwitchPassThrough> {
      * @param {ToggleSwitchChangeEvent} event - Custom change event.
      * @group Emits
      */
-    @Output() onChange: EventEmitter<ToggleSwitchChangeEvent> = new EventEmitter<ToggleSwitchChangeEvent>();
+    readonly onChange = output<ToggleSwitchChangeEvent>();
 
     readonly input = viewChild.required<ElementRef>('input');
     /**

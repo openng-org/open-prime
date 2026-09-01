@@ -1,24 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import {
-    booleanAttribute,
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    contentChild,
-    Directive,
-    effect,
-    EventEmitter,
-    inject,
-    InjectionToken,
-    input,
-    Input,
-    NgModule,
-    numberAttribute,
-    Output,
-    TemplateRef,
-    ViewEncapsulation,
-    contentChildren
-} from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, contentChild, Directive, effect, inject, InjectionToken, input, Input, NgModule, numberAttribute, TemplateRef, ViewEncapsulation, contentChildren, output } from '@angular/core';
 import { addClass, createElement, findSingle, isEmpty } from '@openng/optimus-ui-utils';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { AutoFocus } from '@openng/optimus-ui/autofocus';
@@ -809,7 +790,7 @@ export class Button extends BaseComponent<ButtonPassThrough> {
      * @param {MouseEvent} event - Mouse event.
      * @group Emits
      */
-    @Output() onClick: EventEmitter<MouseEvent> = new EventEmitter();
+    readonly onClick = output<MouseEvent>();
 
     /**
      * Callback to execute when button is focused.
@@ -817,7 +798,7 @@ export class Button extends BaseComponent<ButtonPassThrough> {
      * @param {FocusEvent} event - Focus event.
      * @group Emits
      */
-    @Output() onFocus: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
+    readonly onFocus = output<FocusEvent>();
 
     /**
      * Callback to execute when button loses focus.
@@ -825,7 +806,7 @@ export class Button extends BaseComponent<ButtonPassThrough> {
      * @param {FocusEvent} event - Focus event.
      * @group Emits
      */
-    @Output() onBlur: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
+    readonly onBlur = output<FocusEvent>();
 
     /**
      * Custom content template.

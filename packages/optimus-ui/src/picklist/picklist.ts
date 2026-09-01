@@ -5,19 +5,19 @@ import {
     ChangeDetectionStrategy,
     Component,
     ElementRef,
-    EventEmitter,
     inject,
     InjectionToken,
     Input,
     model,
     NgModule,
     numberAttribute,
-    Output,
+    OutputEmitterRef,
     TemplateRef,
     ViewEncapsulation,
     viewChild,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { find, findIndexInList, isEmpty, setAttribute, uuid } from '@openng/optimus-ui-utils';
@@ -726,75 +726,75 @@ export class PickList extends BaseComponent {
      * @param {PickListMoveToSourceEvent} event - Custom move to source event.
      * @group Emits
      */
-    @Output() onMoveToSource: EventEmitter<PickListMoveToSourceEvent> = new EventEmitter<PickListMoveToSourceEvent>();
+    readonly onMoveToSource = output<PickListMoveToSourceEvent>();
     /**
      * Callback to invoke when all items are moved from target to source.
      * @param {PickListMoveAllToSourceEvent} event - Custom move all to source event.
      * @group Emits
      */
-    @Output() onMoveAllToSource: EventEmitter<PickListMoveAllToSourceEvent> = new EventEmitter<PickListMoveAllToSourceEvent>();
+    readonly onMoveAllToSource = output<PickListMoveAllToSourceEvent>();
     /**
      * Callback to invoke when all items are moved from source to target.
      * @param {PickListMoveAllToTargetEvent} event - Custom move all to target event.
      * @group Emits
      */
-    @Output() onMoveAllToTarget: EventEmitter<PickListMoveAllToTargetEvent> = new EventEmitter<PickListMoveAllToTargetEvent>();
+    readonly onMoveAllToTarget = output<PickListMoveAllToTargetEvent>();
     /**
      * Callback to invoke when items are moved from source to target.
      * @param {PickListMoveToTargetEvent} event - Custom move to target event.
      * @group Emits
      */
-    @Output() onMoveToTarget: EventEmitter<PickListMoveToTargetEvent> = new EventEmitter<PickListMoveToTargetEvent>();
+    readonly onMoveToTarget = output<PickListMoveToTargetEvent>();
     /**
      * Callback to invoke when items are reordered within source list.
      * @param {PickListSourceReorderEvent} event - Custom source reorder event.
      * @group Emits
      */
-    @Output() onSourceReorder: EventEmitter<PickListSourceReorderEvent> = new EventEmitter<PickListSourceReorderEvent>();
+    readonly onSourceReorder = output<PickListSourceReorderEvent>();
     /**
      * Callback to invoke when items are reordered within target list.
      * @param {PickListTargetReorderEvent} event - Custom target reorder event.
      * @group Emits
      */
-    @Output() onTargetReorder: EventEmitter<PickListTargetReorderEvent> = new EventEmitter<PickListTargetReorderEvent>();
+    readonly onTargetReorder = output<PickListTargetReorderEvent>();
     /**
      * Callback to invoke when items are selected within source list.
      * @param {PickListSourceSelectEvent} event - Custom source select event.
      * @group Emits
      */
-    @Output() onSourceSelect: EventEmitter<PickListSourceSelectEvent> = new EventEmitter<PickListSourceSelectEvent>();
+    readonly onSourceSelect = output<PickListSourceSelectEvent>();
     /**
      * Callback to invoke when items are selected within target list.
      * @param {PickListTargetSelectEvent} event - Custom target select event.
      * @group Emits
      */
-    @Output() onTargetSelect: EventEmitter<PickListTargetSelectEvent> = new EventEmitter<PickListTargetSelectEvent>();
+    readonly onTargetSelect = output<PickListTargetSelectEvent>();
     /**
      * Callback to invoke when the source list is filtered
      * @param {PickListSourceFilterEvent} event - Custom source filter event.
      * @group Emits
      */
-    @Output() onSourceFilter: EventEmitter<PickListSourceFilterEvent> = new EventEmitter<PickListSourceFilterEvent>();
+    readonly onSourceFilter = output<PickListSourceFilterEvent>();
     /**
      * Callback to invoke when the target list is filtered
      * @param {PickListTargetFilterEvent} event - Custom target filter event.
      * @group Emits
      */
-    @Output() onTargetFilter: EventEmitter<PickListTargetFilterEvent> = new EventEmitter<PickListTargetFilterEvent>();
+    readonly onTargetFilter = output<PickListTargetFilterEvent>();
 
     /**
      * Callback to invoke when the list is focused
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onFocus: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onFocus = output<Event>();
 
     /**
      * Callback to invoke when the list is blurred
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onBlur: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onBlur = output<Event>();
 
     readonly listViewSourceChild = viewChild.required<Listbox>('sourcelist');
 
@@ -1290,7 +1290,7 @@ export class PickList extends BaseComponent {
         this.listViewSourceChild().cd.markForCheck();
     }
 
-    moveUp(listElement: any, list: any[], selectedItems: any[], callback: EventEmitter<any>, listType: number) {
+    moveUp(listElement: any, list: any[], selectedItems: any[], callback: OutputEmitterRef<any>, listType: number) {
         if (selectedItems && selectedItems.length) {
             selectedItems = this.sortByIndexInList(selectedItems, list);
             for (let i = 0; i < selectedItems.length; i++) {
@@ -1316,7 +1316,7 @@ export class PickList extends BaseComponent {
         }
     }
 
-    moveTop(listElement: any, list: any[], selectedItems: any[], callback: EventEmitter<any>, listType: number) {
+    moveTop(listElement: any, list: any[], selectedItems: any[], callback: OutputEmitterRef<any>, listType: number) {
         if (selectedItems && selectedItems.length) {
             selectedItems = this.sortByIndexInList(selectedItems, list);
             for (let i = 0; i < selectedItems.length; i++) {
@@ -1339,7 +1339,7 @@ export class PickList extends BaseComponent {
         }
     }
 
-    moveDown(listElement: any, list: any[], selectedItems: any[], callback: EventEmitter<any>, listType: number) {
+    moveDown(listElement: any, list: any[], selectedItems: any[], callback: OutputEmitterRef<any>, listType: number) {
         if (selectedItems && selectedItems.length) {
             selectedItems = this.sortByIndexInList(selectedItems, list);
             for (let i = selectedItems.length - 1; i >= 0; i--) {
@@ -1365,7 +1365,7 @@ export class PickList extends BaseComponent {
         }
     }
 
-    moveBottom(listElement: any, list: any[], selectedItems: any[], callback: EventEmitter<any>, listType: number) {
+    moveBottom(listElement: any, list: any[], selectedItems: any[], callback: OutputEmitterRef<any>, listType: number) {
         if (selectedItems && selectedItems.length) {
             selectedItems = this.sortByIndexInList(selectedItems, list);
             for (let i = selectedItems.length - 1; i >= 0; i--) {

@@ -6,7 +6,6 @@ import {
     Component,
     computed,
     ElementRef,
-    EventEmitter,
     HostBinding,
     inject,
     InjectionToken,
@@ -16,12 +15,12 @@ import {
     numberAttribute,
     OnChanges,
     OnInit,
-    Output,
     SimpleChanges,
     TemplateRef,
     ViewEncapsulation,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Aria, PrimeTemplate, SelectItem, SharedModule } from '@openng/optimus-ui/api';
@@ -331,7 +330,7 @@ export class Paginator extends BaseComponent<PaginatorPassThrough> {
      * @param {PaginatorState} event - Paginator state.
      * @group Emits
      */
-    @Output() onPageChange: EventEmitter<PaginatorState> = new EventEmitter<PaginatorState>();
+    readonly onPageChange = output<PaginatorState>();
 
     /**
      * Template for the dropdown icon.

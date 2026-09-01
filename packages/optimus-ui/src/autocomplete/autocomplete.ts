@@ -6,7 +6,6 @@ import {
     computed,
     EmbeddedViewRef,
     ElementRef,
-    EventEmitter,
     forwardRef,
     HostListener,
     inject,
@@ -16,13 +15,13 @@ import {
     NgModule,
     NgZone,
     numberAttribute,
-    Output,
     signal,
     TemplateRef,
     ViewEncapsulation,
     viewChild,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MotionOptions } from '@openng/optimus-ui-motion';
@@ -675,79 +674,79 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
      * @param {AutoCompleteCompleteEvent} event - Custom complete event.
      * @group Emits
      */
-    @Output() completeMethod: EventEmitter<AutoCompleteCompleteEvent> = new EventEmitter<AutoCompleteCompleteEvent>();
+    readonly completeMethod = output<AutoCompleteCompleteEvent>();
     /**
      * Callback to invoke when a suggestion is selected.
      * @param {AutoCompleteSelectEvent} event - custom select event.
      * @group Emits
      */
-    @Output() onSelect: EventEmitter<AutoCompleteSelectEvent<T>> = new EventEmitter<AutoCompleteSelectEvent<T>>();
+    readonly onSelect = output<AutoCompleteSelectEvent<T>>();
     /**
      * Callback to invoke when a selected value is removed.
      * @param {AutoCompleteUnselectEvent} event - custom unselect event.
      * @group Emits
      */
-    @Output() onUnselect: EventEmitter<AutoCompleteUnselectEvent<T>> = new EventEmitter<AutoCompleteUnselectEvent<T>>();
+    readonly onUnselect = output<AutoCompleteUnselectEvent<T>>();
     /**
      * Callback to invoke when an item is added via addOnBlur or separator features.
      * @param {AutoCompleteAddEvent} event - Custom add event.
      * @group Emits
      */
-    @Output() onAdd: EventEmitter<AutoCompleteAddEvent> = new EventEmitter<AutoCompleteAddEvent>();
+    readonly onAdd = output<AutoCompleteAddEvent>();
     /**
      * Callback to invoke when the component receives focus.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onFocus: EventEmitter<Event> = new EventEmitter();
+    readonly onFocus = output<Event>();
     /**
      * Callback to invoke when the component loses focus.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onBlur: EventEmitter<Event> = new EventEmitter();
+    readonly onBlur = output<Event>();
     /**
      * Callback to invoke to when dropdown button is clicked.
      * @param {AutoCompleteDropdownClickEvent} event - custom dropdown click event.
      * @group Emits
      */
-    @Output() onDropdownClick: EventEmitter<AutoCompleteDropdownClickEvent> = new EventEmitter<AutoCompleteDropdownClickEvent>();
+    readonly onDropdownClick = output<AutoCompleteDropdownClickEvent>();
     /**
      * Callback to invoke when clear button is clicked.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onClear: EventEmitter<Event | undefined> = new EventEmitter<Event | undefined>();
+    readonly onClear = output<Event | undefined>();
     /**
      * Callback to invoke on input key down.
      * @param {KeyboardEvent} event - Keyboard event.
      * @group Emits
      */
-    @Output() onInputKeydown: EventEmitter<KeyboardEvent> = new EventEmitter<KeyboardEvent>();
+    readonly onInputKeydown = output<KeyboardEvent>();
     /**
      * Callback to invoke on input key up.
      * @param {KeyboardEvent} event - Keyboard event.
      * @group Emits
      */
-    @Output() onKeyUp: EventEmitter<KeyboardEvent> = new EventEmitter();
+    readonly onKeyUp = output<KeyboardEvent>();
     /**
      * Callback to invoke on overlay is shown.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onShow: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onShow = output<Event | undefined>();
     /**
      * Callback to invoke on overlay is hidden.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onHide: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onHide = output<Event | undefined>();
     /**
      * Callback to invoke on lazy load data.
      * @param {AutoCompleteLazyLoadEvent} event - Lazy load event.
      * @group Emits
      */
-    @Output() onLazyLoad: EventEmitter<AutoCompleteLazyLoadEvent> = new EventEmitter<AutoCompleteLazyLoadEvent>();
+    readonly onLazyLoad = output<AutoCompleteLazyLoadEvent>();
 
     readonly inputEL = viewChild<Nullable<ElementRef>>('focusInput');
 
@@ -1216,7 +1215,7 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
             }
 
             if (query.length === 0 && !this.multiple) {
-                this.onClear.emit();
+                this.onClear.emit(undefined);
 
                 setTimeout(() => {
                     this.hide();
@@ -1778,7 +1777,7 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
         if (isFocus) {
             focus(this.inputEL()?.nativeElement);
         }
-        this.onShow.emit();
+        this.onShow.emit(undefined);
         this.cd.markForCheck();
     }
 
@@ -1788,7 +1787,7 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
             this.overlayVisible = false;
             this.focusedOptionIndex.set(-1);
             isFocus && focus(this.inputEL()?.nativeElement);
-            this.onHide.emit();
+            this.onHide.emit(undefined);
             this.updateInputWithForceSelection(null);
             this.cd.markForCheck();
         };
@@ -1802,7 +1801,7 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
         this.updateModel(null);
         const inputEL = this.inputEL();
         inputEL?.nativeElement && (inputEL.nativeElement.value = '');
-        this.onClear.emit();
+        this.onClear.emit(undefined);
     }
 
     hasSelectedOption() {

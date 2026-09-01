@@ -5,7 +5,6 @@ import {
     Component,
     computed,
     ElementRef,
-    EventEmitter,
     forwardRef,
     inject,
     InjectionToken,
@@ -13,14 +12,14 @@ import {
     Input,
     NgModule,
     numberAttribute,
-    Output,
     signal,
     SimpleChanges,
     TemplateRef,
     ViewEncapsulation,
     viewChild,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MotionOptions } from '@openng/optimus-ui-motion';
@@ -252,13 +251,13 @@ export class PanelMenuSub extends BaseComponent {
 
     motionOptions = input<MotionOptions>();
 
-    @Output() itemToggle: EventEmitter<any> = new EventEmitter<any>();
+    readonly itemToggle = output<any>();
 
-    @Output() menuFocus: EventEmitter<any> = new EventEmitter<any>();
+    readonly menuFocus = output<any>();
 
-    @Output() menuBlur: EventEmitter<any> = new EventEmitter<any>();
+    readonly menuBlur = output<any>();
 
-    @Output() menuKeyDown: EventEmitter<any> = new EventEmitter<any>();
+    readonly menuKeyDown = output<any>();
 
     listViewChild: ElementRef = inject(ElementRef);
 
@@ -407,9 +406,9 @@ export class PanelMenuList extends BaseComponent {
 
     motionOptions = input<MotionOptions>();
 
-    @Output() itemToggle: EventEmitter<any> = new EventEmitter<any>();
+    readonly itemToggle = output<any>();
 
-    @Output() headerFocus: EventEmitter<any> = new EventEmitter<any>();
+    readonly headerFocus = output<any>();
 
     readonly subMenuViewChild = viewChild.required<PanelMenuSub>('submenu');
 

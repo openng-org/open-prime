@@ -1,4 +1,4 @@
-import { AfterViewInit, booleanAttribute, Directive, ElementRef, EventEmitter, HostListener, Input, NgModule, NgZone, OnDestroy, Output, Renderer2, inject } from '@angular/core';
+import { AfterViewInit, booleanAttribute, Directive, ElementRef, HostListener, Input, NgModule, NgZone, OnDestroy, Renderer2, inject, output } from '@angular/core';
 import { addClass, removeClass } from '@openng/optimus-ui-utils';
 import { DomHandler } from '@openng/optimus-ui/dom';
 import { VoidListener } from '@openng/optimus-ui/ts-helpers';
@@ -32,19 +32,19 @@ export class Draggable implements AfterViewInit, OnDestroy {
      * @param {DragEvent} event - Drag event.
      * @group Emits
      */
-    @Output() onDragStart: EventEmitter<DragEvent> = new EventEmitter();
+    readonly onDragStart = output<DragEvent>();
     /**
      * Callback to invoke when drag ends.
      * @param {DragEvent} event - Drag event.
      * @group Emits
      */
-    @Output() onDragEnd: EventEmitter<DragEvent> = new EventEmitter();
+    readonly onDragEnd = output<DragEvent>();
     /**
      * Callback to invoke on dragging.
      * @param {DragEvent} event - Drag event.
      * @group Emits
      */
-    @Output() onDrag: EventEmitter<DragEvent> = new EventEmitter();
+    readonly onDrag = output<DragEvent>();
 
     handle: any;
 
@@ -199,17 +199,17 @@ export class Droppable implements AfterViewInit, OnDestroy {
      * Callback to invoke when a draggable enters drop area.
      * @group Emits
      */
-    @Output() onDragEnter: EventEmitter<DragEvent> = new EventEmitter();
+    readonly onDragEnter = output<DragEvent>();
     /**
      * Callback to invoke when a draggable leave drop area.
      * @group Emits
      */
-    @Output() onDragLeave: EventEmitter<DragEvent> = new EventEmitter();
+    readonly onDragLeave = output<DragEvent>();
     /**
      * Callback to invoke when a draggable is dropped onto drop area.
      * @group Emits
      */
-    @Output() onDrop: EventEmitter<DragEvent> = new EventEmitter();
+    readonly onDrop = output<DragEvent>();
 
     dragOverListener: VoidListener;
 

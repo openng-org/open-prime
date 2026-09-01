@@ -5,7 +5,6 @@ import {
     Component,
     computed,
     effect,
-    EventEmitter,
     inject,
     InjectionToken,
     input,
@@ -14,7 +13,6 @@ import {
     NgZone,
     numberAttribute,
     output,
-    Output,
     signal,
     TemplateRef,
     ViewEncapsulation,
@@ -168,7 +166,7 @@ export class ToastItem extends BaseComponent<ToastPassThrough> {
         }
     }
 
-    @Output() onClose: EventEmitter<ToastItemCloseEvent> = new EventEmitter();
+    readonly onClose = output<ToastItemCloseEvent>();
 
     _componentStyle = inject(ToastStyle);
 
@@ -392,7 +390,7 @@ export class Toast extends BaseComponent<ToastPassThrough> {
      * @param {ToastCloseEvent} event - custom close event.
      * @group Emits
      */
-    @Output() onClose: EventEmitter<ToastCloseEvent> = new EventEmitter<ToastCloseEvent>();
+    readonly onClose = output<ToastCloseEvent>();
     /**
      * Custom message template.
      * @param {ToastMessageTemplateContext} context - message context.

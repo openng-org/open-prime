@@ -1,4 +1,4 @@
-import { booleanAttribute, computed, Directive, effect, EventEmitter, HostListener, inject, InjectionToken, input, Input, NgModule, Output } from '@angular/core';
+import { booleanAttribute, computed, Directive, effect, HostListener, inject, InjectionToken, input, Input, NgModule, output } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
 import { BaseModelHolder } from '@openng/optimus-ui/basemodelholder';
@@ -78,7 +78,7 @@ export class Textarea extends BaseModelHolder<TextareaPassThrough> {
      * @param {(Event | {})} event - Custom resize event.
      * @group Emits
      */
-    @Output() onResize: EventEmitter<Event | {}> = new EventEmitter<Event | {}>();
+    readonly onResize = output<Event | {}>();
 
     ngControlSubscription: Subscription | undefined;
 

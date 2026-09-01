@@ -7,7 +7,6 @@ import {
     Directive,
     effect,
     ElementRef,
-    EventEmitter,
     forwardRef,
     HostListener,
     inject,
@@ -17,7 +16,6 @@ import {
     NgModule,
     NgZone,
     numberAttribute,
-    Output,
     Pipe,
     PipeTransform,
     signal,
@@ -25,7 +23,8 @@ import {
     ViewEncapsulation,
     viewChild,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MotionOptions } from '@openng/optimus-ui-motion';
@@ -678,18 +677,18 @@ export class Password extends BaseInput<PasswordPassThrough> {
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onFocus: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onFocus = output<Event>();
     /**
      * Callback to invoke when the component loses focus.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onBlur: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onBlur = output<Event>();
     /**
      * Callback to invoke when clear button is clicked.
      * @group Emits
      */
-    @Output() onClear: EventEmitter<any> = new EventEmitter<any>();
+    readonly onClear = output<any>();
 
     readonly input = viewChild.required<ElementRef>('input');
 
@@ -947,7 +946,7 @@ export class Password extends BaseInput<PasswordPassThrough> {
         this.value = null;
         this.onModelChange(this.value);
         this.writeValue(this.value);
-        this.onClear.emit();
+        this.onClear.emit(undefined);
     }
 
     /**

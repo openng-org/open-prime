@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformServer } from '@angular/common';
-import { afterNextRender, ChangeDetectionStrategy, Component, EventEmitter, forwardRef, inject, InjectionToken, Input, NgModule, Output, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, forwardRef, inject, InjectionToken, Input, NgModule, TemplateRef, ViewEncapsulation, contentChild, contentChildren, output } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { findSingle } from '@openng/optimus-ui-utils';
 import { Header, PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
@@ -157,37 +157,37 @@ export class Editor extends BaseEditableHolder<EditorPassThrough> {
      * @param {EditorInitEvent} event - custom event.
      * @group Emits
      */
-    @Output('onInit') onEditorInit: EventEmitter<EditorInitEvent> = new EventEmitter<EditorInitEvent>();
+    readonly onEditorInit = output<EditorInitEvent>({ alias: 'onInit' });
     /**
      * Callback to invoke when text of editor changes.
      * @param {EditorTextChangeEvent} event - custom event.
      * @group Emits
      */
-    @Output() onTextChange: EventEmitter<EditorTextChangeEvent> = new EventEmitter<EditorTextChangeEvent>();
+    readonly onTextChange = output<EditorTextChangeEvent>();
     /**
      * Callback to invoke when selection of the text changes.
      * @param {EditorSelectionChangeEvent} event - custom event.
      * @group Emits
      */
-    @Output() onSelectionChange: EventEmitter<EditorSelectionChangeEvent> = new EventEmitter<EditorSelectionChangeEvent>();
+    readonly onSelectionChange = output<EditorSelectionChangeEvent>();
     /**
      * Callback to invoke when editor content changes (combines both text and selection changes).
      * @param {EditorChangeEvent} event - custom event.
      * @group Emits
      */
-    @Output() onEditorChange: EventEmitter<EditorChangeEvent> = new EventEmitter<EditorChangeEvent>();
+    readonly onEditorChange = output<EditorChangeEvent>();
     /**
      * Callback to invoke when editor receives focus.
      * @param {EditorFocusEvent} event - custom event.
      * @group Emits
      */
-    @Output() onFocus: EventEmitter<EditorFocusEvent> = new EventEmitter<EditorFocusEvent>();
+    readonly onFocus = output<EditorFocusEvent>();
     /**
      * Callback to invoke when editor loses focus.
      * @param {EditorBlurEvent} event - custom event.
      * @group Emits
      */
-    @Output() onBlur: EventEmitter<EditorBlurEvent> = new EventEmitter<EditorBlurEvent>();
+    readonly onBlur = output<EditorBlurEvent>();
 
     readonly toolbar = contentChild(Header);
 

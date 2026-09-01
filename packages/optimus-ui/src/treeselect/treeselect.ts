@@ -5,7 +5,6 @@ import {
     Component,
     computed,
     ElementRef,
-    EventEmitter,
     forwardRef,
     HostListener,
     inject,
@@ -13,12 +12,12 @@ import {
     input,
     Input,
     NgModule,
-    Output,
     TemplateRef,
     ViewEncapsulation,
     viewChild,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MotionOptions } from '@openng/optimus-ui-motion';
@@ -43,7 +42,6 @@ import {
     TreeSelectPassThrough,
     TreeSelectValueTemplateContext
 } from '@openng/optimus-ui/types/treeselect';
-import { take } from 'rxjs';
 import { TreeSelectStyle } from './style/treeselectstyle';
 
 export const TREESELECT_VALUE_ACCESSOR: any = {
@@ -475,59 +473,59 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
      * @param {TreeSelectNodeExpandEvent} event - Custom node expand event.
      * @group Emits
      */
-    @Output() onNodeExpand: EventEmitter<TreeSelectNodeExpandEvent> = new EventEmitter<TreeSelectNodeExpandEvent>();
+    readonly onNodeExpand = output<TreeSelectNodeExpandEvent>();
     /**
      * Callback to invoke when a node is collapsed.
      * @param {TreeSelectNodeCollapseEvent} event - Custom node collapse event.
      * @group Emits
      */
-    @Output() onNodeCollapse: EventEmitter<TreeSelectNodeCollapseEvent> = new EventEmitter<TreeSelectNodeCollapseEvent>();
+    readonly onNodeCollapse = output<TreeSelectNodeCollapseEvent>();
     /**
      * Callback to invoke when the overlay is shown.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onShow: EventEmitter<any> = new EventEmitter<any>();
+    readonly onShow = output<any>();
     /**
      * Callback to invoke when the overlay is hidden.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onHide: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onHide = output<Event>();
     /**
      * Callback to invoke when input field is cleared.
      * @group Emits
      */
-    @Output() onClear: EventEmitter<any> = new EventEmitter<any>();
+    readonly onClear = output<any>();
     /**
      * Callback to invoke when data is filtered.
      * @group Emits
      */
-    @Output() onFilter: EventEmitter<TreeFilterEvent> = new EventEmitter<TreeFilterEvent>();
+    readonly onFilter = output<TreeFilterEvent>();
     /**
      * Callback to invoke when treeselect gets focus.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onFocus: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onFocus = output<Event>();
     /**
      * Callback to invoke when treeselect loses focus.
      * @param {Event} event - Browser event.
      * @group Emits
      */
-    @Output() onBlur: EventEmitter<Event> = new EventEmitter<Event>();
+    readonly onBlur = output<Event>();
     /**
      * Callback to invoke when a node is unselected.
      * @param {TreeNodeUnSelectEvent} event - node unselect event.
      * @group Emits
      */
-    @Output() onNodeUnselect: EventEmitter<TreeNodeUnSelectEvent> = new EventEmitter<TreeNodeUnSelectEvent>();
+    readonly onNodeUnselect = output<TreeNodeUnSelectEvent>();
     /**
      * Callback to invoke when a node is selected.
      * @param {TreeNodeSelectEvent} event - node select event.
      * @group Emits
      */
-    @Output() onNodeSelect: EventEmitter<TreeNodeSelectEvent> = new EventEmitter<TreeNodeSelectEvent>();
+    readonly onNodeSelect = output<TreeNodeSelectEvent>();
 
     $appendTo = computed(() => this.appendTo() || this.config.overlayAppendTo());
 
@@ -771,9 +769,10 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
             virtualScrollResizeObserver.observe(panelElement);
 
             // clean up when overlay closes, not after first callback
-            this.overlayViewChild()
-                ?.onHide.pipe(take(1))
-                .subscribe(() => virtualScrollResizeObserver.disconnect());
+            const onHideSubscription = this.overlayViewChild()?.onHide.subscribe(() => {
+                virtualScrollResizeObserver.disconnect();
+                onHideSubscription?.unsubscribe();
+            });
         }
     }
 
@@ -903,7 +902,7 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
         this.resetExpandedNodes();
         this.resetPartialSelected();
         this.onModelChange(this.value);
-        this.onClear.emit();
+        this.onClear.emit(undefined);
 
         event.stopPropagation();
     }

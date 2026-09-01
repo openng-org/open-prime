@@ -1,4 +1,4 @@
-import { EventEmitter } from '@angular/core';
+import { Subject } from 'rxjs';
 
 /**
  * Represents a confirmation dialog configuration.
@@ -84,11 +84,11 @@ export interface Confirmation {
     /**
      * An event emitter for the accept event.
      */
-    acceptEvent?: EventEmitter<any>;
+    acceptEvent?: Subject<any>;
     /**
      * An event emitter for the reject event.
      */
-    rejectEvent?: EventEmitter<any>;
+    rejectEvent?: Subject<any>;
     /**
      * Accept button properties.
      */

@@ -5,7 +5,6 @@ import {
     Component,
     computed,
     ElementRef,
-    EventEmitter,
     HostListener,
     inject,
     InjectionToken,
@@ -14,12 +13,12 @@ import {
     NgModule,
     NgZone,
     numberAttribute,
-    Output,
     TemplateRef,
     ViewEncapsulation,
     ViewRef,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { MotionEvent, MotionOptions } from '@openng/optimus-ui-motion';
 import { $dt } from '@openng/optimus-ui-styled';
@@ -166,12 +165,12 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
      * Callback to invoke when an overlay becomes visible.
      * @group Emits
      */
-    @Output() onShow: EventEmitter<any> = new EventEmitter();
+    readonly onShow = output<any>();
     /**
      * Callback to invoke when an overlay gets hidden.
      * @group Emits
      */
-    @Output() onHide: EventEmitter<any> = new EventEmitter<any>();
+    readonly onHide = output<any>();
 
     $appendTo = computed(() => this.appendTo() || this.config.overlayAppendTo());
 

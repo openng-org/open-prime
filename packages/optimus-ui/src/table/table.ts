@@ -7,7 +7,6 @@ import {
     computed,
     Directive,
     ElementRef,
-    EventEmitter,
     HostListener,
     inject,
     Injectable,
@@ -17,14 +16,14 @@ import {
     NgModule,
     NgZone,
     numberAttribute,
-    Output,
     signal,
     SimpleChanges,
     TemplateRef,
     ViewEncapsulation,
     viewChild,
     contentChildren,
-    contentChild
+    contentChild,
+    output
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MotionEvent, MotionOptions } from '@openng/optimus-ui-motion';
@@ -535,7 +534,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
      * @param {*} object - row data.
      * @group Emits
      */
-    @Output() contextMenuSelectionChange: EventEmitter<any> = new EventEmitter();
+    readonly contextMenuSelectionChange = output<any>();
     /**
      *  Defines the behavior of context menu selection, in "separate" mode context menu updates contextMenuSelection property whereas in joint mode selection property is used instead so that when row selection is enabled, both row selection and context menu selection use the same property.
      * @group Props
@@ -883,140 +882,144 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
      * @param {TableSelectAllChangeEvent} event - custom  all selection change event.
      * @group Emits
      */
-    @Output() selectAllChange: EventEmitter<TableSelectAllChangeEvent> = new EventEmitter<TableSelectAllChangeEvent>();
+    readonly selectAllChange = output<TableSelectAllChangeEvent>();
     /**
      * Callback to invoke on selection changed.
      * @param {any | null} value - selected data.
      * @group Emits
      */
-    @Output() selectionChange: EventEmitter<any | null> = new EventEmitter<any | null>();
+    readonly selectionChange = output<any | null>();
     /**
      * Callback to invoke when a row is selected.
      * @param {TableRowSelectEvent} event - custom select event.
      * @group Emits
      */
-    @Output() onRowSelect: EventEmitter<TableRowSelectEvent<RowData>> = new EventEmitter<TableRowSelectEvent<RowData>>();
+    readonly onRowSelect = output<TableRowSelectEvent<RowData>>();
     /**
      * Callback to invoke when a row is unselected.
      * @param {TableRowUnSelectEvent} event - custom unselect event.
      * @group Emits
      */
-    @Output() onRowUnselect: EventEmitter<TableRowUnSelectEvent<RowData>> = new EventEmitter<TableRowUnSelectEvent<RowData>>();
+    readonly onRowUnselect = output<TableRowUnSelectEvent<RowData>>();
     /**
      * Callback to invoke when pagination occurs.
      * @param {TablePageEvent} event - custom pagination event.
      * @group Emits
      */
-    @Output() onPage: EventEmitter<TablePageEvent> = new EventEmitter<TablePageEvent>();
+    readonly onPage = output<TablePageEvent>();
     /**
      * Callback to invoke when a column gets sorted.
      * @param {Object} object - sort meta.
      * @group Emits
      */
-    @Output() onSort: EventEmitter<{ multisortmeta: SortMeta[] } | any> = new EventEmitter<{ multisortmeta: SortMeta[] } | any>();
+    readonly onSort = output<
+        | {
+              multisortmeta: SortMeta[];
+          }
+        | any
+    >();
     /**
      * Callback to invoke when data is filtered.
      * @param {TableFilterEvent} event - custom filtering event.
      * @group Emits
      */
-    @Output() onFilter: EventEmitter<TableFilterEvent> = new EventEmitter<TableFilterEvent>();
+    readonly onFilter = output<TableFilterEvent>();
     /**
      * Callback to invoke when paging, sorting or filtering happens in lazy mode.
      * @param {TableLazyLoadEvent} event - custom lazy loading event.
      * @group Emits
      */
-    @Output() onLazyLoad: EventEmitter<TableLazyLoadEvent> = new EventEmitter<TableLazyLoadEvent>();
+    readonly onLazyLoad = output<TableLazyLoadEvent>();
     /**
      * Callback to invoke when a row is expanded.
      * @param {TableRowExpandEvent} event - custom row expand event.
      * @group Emits
      */
-    @Output() onRowExpand: EventEmitter<TableRowExpandEvent<RowData>> = new EventEmitter<TableRowExpandEvent<RowData>>();
+    readonly onRowExpand = output<TableRowExpandEvent<RowData>>();
     /**
      * Callback to invoke when a row is collapsed.
      * @param {TableRowCollapseEvent} event - custom row collapse event.
      * @group Emits
      */
-    @Output() onRowCollapse: EventEmitter<TableRowCollapseEvent> = new EventEmitter<TableRowCollapseEvent>();
+    readonly onRowCollapse = output<TableRowCollapseEvent>();
     /**
      * Callback to invoke when a row is selected with right click.
      * @param {TableContextMenuSelectEvent} event - custom context menu select event.
      * @group Emits
      */
-    @Output() onContextMenuSelect: EventEmitter<TableContextMenuSelectEvent<RowData>> = new EventEmitter<TableContextMenuSelectEvent<RowData>>();
+    readonly onContextMenuSelect = output<TableContextMenuSelectEvent<RowData>>();
     /**
      * Callback to invoke when a column is resized.
      * @param {TableColResizeEvent} event - custom column resize event.
      * @group Emits
      */
-    @Output() onColResize: EventEmitter<TableColResizeEvent> = new EventEmitter<TableColResizeEvent>();
+    readonly onColResize = output<TableColResizeEvent>();
     /**
      * Callback to invoke when a column is reordered.
      * @param {TableColumnReorderEvent} event - custom column reorder event.
      * @group Emits
      */
-    @Output() onColReorder: EventEmitter<TableColumnReorderEvent> = new EventEmitter<TableColumnReorderEvent>();
+    readonly onColReorder = output<TableColumnReorderEvent>();
     /**
      * Callback to invoke when a row is reordered.
      * @param {TableRowReorderEvent} event - custom row reorder event.
      * @group Emits
      */
-    @Output() onRowReorder: EventEmitter<TableRowReorderEvent> = new EventEmitter<TableRowReorderEvent>();
+    readonly onRowReorder = output<TableRowReorderEvent>();
     /**
      * Callback to invoke when a cell switches to edit mode.
      * @param {TableEditInitEvent} event - custom edit init event.
      * @group Emits
      */
-    @Output() onEditInit: EventEmitter<TableEditInitEvent> = new EventEmitter<TableEditInitEvent>();
+    readonly onEditInit = output<TableEditInitEvent>();
     /**
      * Callback to invoke when cell edit is completed.
      * @param {TableEditCompleteEvent} event - custom edit complete event.
      * @group Emits
      */
-    @Output() onEditComplete: EventEmitter<TableEditCompleteEvent> = new EventEmitter<TableEditCompleteEvent>();
+    readonly onEditComplete = output<TableEditCompleteEvent>();
     /**
      * Callback to invoke when cell edit is cancelled with escape key.
      * @param {TableEditCancelEvent} event - custom edit cancel event.
      * @group Emits
      */
-    @Output() onEditCancel: EventEmitter<TableEditCancelEvent> = new EventEmitter<TableEditCancelEvent>();
+    readonly onEditCancel = output<TableEditCancelEvent>();
     /**
      * Callback to invoke when state of header checkbox changes.
      * @param {TableHeaderCheckboxToggleEvent} event - custom header checkbox event.
      * @group Emits
      */
-    @Output()
-    onHeaderCheckboxToggle: EventEmitter<TableHeaderCheckboxToggleEvent> = new EventEmitter<TableHeaderCheckboxToggleEvent>();
+    readonly onHeaderCheckboxToggle = output<TableHeaderCheckboxToggleEvent>();
     /**
      * A function to implement custom sorting, refer to sorting section for details.
      * @param {any} any - sort meta.
      * @group Emits
      */
-    @Output() sortFunction: EventEmitter<any> = new EventEmitter<any>();
+    readonly sortFunction = output<any>();
     /**
      * Callback to invoke on pagination.
      * @param {number} number - first element.
      * @group Emits
      */
-    @Output() firstChange: EventEmitter<number> = new EventEmitter<number>();
+    readonly firstChange = output<number | undefined>();
     /**
      * Callback to invoke on rows change.
      * @param {number} number - Row count.
      * @group Emits
      */
-    @Output() rowsChange: EventEmitter<number> = new EventEmitter<number>();
+    readonly rowsChange = output<number | undefined>();
     /**
      * Callback to invoke table state is saved.
      * @param {TableState} object - table state.
      * @group Emits
      */
-    @Output() onStateSave: EventEmitter<TableState> = new EventEmitter<TableState>();
+    readonly onStateSave = output<TableState>();
     /**
      * Callback to invoke table state is restored.
      * @param {TableState} object - table state.
      * @group Emits
      */
-    @Output() onStateRestore: EventEmitter<TableState> = new EventEmitter<TableState>();
+    readonly onStateRestore = output<TableState>();
 
     readonly resizeHelperViewChild = viewChild<Nullable<ElementRef>>('resizeHelper');
 
@@ -5808,7 +5811,7 @@ export class ColumnFilter extends BaseComponent {
      * @param {AnimationEvent} originalEvent - animation event.
      * @group Emits
      */
-    @Output() onShow: EventEmitter<{ originalEvent: AnimationEvent }> = new EventEmitter<{
+    readonly onShow = output<{
         originalEvent: AnimationEvent;
     }>();
     /**
@@ -5816,7 +5819,7 @@ export class ColumnFilter extends BaseComponent {
      * @param {AnimationEvent} originalEvent - animation event.
      * @group Emits
      */
-    @Output() onHide: EventEmitter<{ originalEvent: AnimationEvent }> = new EventEmitter<{
+    readonly onHide = output<{
         originalEvent: AnimationEvent;
     }>();
 

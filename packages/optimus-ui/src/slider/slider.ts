@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { booleanAttribute, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, forwardRef, HostListener, inject, InjectionToken, Input, NgModule, NgZone, numberAttribute, Output, ViewEncapsulation, viewChild } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, ElementRef, forwardRef, HostListener, inject, InjectionToken, Input, NgModule, NgZone, numberAttribute, ViewEncapsulation, viewChild, output } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { addClass, getWindowScrollLeft, getWindowScrollTop, isRTL, removeClass } from '@openng/optimus-ui-utils';
 import { SharedModule } from '@openng/optimus-ui/api';
@@ -224,13 +224,13 @@ export class Slider extends BaseEditableHolder<SliderPassThrough> {
      * @param {SliderChangeEvent} event - Custom value change event.
      * @group Emits
      */
-    @Output() onChange: EventEmitter<SliderChangeEvent> = new EventEmitter<SliderChangeEvent>();
+    readonly onChange = output<SliderChangeEvent>();
     /**
      * Callback to invoke when slide ended.
      * @param {SliderSlideEndEvent} event - Custom slide end event.
      * @group Emits
      */
-    @Output() onSlideEnd: EventEmitter<SliderSlideEndEvent> = new EventEmitter<SliderSlideEndEvent>();
+    readonly onSlideEnd = output<SliderSlideEndEvent>();
 
     readonly sliderHandle = viewChild<Nullable<ElementRef>>('sliderHandle');
 

@@ -6,14 +6,12 @@ import {
     Component,
     effect,
     ElementRef,
-    EventEmitter,
     inject,
     Injectable,
     InjectionToken,
     Input,
     NgModule,
     numberAttribute,
-    Output,
     PLATFORM_ID,
     Renderer2,
     signal,
@@ -21,7 +19,8 @@ import {
     ViewEncapsulation,
     viewChild,
     contentChild,
-    contentChildren
+    contentChildren,
+    output
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { findLastIndex, findSingle, focus, isEmpty, isNotEmpty, isPrintableCharacter, isTouchDevice, resolve, uuid } from '@openng/optimus-ui-utils';
@@ -269,15 +268,15 @@ export class MenubarSub extends BaseComponent<MenubarPassThrough> {
 
     @Input() submenuiconTemplate: TemplateRef<void> | undefined;
 
-    @Output() itemClick: EventEmitter<any> = new EventEmitter();
+    readonly itemClick = output<any>();
 
-    @Output() itemMouseEnter: EventEmitter<any> = new EventEmitter();
+    readonly itemMouseEnter = output<any>();
 
-    @Output() menuFocus: EventEmitter<any> = new EventEmitter();
+    readonly menuFocus = output<any>();
 
-    @Output() menuBlur: EventEmitter<any> = new EventEmitter();
+    readonly menuBlur = output<any>();
 
-    @Output() menuKeydown: EventEmitter<any> = new EventEmitter();
+    readonly menuKeydown = output<any>();
 
     mouseLeaveSubscriber: Subscription | undefined;
 
@@ -535,13 +534,13 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
      * @param {FocusEvent} event - Focus event.
      * @group Emits
      */
-    @Output() onFocus: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
+    readonly onFocus = output<FocusEvent>();
     /**
      * Callback to execute when button loses focus.
      * @param {FocusEvent} event - Focus event.
      * @group Emits
      */
-    @Output() onBlur: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
+    readonly onBlur = output<FocusEvent>();
 
     readonly menubutton = viewChild<ElementRef>('menubutton');
 
