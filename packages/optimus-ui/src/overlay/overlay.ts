@@ -286,20 +286,6 @@ export class Overlay extends BaseComponent {
      */
     readonly onHide = output<OverlayOnHideEvent>();
     /**
-     * Callback to invoke when the animation is started.
-     * @param {AnimationEvent} event - Animation event.
-     * @group Emits
-     * @deprecated since v21.0.0. Use onOverlayBeforeEnter and onOverlayBeforeLeave instead.
-     */
-    readonly onAnimationStart = output<AnimationEvent>();
-    /**
-     * Callback to invoke when the animation is done.
-     * @param {AnimationEvent} event - Animation event.
-     * @group Emits
-     * @deprecated since v21.0.0. Use onOverlayAfterEnter and onOverlayAfterLeave instead.
-     */
-    readonly onAnimationDone = output<AnimationEvent>();
-    /**
      * Callback to invoke before the overlay enters.
      * @param {MotionEvent} event - Event before enter.
      * @group Emits

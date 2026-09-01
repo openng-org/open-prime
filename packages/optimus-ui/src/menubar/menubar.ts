@@ -272,12 +272,6 @@ export class MenubarSub extends BaseComponent<MenubarPassThrough> {
 
     readonly itemMouseEnter = output<any>();
 
-    readonly menuFocus = output<any>();
-
-    readonly menuBlur = output<any>();
-
-    readonly menuKeydown = output<any>();
-
     mouseLeaveSubscriber: Subscription | undefined;
 
     menubarService = inject(MenubarService);

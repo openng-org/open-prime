@@ -186,12 +186,4 @@ export interface OverlayOptions {
      * A callback function that is invoked when the overlay is hidden.
      */
     onHide?: (event?: OverlayOnHideEvent) => void;
-    /**
-     * A callback function that is invoked when the overlay's animation starts.
-     */
-    onAnimationStart?: (event?: AnimationEvent) => void;
-    /**
-     * A callback function that is invoked when the overlay's animation is done.
-     */
-    onAnimationDone?: (event?: AnimationEvent) => void;
 }
