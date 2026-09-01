@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, SimpleChange } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 
 import { SharedModule, SortMeta } from '@openng/optimus-ui/api';
 import { Select } from '@openng/optimus-ui/select';
-import { CellEditor, ColumnFilter, Table, TableModule, TableRadioButton, TableService } from './table';
+import { CellEditor, ColumnFilter, EditableColumn, Table, TableModule, TableRadioButton, TableService } from './table';
 
 describe('Table', () => {
     let component: Table;
@@ -648,12 +648,17 @@ describe('Table', () => {
             expect(tableInstance.totalRecords).toBe(1000);
         });
 
-        it('should emit lazy load event', () => {
+        it('should emit lazy load event through a real trigger (onPageChange), not a manual .emit() call', () => {
             vi.spyOn(testComponent, 'loadProducts').mockImplementation(() => {});
             const tableInstance = testFixture.debugElement.query(By.css('p-table')).componentInstance;
+            vi.spyOn(tableInstance.onLazyLoad, 'emit');
 
-            tableInstance.onLazyLoad.emit({ first: 0, rows: 10 });
-            expect(testComponent.loadProducts).toHaveBeenCalled();
+            // onPageChange is the real method a paginator click invokes; because lazy=true is
+            // bound on the host template, it internally emits onLazyLoad with fresh metadata.
+            tableInstance.onPageChange({ first: 10, rows: 10 });
+
+            expect(tableInstance.onLazyLoad.emit).toHaveBeenCalledWith(expect.objectContaining({ first: 10, rows: 10 }));
+            expect(testComponent.loadProducts).toHaveBeenCalledWith(expect.objectContaining({ first: 10, rows: 10 }));
         });
     });
 
@@ -792,6 +797,471 @@ describe('Table', () => {
                 vi.spyOn(component, 'exportCSV').mockImplementation(() => {});
                 component.exportCSV();
                 expect(component.exportCSV).toHaveBeenCalled();
+            });
+        });
+    });
+
+    describe('Output Events', () => {
+        // These tests drive each output() through the real method that emits it (row clicks,
+        // paging, sorting, filtering, drag/drop, state save/restore, etc.) rather than calling
+        // `.emit()` directly, so they fail if the internal wiring between the method and the
+        // output is ever broken.
+        let outputComponent: Table;
+        let outputFixture: ComponentFixture<Table>;
+
+        const clickEvent = (target: HTMLElement = document.createElement('div'), extra: Record<string, any> = {}) => ({
+            target,
+            shiftKey: false,
+            metaKey: false,
+            ctrlKey: false,
+            ...extra
+        });
+
+        beforeEach(() => {
+            outputFixture = TestBed.createComponent(Table);
+            outputComponent = outputFixture.componentInstance;
+            outputFixture.detectChanges();
+        });
+
+        describe('Selection outputs', () => {
+            it('emits selectionChange and onRowSelect via handleRowClick (select)', () => {
+                outputComponent.selectionMode = 'single';
+                outputComponent.dataKey = 'id';
+                const rowData = { id: '1', name: 'Row 1' };
+                outputComponent.value = [rowData, { id: '2', name: 'Row 2' }];
+                vi.spyOn(outputComponent.selectionChange, 'emit');
+                vi.spyOn(outputComponent.onRowSelect, 'emit');
+
+                outputComponent.handleRowClick({ originalEvent: clickEvent(), rowData, rowIndex: 0 });
+
+                expect(outputComponent.selectionChange.emit).toHaveBeenCalledWith(rowData);
+                expect(outputComponent.onRowSelect.emit).toHaveBeenCalledWith(expect.objectContaining({ data: rowData, type: 'row', index: 0 }));
+            });
+
+            it('emits selectionChange and onRowUnselect via handleRowClick (unselect an already-selected row)', () => {
+                outputComponent.selectionMode = 'single';
+                outputComponent.dataKey = 'id';
+                const rowData = { id: '1', name: 'Row 1' };
+                outputComponent.value = [rowData];
+                outputComponent.selection = rowData;
+                outputComponent.ngOnChanges({ selection: new SimpleChange(null, rowData, false) });
+                vi.spyOn(outputComponent.selectionChange, 'emit');
+                vi.spyOn(outputComponent.onRowUnselect, 'emit');
+
+                outputComponent.handleRowClick({ originalEvent: clickEvent(), rowData, rowIndex: 0 });
+
+                expect(outputComponent.selectionChange.emit).toHaveBeenCalled();
+                expect(outputComponent.onRowUnselect.emit).toHaveBeenCalledWith(expect.objectContaining({ data: rowData, type: 'row' }));
+            });
+
+            it('emits selectionChange and onRowSelect via selectRange (shift-click multi-select)', () => {
+                outputComponent.selectionMode = 'multiple';
+                outputComponent.dataKey = 'id';
+                const rows = [
+                    { id: '1', name: 'Row 1' },
+                    { id: '2', name: 'Row 2' },
+                    { id: '3', name: 'Row 3' }
+                ];
+                outputComponent.value = rows;
+                outputComponent.selection = [];
+                outputComponent.anchorRowIndex = 0;
+                vi.spyOn(outputComponent.selectionChange, 'emit');
+                vi.spyOn(outputComponent.onRowSelect, 'emit');
+
+                outputComponent.selectRange(clickEvent() as any, 2);
+
+                expect(outputComponent.selectionChange.emit).toHaveBeenCalledWith(rows);
+                expect(outputComponent.onRowSelect.emit).toHaveBeenCalledWith(expect.objectContaining({ data: rows, type: 'row' }));
+            });
+
+            it('emits onRowUnselect via clearSelectionRange', () => {
+                outputComponent.dataKey = 'id';
+                const rows = [
+                    { id: '1', name: 'Row 1' },
+                    { id: '2', name: 'Row 2' }
+                ];
+                outputComponent.value = rows;
+                outputComponent.selection = [...rows];
+                outputComponent.selectionKeys = { '1': 1, '2': 1 };
+                outputComponent.anchorRowIndex = 0;
+                outputComponent.rangeRowIndex = 1;
+                vi.spyOn(outputComponent.onRowUnselect, 'emit');
+
+                outputComponent.clearSelectionRange(clickEvent() as any);
+
+                expect(outputComponent.onRowUnselect.emit).toHaveBeenCalledTimes(2);
+            });
+
+            it('emits selectionChange and onRowSelect/onRowUnselect via toggleRowWithRadio', () => {
+                outputComponent.dataKey = 'id';
+                const rowData = { id: '1', name: 'Row 1' };
+                outputComponent.value = [rowData];
+                vi.spyOn(outputComponent.selectionChange, 'emit');
+                vi.spyOn(outputComponent.onRowSelect, 'emit');
+                vi.spyOn(outputComponent.onRowUnselect, 'emit');
+
+                outputComponent.toggleRowWithRadio({ originalEvent: clickEvent(), rowIndex: 0 }, rowData);
+                expect(outputComponent.selectionChange.emit).toHaveBeenCalledWith(rowData);
+                expect(outputComponent.onRowSelect.emit).toHaveBeenCalledWith(expect.objectContaining({ data: rowData, type: 'radiobutton' }));
+
+                outputComponent.toggleRowWithRadio({ originalEvent: clickEvent(), rowIndex: 0 }, rowData);
+                expect(outputComponent.onRowUnselect.emit).toHaveBeenCalledWith(expect.objectContaining({ data: rowData, type: 'radiobutton' }));
+            });
+
+            // NOTE: the `selectAll` @Input's getter/setter (table.ts ~875-880) reads/writes
+            // `_selection` instead of `_selectAll` -- a copy/paste bug that only doesn't break
+            // real usage because Table.onChanges() (~1503-1504) separately reads the raw
+            // SimpleChanges value and assigns `_selectAll` correctly. We drive that real
+            // ngOnChanges/onChanges path here (as a template `[selectAll]` binding would)
+            // rather than assigning `.selectAll` directly, since the direct setter is the buggy
+            // path. See final report for details -- this was left as-is per instructions to not
+            // silently work around a source bug.
+            it('emits selectAllChange via toggleRowsWithCheckbox when selectAll is bound (not null)', () => {
+                outputComponent.value = [{ id: '1' }, { id: '2' }];
+                outputComponent.dataKey = 'id';
+                outputComponent.ngOnChanges({ selectAll: new SimpleChange(null, false, false) });
+                vi.spyOn(outputComponent.selectAllChange, 'emit');
+
+                const originalEvent = new Event('change');
+                outputComponent.toggleRowsWithCheckbox({ originalEvent } as any, true);
+
+                expect(outputComponent.selectAllChange.emit).toHaveBeenCalledWith({ originalEvent, checked: true });
+            });
+
+            it('emits onHeaderCheckboxToggle and selectionChange via toggleRowsWithCheckbox (selectAll not bound)', () => {
+                outputComponent.value = [{ id: '1' }, { id: '2' }];
+                outputComponent.dataKey = 'id';
+                vi.spyOn(outputComponent.selectionChange, 'emit');
+                vi.spyOn(outputComponent.onHeaderCheckboxToggle, 'emit');
+
+                const originalEvent = new Event('change');
+                outputComponent.toggleRowsWithCheckbox({ originalEvent } as any, true);
+
+                expect(outputComponent.selectionChange.emit).toHaveBeenCalled();
+                expect(outputComponent.onHeaderCheckboxToggle.emit).toHaveBeenCalledWith({ originalEvent, checked: true });
+            });
+        });
+
+        describe('Context menu outputs', () => {
+            it('emits contextMenuSelectionChange and onContextMenuSelect via handleRowRightClick', () => {
+                outputComponent.contextMenu = { show: vi.fn() };
+                outputComponent.dataKey = 'id';
+                const rowData = { id: '1', name: 'Row 1' };
+                outputComponent.value = [rowData];
+                vi.spyOn(outputComponent.contextMenuSelectionChange, 'emit');
+                vi.spyOn(outputComponent.onContextMenuSelect, 'emit');
+
+                const originalEvent = clickEvent();
+                outputComponent.handleRowRightClick({ originalEvent, rowData, rowIndex: 0 });
+
+                expect(outputComponent.contextMenuSelectionChange.emit).toHaveBeenCalledWith(rowData);
+                expect(outputComponent.onContextMenuSelect.emit).toHaveBeenCalledWith(expect.objectContaining({ data: rowData, index: 0 }));
+            });
+        });
+
+        describe('Paging outputs', () => {
+            it('emits onPage, firstChange and rowsChange via onPageChange', () => {
+                outputComponent.value = [{ id: '1' }];
+                vi.spyOn(outputComponent.onPage, 'emit');
+                vi.spyOn(outputComponent.firstChange, 'emit');
+                vi.spyOn(outputComponent.rowsChange, 'emit');
+
+                outputComponent.onPageChange({ first: 10, rows: 5 });
+
+                expect(outputComponent.onPage.emit).toHaveBeenCalledWith({ first: 10, rows: 5 });
+                expect(outputComponent.firstChange.emit).toHaveBeenCalledWith(10);
+                expect(outputComponent.rowsChange.emit).toHaveBeenCalledWith(5);
+            });
+        });
+
+        describe('Sorting outputs', () => {
+            it('emits onSort via sortSingle', () => {
+                outputComponent.value = [{ name: 'b' }, { name: 'a' }];
+                outputComponent.sortField = 'name';
+                outputComponent.sortOrder = 1;
+                vi.spyOn(outputComponent.onSort, 'emit');
+
+                outputComponent.sortSingle();
+
+                expect(outputComponent.onSort.emit).toHaveBeenCalledWith({ field: 'name', order: 1 });
+            });
+
+            it('emits sortFunction and onSort via sortMultiple when customSort is enabled', () => {
+                outputComponent.value = [{ name: 'b' }, { name: 'a' }];
+                outputComponent.sortMode = 'multiple';
+                outputComponent.multiSortMeta = [{ field: 'name', order: 1 }];
+                outputComponent.customSort = true;
+                vi.spyOn(outputComponent.sortFunction, 'emit');
+                vi.spyOn(outputComponent.onSort, 'emit');
+
+                outputComponent.sortMultiple();
+
+                expect(outputComponent.sortFunction.emit).toHaveBeenCalledWith({
+                    data: outputComponent.value,
+                    mode: 'multiple',
+                    multiSortMeta: outputComponent.multiSortMeta
+                });
+                expect(outputComponent.onSort.emit).toHaveBeenCalledWith({ multisortmeta: outputComponent.multiSortMeta });
+            });
+        });
+
+        describe('Filtering outputs', () => {
+            it('emits onFilter and firstChange via _filter', () => {
+                outputComponent.value = [{ name: 'a' }, { name: 'b' }];
+                outputComponent.filters = { name: { value: 'a', matchMode: 'equals' } };
+                vi.spyOn(outputComponent.onFilter, 'emit');
+                vi.spyOn(outputComponent.firstChange, 'emit');
+
+                outputComponent._filter();
+
+                expect(outputComponent.firstChange.emit).toHaveBeenCalledWith(0);
+                expect(outputComponent.onFilter.emit).toHaveBeenCalledWith(expect.objectContaining({ filters: outputComponent.filters }));
+            });
+        });
+
+        describe('Row expand/collapse outputs', () => {
+            it('emits onRowExpand via toggleRow on a collapsed row', () => {
+                outputComponent.dataKey = 'id';
+                outputComponent.expandedRowKeys = {};
+                const rowData = { id: '1', name: 'Row 1' };
+                vi.spyOn(outputComponent.onRowExpand, 'emit');
+
+                outputComponent.toggleRow(rowData);
+
+                expect(outputComponent.onRowExpand.emit).toHaveBeenCalledWith(expect.objectContaining({ data: rowData }));
+            });
+
+            it('emits onRowCollapse via toggleRow on an already-expanded row', () => {
+                outputComponent.dataKey = 'id';
+                const rowData = { id: '1', name: 'Row 1' };
+                outputComponent.expandedRowKeys = { '1': true };
+                vi.spyOn(outputComponent.onRowCollapse, 'emit');
+
+                outputComponent.toggleRow(rowData);
+
+                expect(outputComponent.onRowCollapse.emit).toHaveBeenCalledWith(expect.objectContaining({ data: rowData }));
+            });
+        });
+
+        describe('Column resize/reorder outputs', () => {
+            it('emits onColResize via onColumnResizeEnd', async () => {
+                outputComponent.resizableColumns = true;
+                outputFixture.changeDetectorRef.markForCheck();
+                await outputFixture.whenStable();
+                outputFixture.detectChanges();
+
+                const row = document.createElement('tr');
+                const th1 = document.createElement('th');
+                const th2 = document.createElement('th');
+                th1.style.minWidth = '0px';
+                row.appendChild(th1);
+                row.appendChild(th2);
+
+                outputComponent.resizeColumnElement = th1 as any;
+                outputComponent.lastResizerHelperX = 0;
+                vi.spyOn(outputComponent.onColResize, 'emit');
+
+                outputComponent.onColumnResizeEnd();
+
+                expect(outputComponent.onColResize.emit).toHaveBeenCalledWith(expect.objectContaining({ element: th1 }));
+            });
+
+            it('emits onColReorder via onColumnDrop', async () => {
+                outputComponent.reorderableColumns = true;
+                outputFixture.changeDetectorRef.markForCheck();
+                await outputFixture.whenStable();
+                outputFixture.detectChanges();
+
+                const row = document.createElement('tr');
+                const col1 = document.createElement('th');
+                const col2 = document.createElement('th');
+                col1.setAttribute('preorderablecolumn', '');
+                col2.setAttribute('preorderablecolumn', '');
+                row.appendChild(col1);
+                row.appendChild(col2);
+
+                outputComponent.columns = [{ field: 'name' }, { field: 'price' }];
+                outputComponent.onColumnDragStart({ dataTransfer: { setData: vi.fn() } } as any, col1);
+                vi.spyOn(outputComponent.onColReorder, 'emit');
+
+                outputComponent.onColumnDrop({ preventDefault: vi.fn() } as unknown as Event, col2);
+
+                expect(outputComponent.onColReorder.emit).toHaveBeenCalledWith(expect.objectContaining({ dragIndex: 0, dropIndex: 1 }));
+            });
+        });
+
+        describe('Row reorder output', () => {
+            it('emits onRowReorder via onRowDrop', () => {
+                outputComponent.value = [{ id: '1' }, { id: '2' }, { id: '3' }];
+                outputComponent.draggedRowIndex = 0;
+                outputComponent.droppedRowIndex = 2;
+                vi.spyOn(outputComponent.onRowReorder, 'emit');
+
+                outputComponent.onRowDrop(new Event('drop'), document.createElement('tr'));
+
+                expect(outputComponent.onRowReorder.emit).toHaveBeenCalledWith({ dragIndex: 0, dropIndex: 1 });
+            });
+        });
+
+        describe('State outputs', () => {
+            it('emits onStateSave via saveState', () => {
+                outputComponent.stateKey = 'output-events-test-state-save';
+                outputComponent.value = [{ id: '1' }];
+                vi.spyOn(outputComponent.onStateSave, 'emit');
+
+                outputComponent.saveState();
+
+                expect(outputComponent.onStateSave.emit).toHaveBeenCalled();
+            });
+
+            it('emits onStateRestore, firstChange and rowsChange via restoreState', () => {
+                const stateKey = 'output-events-test-state-restore';
+                outputComponent.stateKey = stateKey;
+                outputComponent.paginator = true;
+                outputComponent.first = 0;
+                outputComponent.rows = 10;
+                window.sessionStorage.setItem(stateKey, JSON.stringify({ first: 20, rows: 50 }));
+
+                vi.spyOn(outputComponent.onStateRestore, 'emit');
+                vi.spyOn(outputComponent.firstChange, 'emit');
+                vi.spyOn(outputComponent.rowsChange, 'emit');
+
+                outputComponent.restoreState();
+
+                expect(outputComponent.firstChange.emit).toHaveBeenCalledWith(20);
+                expect(outputComponent.rowsChange.emit).toHaveBeenCalledWith(50);
+                expect(outputComponent.onStateRestore.emit).toHaveBeenCalledWith(expect.objectContaining({ first: 20, rows: 50 }));
+
+                window.sessionStorage.removeItem(stateKey);
+            });
+        });
+
+        describe('Lazy load output via ngOnInit', () => {
+            it('emits onLazyLoad on init when lazy is true (real lifecycle trigger)', () => {
+                const freshFixture = TestBed.createComponent(Table);
+                const freshComponent = freshFixture.componentInstance;
+                freshComponent.lazy = true;
+                vi.spyOn(freshComponent.onLazyLoad, 'emit');
+
+                freshFixture.detectChanges(); // triggers ngOnInit -> onInit()
+
+                expect(freshComponent.onLazyLoad.emit).toHaveBeenCalled();
+            });
+        });
+
+        describe('Edit outputs (EditableColumn directive)', () => {
+            beforeEach(() => {
+                TestBed.resetTestingModule();
+            });
+
+            @Component({
+                changeDetection: ChangeDetectionStrategy.Eager,
+                standalone: false,
+                template: `
+                    <p-table [value]="products" [dataKey]="'id'" editMode="cell">
+                        <ng-template #header>
+                            <tr>
+                                <th>Name</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template #body let-product let-rowIndex="rowIndex">
+                            <tr>
+                                <td [pEditableColumn]="product" [pEditableColumnField]="'name'" [pEditableColumnRowIndex]="rowIndex">
+                                    <p-cellEditor>
+                                        <ng-template #input>
+                                            <input pInputText type="text" [(ngModel)]="product.name" class="name-input" />
+                                        </ng-template>
+                                        <ng-template #output>
+                                            {{ product.name }}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                `
+            })
+            class TestEditOutputsComponent {
+                products = [{ id: '1001', name: 'Gaming Laptop' }];
+            }
+
+            const setupEditFixture = async () => {
+                await TestBed.configureTestingModule({
+                    imports: [TableModule, CommonModule, FormsModule],
+                    declarations: [TestEditOutputsComponent],
+                    providers: [TableService, provideZonelessChangeDetection()]
+                }).compileComponents();
+
+                const fixture = TestBed.createComponent(TestEditOutputsComponent);
+                await fixture.whenStable();
+                fixture.detectChanges();
+
+                const tableInstance = fixture.debugElement.query(By.css('p-table')).componentInstance as Table;
+                return { fixture, tableInstance };
+            };
+
+            it('emits onEditInit when a real click opens the cell editor', async () => {
+                const { fixture, tableInstance } = await setupEditFixture();
+                vi.spyOn(tableInstance.onEditInit, 'emit');
+
+                const cell: HTMLElement = fixture.nativeElement.querySelector('[data-p-editable-column="true"]');
+                cell.click();
+                await fixture.whenStable();
+                fixture.detectChanges();
+
+                expect(tableInstance.onEditInit.emit).toHaveBeenCalledWith(expect.objectContaining({ field: 'name', index: 0 }));
+            });
+
+            it('emits onEditComplete via EditableColumn.closeEditingCell(true, ...)', async () => {
+                const { fixture, tableInstance } = await setupEditFixture();
+                const cell: HTMLElement = fixture.nativeElement.querySelector('[data-p-editable-column="true"]');
+                cell.click();
+                await fixture.whenStable();
+                fixture.detectChanges();
+
+                const editableColumn = fixture.debugElement.query(By.directive(EditableColumn)).injector.get(EditableColumn);
+                vi.spyOn(tableInstance.onEditComplete, 'emit');
+
+                editableColumn.closeEditingCell(true, new Event('blur'));
+
+                expect(tableInstance.onEditComplete.emit).toHaveBeenCalled();
+            });
+
+            it('emits onEditCancel via EditableColumn.closeEditingCell(false, ...)', async () => {
+                const { fixture, tableInstance } = await setupEditFixture();
+                const cell: HTMLElement = fixture.nativeElement.querySelector('[data-p-editable-column="true"]');
+                cell.click();
+                await fixture.whenStable();
+                fixture.detectChanges();
+
+                const editableColumn = fixture.debugElement.query(By.directive(EditableColumn)).injector.get(EditableColumn);
+                vi.spyOn(tableInstance.onEditCancel, 'emit');
+
+                editableColumn.closeEditingCell(false, new Event('blur'));
+
+                expect(tableInstance.onEditCancel.emit).toHaveBeenCalled();
+            });
+        });
+
+        describe('ColumnFilter outputs (onShow/onHide)', () => {
+            let filterFixture: ComponentFixture<TestFilteringTableComponent>;
+
+            beforeEach(async () => {
+                filterFixture = TestBed.createComponent(TestFilteringTableComponent);
+                await filterFixture.whenStable();
+                filterFixture.detectChanges();
+            });
+
+            it('emits onShow via onOverlayBeforeEnter and onHide via onOverlayAnimationAfterLeave', () => {
+                const columnFilter = filterFixture.debugElement.query(By.css('p-columnFilter')).componentInstance;
+                vi.spyOn(columnFilter.onShow, 'emit');
+                vi.spyOn(columnFilter.onHide, 'emit');
+
+                columnFilter.onOverlayBeforeEnter({} as any);
+                expect(columnFilter.onShow.emit).toHaveBeenCalled();
+
+                columnFilter.onOverlayAnimationAfterLeave({} as any);
+                expect(columnFilter.onHide.emit).toHaveBeenCalled();
             });
         });
     });

@@ -71,6 +71,7 @@ import { SharedModule } from '@openng/optimus-ui/api';
             (onClearClick)="onDateClearClick($event)"
             (onMonthChange)="onDateMonthChange($event)"
             (onYearChange)="onDateYearChange($event)"
+            (onClickOutside)="onDateClickOutside($event)"
         ></p-datepicker>
     `
 })
@@ -134,6 +135,7 @@ class TestDatePickerComponent {
     onDateClearClick(event: Event) {}
     onDateMonthChange(event: DatePickerMonthChangeEvent) {}
     onDateYearChange(event: DatePickerYearChangeEvent) {}
+    onDateClickOutside(event: any) {}
 }
 
 @Component({
@@ -490,6 +492,103 @@ describe('DatePicker', () => {
             await testFixture.whenStable();
 
             expect(testComponent.selectedDate).toEqual(testDate);
+
+            const datePickerComponent = testFixture.debugElement.query(By.css('p-datepicker')).componentInstance;
+            datePickerComponent.selectDate({ year: 2023, month: 5, day: 15, selectable: true });
+
+            expect(testComponent.onDateSelect).toHaveBeenCalled();
+        });
+    });
+
+    describe('Additional Output Events', () => {
+        beforeEach(async () => {
+            testFixture.changeDetectorRef.markForCheck();
+            await testFixture.whenStable();
+        });
+
+        it('should emit onClose when overlay finishes leaving', () => {
+            vi.spyOn(testComponent, 'onDateClose').mockImplementation(() => {});
+            const datePickerComponent = testFixture.debugElement.query(By.css('p-datepicker')).componentInstance;
+
+            datePickerComponent.onOverlayAfterLeave({ element: document.createElement('div') });
+
+            expect(testComponent.onDateClose).toHaveBeenCalled();
+        });
+
+        it('should emit onShow when overlay starts entering', () => {
+            vi.spyOn(testComponent, 'onDateShow').mockImplementation(() => {});
+            const datePickerComponent = testFixture.debugElement.query(By.css('p-datepicker')).componentInstance;
+
+            datePickerComponent.onOverlayBeforeEnter({ element: document.createElement('div') });
+
+            expect(testComponent.onDateShow).toHaveBeenCalled();
+        });
+
+        it('should emit onClear when clear() is called', () => {
+            vi.spyOn(testComponent, 'onDateClear').mockImplementation(() => {});
+            const datePickerComponent = testFixture.debugElement.query(By.css('p-datepicker')).componentInstance;
+
+            datePickerComponent.clear();
+
+            expect(testComponent.onDateClear).toHaveBeenCalled();
+        });
+
+        it('should emit onInput on user input', () => {
+            vi.spyOn(testComponent, 'onDateInput').mockImplementation(() => {});
+            const datePickerComponent = testFixture.debugElement.query(By.css('p-datepicker')).componentInstance;
+
+            datePickerComponent.isKeydown = true;
+            datePickerComponent.onUserInput({ target: { value: '' } });
+
+            expect(testComponent.onDateInput).toHaveBeenCalled();
+        });
+
+        it('should emit onTodayClick when the today button is clicked', () => {
+            vi.spyOn(testComponent, 'onDateTodayClick').mockImplementation(() => {});
+            const datePickerComponent = testFixture.debugElement.query(By.css('p-datepicker')).componentInstance;
+
+            datePickerComponent.onTodayButtonClick({ preventDefault: () => {} });
+
+            expect(testComponent.onDateTodayClick).toHaveBeenCalled();
+        });
+
+        it('should emit onClearClick when the clear button is clicked', () => {
+            vi.spyOn(testComponent, 'onDateClearClick').mockImplementation(() => {});
+            const datePickerComponent = testFixture.debugElement.query(By.css('p-datepicker')).componentInstance;
+
+            datePickerComponent.onClearButtonClick({});
+
+            expect(testComponent.onDateClearClick).toHaveBeenCalled();
+        });
+
+        it('should emit onMonthChange when navigating forward', () => {
+            vi.spyOn(testComponent, 'onDateMonthChange').mockImplementation(() => {});
+            const datePickerComponent = testFixture.debugElement.query(By.css('p-datepicker')).componentInstance;
+
+            datePickerComponent.navForward({ preventDefault: () => {} });
+
+            expect(testComponent.onDateMonthChange).toHaveBeenCalled();
+        });
+
+        it('should emit onYearChange when a year is selected', () => {
+            vi.spyOn(testComponent, 'onDateYearChange').mockImplementation(() => {});
+            const datePickerComponent = testFixture.debugElement.query(By.css('p-datepicker')).componentInstance;
+
+            datePickerComponent.onYearSelect({ preventDefault: () => {} }, 2024);
+
+            expect(testComponent.onDateYearChange).toHaveBeenCalled();
+        });
+
+        it('should emit onClickOutside when clicking outside while the overlay is visible', () => {
+            vi.spyOn(testComponent, 'onDateClickOutside').mockImplementation(() => {});
+            const datePickerComponent = testFixture.debugElement.query(By.css('p-datepicker')).componentInstance;
+
+            datePickerComponent.overlayVisible = true;
+            datePickerComponent.onOverlayBeforeEnter({ element: document.createElement('div') });
+
+            document.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+
+            expect(testComponent.onDateClickOutside).toHaveBeenCalled();
         });
     });
 

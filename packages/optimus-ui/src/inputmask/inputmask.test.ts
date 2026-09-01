@@ -357,19 +357,32 @@ describe('InputMask', () => {
             expect(testComponent.onInputBlur).toHaveBeenCalledWith(blurEvent);
         });
 
-        it('should handle keydown event', () => {
-            vi.spyOn(testComponent, 'onKeydownEvent').mockImplementation(() => {});
-            testFixture.detectChanges();
+        it('should emit onKeydown via the real onInputKeydown handler', () => {
+            // Drive the real onInputKeydown() handler (which is what actually emits onKeydown)
+            // instead of calling emit() directly, so the test exercises real component logic.
+            component.mask = '999-99-9999';
+            (component as any).inputViewChild = () =>
+                ({
+                    nativeElement: {
+                        value: '',
+                        focus: vi.fn(),
+                        setSelectionRange: vi.fn(),
+                        selectionStart: 0,
+                        selectionEnd: 0,
+                        offsetParent: {},
+                        ownerDocument: { activeElement: {} }
+                    }
+                }) as any;
+            fixture.detectChanges();
 
-            // Simulate keydown event through the component's output binding
-            const inputMask = testFixture.debugElement.query(By.css('p-inputmask')).componentInstance;
-            if (inputMask.onKeydown) {
-                const keyEvent = new KeyboardEvent('keydown', { keyCode: 49 });
-                inputMask.onKeydown.emit(keyEvent);
-                expect(testComponent.onKeydownEvent).toHaveBeenCalledWith(keyEvent);
-            } else {
-                expect(testComponent.onKeydownEvent).not.toHaveBeenCalled();
-            }
+            vi.spyOn(component, 'caret').mockReturnValue({ begin: 0, end: 0 });
+            vi.spyOn(component.onKeydown, 'emit');
+
+            // keyCode 49 ('1') avoids the backspace/delete/enter/escape special-case branches.
+            const keyEvent = new KeyboardEvent('keydown', { keyCode: 49 });
+            component.onInputKeydown(keyEvent);
+
+            expect(component.onKeydown.emit).toHaveBeenCalledWith(keyEvent);
         });
 
         it('should handle input change event', () => {
@@ -383,20 +396,33 @@ describe('InputMask', () => {
             expect(testComponent.onInputChange).toHaveBeenCalledWith(inputEvent);
         });
 
-        it('should emit onComplete when mask is fully filled', async () => {
-            vi.spyOn(testComponent, 'onMaskComplete').mockImplementation(() => {});
-            testComponent.mask = '999';
-            testFixture.changeDetectorRef.markForCheck();
-            await testFixture.whenStable();
+        it('should emit onComplete via the real onKeyPress handler when the mask is fully filled', () => {
+            // A single-character mask completes after exactly one accepted keypress, letting the
+            // real onKeyPress() handler (which is what actually emits onComplete) drive the test,
+            // instead of calling emit() directly.
+            component.mask = '9';
+            (component as any).inputViewChild = () =>
+                ({
+                    nativeElement: {
+                        value: '',
+                        focus: vi.fn(),
+                        setSelectionRange: vi.fn(),
+                        selectionStart: 0,
+                        selectionEnd: 0,
+                        offsetParent: {},
+                        ownerDocument: { activeElement: {} }
+                    }
+                }) as any;
+            fixture.detectChanges();
 
-            const inputMask = testFixture.debugElement.query(By.css('p-inputmask')).componentInstance;
-            if (inputMask.onComplete) {
-                inputMask.onComplete.emit();
-                expect(testComponent.onMaskComplete).toHaveBeenCalled();
-            } else {
-                // If onComplete is not available, just check that the component exists
-                expect(inputMask).toBeTruthy();
-            }
+            vi.spyOn(component, 'caret').mockReturnValue({ begin: 0, end: 0 });
+            vi.spyOn(component, 'updateModel').mockImplementation(() => {});
+            vi.spyOn(component.onComplete, 'emit');
+
+            const keyEvent = new KeyboardEvent('keypress', { keyCode: 49 }); // '1' fills the single slot
+            component.onKeyPress(keyEvent);
+
+            expect(component.onComplete.emit).toHaveBeenCalledWith(undefined);
         });
 
         it('should handle clear event when showClear is enabled', async () => {

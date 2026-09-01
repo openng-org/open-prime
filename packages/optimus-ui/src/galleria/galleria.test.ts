@@ -5,7 +5,7 @@ import { By } from '@angular/platform-browser';
 
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { GalleriaResponsiveOptions } from '@openng/optimus-ui/types/galleria';
-import { Galleria, GalleriaModule, GalleriaThumbnails } from './galleria';
+import { Galleria, GalleriaContent, GalleriaItem, GalleriaModule, GalleriaThumbnails } from './galleria';
 
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 // Mock data for testing
@@ -1339,5 +1339,144 @@ describe('Galleria Signal Query API', () => {
 
         const thumbnails = fixture.debugElement.query(By.directive(GalleriaThumbnails)).componentInstance;
         expect(thumbnails.itemsContainer()).toBeDefined();
+    });
+});
+
+// GalleriaContent, GalleriaItem and GalleriaThumbnails are the internal building blocks that
+// p-galleria renders as child directives. They each `inject(Galleria)` unconditionally, so a
+// minimal Galleria stub is supplied wherever they are instantiated directly.
+describe('GalleriaContent', () => {
+    beforeEach(async () => {
+        await TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [CommonModule, GalleriaModule, SharedModule, PrimeTemplate],
+            providers: [provideZonelessChangeDetection(), { provide: Galleria, useValue: {} as unknown as Galleria }]
+        }).compileComponents();
+    });
+
+    it('should emit maskHide when the fullscreen close button is clicked', () => {
+        // maskHide has no surrounding logic (the template just does `(click)="maskHide.emit()"`),
+        // so it is exercised through a real click rather than calling emit() directly.
+        const galleriaFixture = TestBed.createComponent(Galleria);
+        galleriaFixture.componentRef.setInput('value', mockImages);
+        galleriaFixture.componentRef.setInput('fullScreen', true);
+        galleriaFixture.componentRef.setInput('visible', true);
+        galleriaFixture.detectChanges();
+
+        const contentDebugEl = galleriaFixture.debugElement.query(By.directive(GalleriaContent));
+        expect(contentDebugEl).toBeTruthy();
+        const contentInstance = contentDebugEl.componentInstance as GalleriaContent;
+        vi.spyOn(contentInstance.maskHide, 'emit');
+
+        const closeButton = galleriaFixture.nativeElement.querySelector('[data-pc-section="closebutton"]');
+        expect(closeButton).toBeTruthy();
+        closeButton.click();
+
+        expect(contentInstance.maskHide.emit).toHaveBeenCalled();
+    });
+
+    it('should emit activeItemChange when onActiveIndexChange is called with a new index', () => {
+        const fixture = TestBed.createComponent(GalleriaContent);
+        const instance = fixture.componentInstance;
+        instance.activeIndex = 0;
+
+        vi.spyOn(instance.activeItemChange, 'emit');
+        instance.onActiveIndexChange(3);
+
+        expect(instance.activeItemChange.emit).toHaveBeenCalledWith(3);
+        expect(instance.activeIndex).toBe(3);
+    });
+
+    it('should not emit activeItemChange when onActiveIndexChange is called with the same index', () => {
+        const fixture = TestBed.createComponent(GalleriaContent);
+        const instance = fixture.componentInstance;
+        instance.activeIndex = 2;
+
+        vi.spyOn(instance.activeItemChange, 'emit');
+        instance.onActiveIndexChange(2);
+
+        expect(instance.activeItemChange.emit).not.toHaveBeenCalled();
+    });
+});
+
+describe('GalleriaItem', () => {
+    beforeEach(async () => {
+        await TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [CommonModule, GalleriaModule, SharedModule, PrimeTemplate],
+            providers: [provideZonelessChangeDetection(), { provide: Galleria, useValue: {} as unknown as Galleria }]
+        }).compileComponents();
+    });
+
+    function createInstance() {
+        return TestBed.createComponent(GalleriaItem).componentInstance;
+    }
+
+    it('should emit onActiveIndexChange when navigating to the next item', () => {
+        const instance = createInstance();
+        instance.value = mockImages;
+        instance.activeIndex = 0;
+        instance.circular = false;
+
+        vi.spyOn(instance.onActiveIndexChange, 'emit');
+        instance.next();
+
+        expect(instance.onActiveIndexChange.emit).toHaveBeenCalledWith(1);
+    });
+
+    it('should emit startSlideShow when autoPlay changes to true', () => {
+        const instance = createInstance();
+
+        vi.spyOn(instance.startSlideShow, 'emit');
+        instance.onChanges({
+            autoPlay: { currentValue: true, previousValue: false, firstChange: true, isFirstChange: () => true }
+        } as any);
+
+        expect(instance.startSlideShow.emit).toHaveBeenCalledWith(undefined);
+    });
+
+    it('should emit stopSlideShow via stopTheSlideShow when the slideshow is active', () => {
+        const instance = createInstance();
+        instance.slideShowActive = true;
+
+        vi.spyOn(instance.stopSlideShow, 'emit');
+        instance.stopTheSlideShow();
+
+        expect(instance.stopSlideShow.emit).toHaveBeenCalledWith(undefined);
+    });
+});
+
+describe('GalleriaThumbnails', () => {
+    beforeEach(async () => {
+        await TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [CommonModule, GalleriaModule, SharedModule, PrimeTemplate],
+            providers: [provideZonelessChangeDetection(), { provide: Galleria, useValue: {} as unknown as Galleria }]
+        }).compileComponents();
+    });
+
+    function createInstance() {
+        return TestBed.createComponent(GalleriaThumbnails).componentInstance;
+    }
+
+    it('should emit onActiveIndexChange when a thumbnail item is clicked', () => {
+        const instance = createInstance();
+        instance.value = mockImages;
+        instance.activeIndex = 0;
+
+        vi.spyOn(instance.onActiveIndexChange, 'emit');
+        instance.onItemClick(2);
+
+        expect(instance.onActiveIndexChange.emit).toHaveBeenCalledWith(2);
+    });
+
+    it('should emit stopSlideShow via stopTheSlideShow when the slideshow is active', () => {
+        const instance = createInstance();
+        instance.slideShowActive = true;
+
+        vi.spyOn(instance.stopSlideShow, 'emit');
+        instance.stopTheSlideShow();
+
+        expect(instance.stopSlideShow.emit).toHaveBeenCalledWith(undefined);
     });
 });

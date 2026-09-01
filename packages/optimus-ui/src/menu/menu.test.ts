@@ -5,7 +5,7 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MenuItem, OverlayService, SharedModule } from '@openng/optimus-ui/api';
 import { provideOptimus } from '@openng/optimus-ui/config';
-import { Menu } from './menu';
+import { Menu, MenuItemContent } from './menu';
 import type { Mock } from 'vitest';
 
 @Component({
@@ -1018,10 +1018,19 @@ describe('Menu', () => {
             expect(menuInstance.visible).toBe(true);
             expect(menuInstance.overlayVisible).toBe(true);
 
+            // show()/hide() only flip the visibility flags; onShow/onHide are actually emitted from
+            // the overlay's motion lifecycle hooks, so those real handlers are invoked directly here.
+            const overlayContainer = document.createElement('div');
+            menuInstance.onOverlayBeforeEnter({ element: overlayContainer } as any);
+            expect(menuInstance.onShow.emit).toHaveBeenCalledWith({});
+
             // Hide menu
             menuInstance.hide();
 
             expect(menuInstance.visible).toBe(false);
+
+            menuInstance.onOverlayAfterLeave();
+            expect(menuInstance.onHide.emit).toHaveBeenCalledWith({});
         });
 
         it('should toggle popup menu visibility', async () => {
@@ -2145,5 +2154,28 @@ describe('Menu Signal Query API', () => {
         expect(instance.submenuHeaderTemplate()).toBeDefined();
         expect(instance.listViewChild()).toBeDefined();
         expect(instance.containerViewChild()).toBeDefined();
+    });
+});
+
+describe('MenuItemContent', () => {
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [MenuItemContent],
+            // MenuItemContent unconditionally injects Menu in its constructor; onItemClick() never
+            // touches `this.menu`, so a stub is sufficient for a direct, unrendered instantiation.
+            providers: [provideZonelessChangeDetection(), { provide: Menu, useValue: {} as unknown as Menu }]
+        }).compileComponents();
+    });
+
+    it('should emit onMenuItemClick when an item is clicked', () => {
+        const fixture = TestBed.createComponent(MenuItemContent);
+        const instance = fixture.componentInstance;
+        const item: MenuItem = { label: 'Test Item' };
+        const clickEvent = new MouseEvent('click');
+
+        vi.spyOn(instance.onMenuItemClick, 'emit');
+        instance.onItemClick(clickEvent, item);
+
+        expect(instance.onMenuItemClick.emit).toHaveBeenCalledWith({ originalEvent: clickEvent, item });
     });
 });

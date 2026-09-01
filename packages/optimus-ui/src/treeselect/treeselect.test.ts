@@ -4,6 +4,7 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { By } from '@angular/platform-browser';
 import { SharedModule, TreeNode } from '@openng/optimus-ui/api';
 import { provideOptimus } from '@openng/optimus-ui/config';
+import { Overlay } from '@openng/optimus-ui/overlay';
 import { TreeSelectNodeCollapseEvent, TreeSelectNodeExpandEvent } from '@openng/optimus-ui/types/treeselect';
 import { BehaviorSubject } from 'rxjs';
 import { TreeSelect, TreeSelectModule } from './treeselect';
@@ -792,28 +793,71 @@ describe('TreeSelect', () => {
         });
 
         it('should emit onNodeSelect event', async () => {
-            testComponent.selectedValue = null as any;
-            testFixture.changeDetectorRef.markForCheck();
-            await testFixture.whenStable();
-            testFixture.detectChanges();
-
-            const dropdown = testFixture.debugElement.query(By.css('.p-treeselect-dropdown'));
-
-            dropdown.nativeElement.click();
-            testFixture.detectChanges();
-            await testFixture.whenStable();
-
-            // Set a value to trigger node selection event
-            testComponent.selectedValue = mockTreeNodes[0];
-            testFixture.changeDetectorRef.markForCheck();
-            await testFixture.whenStable();
-            testFixture.detectChanges();
-
-            // Verify the component received the selected value
             const treeSelectInstance = testFixture.debugElement.query(By.directive(TreeSelect)).componentInstance;
-            // Use writeValue to simulate ControlValueAccessor behavior
-            treeSelectInstance.writeValue(mockTreeNodes[0]);
-            expect(treeSelectInstance.value).toEqual(mockTreeNodes[0]);
+
+            vi.spyOn(treeSelectInstance.onNodeSelect, 'emit').mockImplementation(() => {});
+
+            const selectEvent = { originalEvent: new Event('click'), node: mockTreeNodes[0] };
+            // Call the real selection handler that the internal p-tree's
+            // (onNodeSelect)="onSelect($event)" binding invokes.
+            treeSelectInstance.onSelect(selectEvent);
+
+            expect(treeSelectInstance.onNodeSelect.emit).toHaveBeenCalledWith(selectEvent);
+        });
+
+        it('should emit onNodeUnselect event', () => {
+            const treeSelectInstance = testFixture.debugElement.query(By.directive(TreeSelect)).componentInstance;
+
+            vi.spyOn(treeSelectInstance.onNodeUnselect, 'emit').mockImplementation(() => {});
+
+            const unselectEvent = { originalEvent: new Event('click'), node: mockTreeNodes[0] };
+            // Call the real unselect handler that the internal p-tree's
+            // (onNodeUnselect)="onUnselect($event)" binding invokes.
+            treeSelectInstance.onUnselect(unselectEvent);
+
+            expect(treeSelectInstance.onNodeUnselect.emit).toHaveBeenCalledWith(unselectEvent);
+        });
+
+        it('should emit onNodeExpand event', () => {
+            const treeSelectInstance = testFixture.debugElement.query(By.directive(TreeSelect)).componentInstance;
+
+            vi.spyOn(treeSelectInstance.onNodeExpand, 'emit').mockImplementation(() => {});
+
+            const expandEvent = { originalEvent: new Event('click'), node: mockTreeNodes[0] };
+            // Call the real expand handler that the internal p-tree's
+            // (onNodeExpand)="nodeExpand($event)" binding invokes.
+            treeSelectInstance.nodeExpand(expandEvent);
+
+            expect(treeSelectInstance.onNodeExpand.emit).toHaveBeenCalledWith(expandEvent);
+        });
+
+        it('should emit onNodeCollapse event', () => {
+            const treeSelectInstance = testFixture.debugElement.query(By.directive(TreeSelect)).componentInstance;
+
+            vi.spyOn(treeSelectInstance.onNodeCollapse, 'emit').mockImplementation(() => {});
+
+            const collapseEvent = { originalEvent: new Event('click'), node: mockTreeNodes[0] };
+            // Call the real collapse handler that the internal p-tree's
+            // (onNodeCollapse)="nodeCollapse($event)" binding invokes.
+            treeSelectInstance.nodeCollapse(collapseEvent);
+
+            expect(treeSelectInstance.onNodeCollapse.emit).toHaveBeenCalledWith(collapseEvent);
+        });
+
+        it('should emit onFilter event', () => {
+            testComponent.filter = true;
+            testFixture.changeDetectorRef.markForCheck();
+            testFixture.detectChanges();
+
+            const treeSelectInstance = testFixture.debugElement.query(By.directive(TreeSelect)).componentInstance;
+
+            vi.spyOn(treeSelectInstance.onFilter, 'emit').mockImplementation(() => {});
+
+            const filterEvent = { target: { value: 'Documents' } } as unknown as Event;
+            // Call the real filter handler bound to the filter input's (input) event.
+            treeSelectInstance.onFilterInput(filterEvent);
+
+            expect(treeSelectInstance.onFilter.emit).toHaveBeenCalled();
         });
 
         it('should emit onShow event', async () => {
@@ -821,15 +865,18 @@ describe('TreeSelect', () => {
 
             vi.spyOn(treeSelectInstance.onShow, 'emit').mockImplementation(() => {});
 
-            // Manually call show to make overlay visible
+            // Open the dropdown so the internal p-overlay (which owns the real
+            // "(onShow)=\"onShow.emit($event)\"" wiring) is rendered.
             treeSelectInstance.show();
             testFixture.changeDetectorRef.markForCheck();
             await testFixture.whenStable();
             testFixture.detectChanges();
 
-            // Manually emit onShow to simulate overlay component's onShow event
-            // In real usage, the overlay component emits this
-            treeSelectInstance.onShow.emit({});
+            // Trigger the overlay's own real show() method — the actual mechanism
+            // that causes the p-overlay component to emit its onShow output, which
+            // is then forwarded to TreeSelect.onShow via the real template binding.
+            const overlayInstance = testFixture.debugElement.query(By.directive(Overlay)).componentInstance;
+            overlayInstance.show();
 
             expect(treeSelectInstance.onShow.emit).toHaveBeenCalled();
         });
@@ -864,12 +911,12 @@ describe('TreeSelect', () => {
             const treeSelectInstance = testFixture.debugElement.query(By.directive(TreeSelect)).componentInstance;
             expect(treeSelectInstance.showClear).toBe(true);
 
-            // Verify clear icon is available when showClear is true and value exists
-            if (treeSelectInstance.checkValue && treeSelectInstance.checkValue()) {
-                expect(true).toBe(true); // Clear functionality is configured
-            } else {
-                expect(treeSelectInstance.showClear).toBe(true); // At least verify showClear is set
-            }
+            vi.spyOn(treeSelectInstance.onClear, 'emit').mockImplementation(() => {});
+
+            // Call the real clear() method that the clear icon's (click) binding invokes.
+            treeSelectInstance.clear(new Event('click'));
+
+            expect(treeSelectInstance.onClear.emit).toHaveBeenCalled();
         });
 
         it('should emit onFocus event', () => {

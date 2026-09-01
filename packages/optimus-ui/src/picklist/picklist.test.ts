@@ -1861,6 +1861,116 @@ describe('PickList', () => {
             });
         });
     });
+
+    describe('Output Events', () => {
+        it('should emit onMoveToTarget when moveRight is called', () => {
+            vi.spyOn(picklistComponent.onMoveToTarget, 'emit');
+            const itemToMove = picklistComponent.source()[0];
+            picklistComponent.selectedItemsSource = [itemToMove];
+
+            picklistComponent.moveRight();
+
+            expect(picklistComponent.onMoveToTarget.emit).toHaveBeenCalledWith({ items: [itemToMove] });
+        });
+
+        it('should emit onMoveToSource when moveLeft is called', () => {
+            vi.spyOn(picklistComponent.onMoveToSource, 'emit');
+            const itemToMove = picklistComponent.target()[0];
+            picklistComponent.selectedItemsTarget = [itemToMove];
+
+            picklistComponent.moveLeft();
+
+            expect(picklistComponent.onMoveToSource.emit).toHaveBeenCalledWith({ items: [itemToMove] });
+        });
+
+        it('should emit onMoveAllToTarget when moveAllRight is called', () => {
+            vi.spyOn(picklistComponent.onMoveAllToTarget, 'emit');
+
+            picklistComponent.moveAllRight();
+
+            expect(picklistComponent.onMoveAllToTarget.emit).toHaveBeenCalled();
+        });
+
+        it('should emit onMoveAllToSource when moveAllLeft is called', () => {
+            vi.spyOn(picklistComponent.onMoveAllToSource, 'emit');
+
+            picklistComponent.moveAllLeft();
+
+            expect(picklistComponent.onMoveAllToSource.emit).toHaveBeenCalled();
+        });
+
+        it('should emit onSourceReorder when moveUp is called on the source list', () => {
+            vi.spyOn(picklistComponent.onSourceReorder, 'emit');
+            const selectedItems = [picklistComponent.source()[1]];
+
+            picklistComponent.moveUp({}, picklistComponent.source(), selectedItems, picklistComponent.onSourceReorder, picklistComponent.SOURCE_LIST);
+
+            expect(picklistComponent.onSourceReorder.emit).toHaveBeenCalledWith({ items: selectedItems });
+        });
+
+        it('should emit onTargetReorder when moveUp is called on the target list', () => {
+            vi.spyOn(picklistComponent.onTargetReorder, 'emit');
+            const selectedItems = [picklistComponent.target()[1]];
+
+            picklistComponent.moveUp({}, picklistComponent.target(), selectedItems, picklistComponent.onTargetReorder, picklistComponent.TARGET_LIST);
+
+            expect(picklistComponent.onTargetReorder.emit).toHaveBeenCalledWith({ items: selectedItems });
+        });
+
+        it('should emit onSourceSelect when a source item is selected', () => {
+            vi.spyOn(picklistComponent.onSourceSelect, 'emit');
+            const selectedItem = picklistComponent.source()[0];
+            const originalEvent = new Event('change');
+
+            picklistComponent.onChangeSelection({ originalEvent, value: [selectedItem] }, picklistComponent.SOURCE_LIST);
+
+            expect(picklistComponent.onSourceSelect.emit).toHaveBeenCalledWith({ originalEvent, items: [selectedItem] });
+        });
+
+        it('should emit onTargetSelect when a target item is selected', () => {
+            vi.spyOn(picklistComponent.onTargetSelect, 'emit');
+            const selectedItem = picklistComponent.target()[0];
+            const originalEvent = new Event('change');
+
+            picklistComponent.onChangeSelection({ originalEvent, value: [selectedItem] }, picklistComponent.TARGET_LIST);
+
+            expect(picklistComponent.onTargetSelect.emit).toHaveBeenCalledWith({ originalEvent, items: [selectedItem] });
+        });
+
+        it('should emit onSourceFilter when the source list is filtered', () => {
+            vi.spyOn(picklistComponent.onSourceFilter, 'emit');
+
+            picklistComponent.filterSource('Item 1');
+
+            expect(picklistComponent.onSourceFilter.emit).toHaveBeenCalled();
+        });
+
+        it('should emit onTargetFilter when the target list is filtered', () => {
+            vi.spyOn(picklistComponent.onTargetFilter, 'emit');
+
+            picklistComponent.filterTarget('Item 5');
+
+            expect(picklistComponent.onTargetFilter.emit).toHaveBeenCalled();
+        });
+
+        it('should emit onFocus when the list receives focus', () => {
+            vi.spyOn(picklistComponent.onFocus, 'emit');
+            const focusEvent = new FocusEvent('focus');
+
+            picklistComponent.onListFocus(focusEvent, picklistComponent.SOURCE_LIST);
+
+            expect(picklistComponent.onFocus.emit).toHaveBeenCalledWith(focusEvent);
+        });
+
+        it('should emit onBlur when the list loses focus', () => {
+            vi.spyOn(picklistComponent.onBlur, 'emit');
+            const blurEvent = new FocusEvent('blur');
+
+            picklistComponent.onListBlur(blurEvent, picklistComponent.SOURCE_LIST);
+
+            expect(picklistComponent.onBlur.emit).toHaveBeenCalledWith(blurEvent);
+        });
+    });
 });
 
 // ---------------------------------------------------------------------------

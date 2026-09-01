@@ -115,6 +115,30 @@ describe('FileUpload', () => {
             });
         });
 
+        it('should remove an uploaded file by index', () => {
+            const uploadedFile = new File(['uploaded'], 'uploaded.txt', { type: 'text/plain' });
+            const otherUploadedFile = new File(['other'], 'other.txt', { type: 'text/plain' });
+            component.uploadedFiles = [uploadedFile, otherUploadedFile];
+            vi.spyOn(component.onRemoveUploadedFile, 'emit').mockImplementation(() => {});
+
+            component.removeUploadedFile(0);
+
+            expect(component.uploadedFiles).toEqual([otherUploadedFile]);
+            expect(component.onRemoveUploadedFile.emit).toHaveBeenCalledWith({
+                file: uploadedFile,
+                files: [otherUploadedFile]
+            });
+        });
+
+        it('should emit onImageError when imageError is called', () => {
+            vi.spyOn(component.onImageError, 'emit').mockImplementation(() => {});
+
+            const event = new Event('error');
+            component.imageError(event);
+
+            expect(component.onImageError.emit).toHaveBeenCalledWith(event);
+        });
+
         it('should upload files when upload method called', async () => {
             const testFile = new File(['test'], 'test.txt', { type: 'text/plain' });
             component.files = [testFile];
@@ -394,6 +418,33 @@ describe('FileUpload', () => {
             req.flush({ success: true }, { status: 200, statusText: 'OK' });
             expect(component.onUpload.emit).toHaveBeenCalled();
             expect(component.uploading).toBe(false);
+        });
+
+        it('should emit onProgress during upload progress events', async () => {
+            const testFile = new File(['test content'], 'test.txt', { type: 'text/plain' });
+            component.files = [testFile];
+
+            vi.spyOn(component.onProgress, 'emit').mockImplementation(() => {});
+
+            component.uploader();
+            await fixture.whenStable();
+
+            const req = httpMock.expectOne('https://test.com/upload');
+
+            req.event({
+                type: HttpEventType.UploadProgress,
+                loaded: 25,
+                total: 100
+            });
+
+            expect(component.progress).toBe(25);
+            expect(component.onProgress.emit).toHaveBeenCalledWith({
+                originalEvent: expect.objectContaining({ type: HttpEventType.UploadProgress }),
+                progress: 25
+            });
+
+            // Drain the request so httpMock.verify() in afterEach does not fail.
+            req.flush({ success: true }, { status: 200, statusText: 'OK' });
         });
 
         it('should handle upload error', async () => {

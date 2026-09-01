@@ -6,7 +6,7 @@ import { By } from '@angular/platform-browser';
 
 import { BehaviorSubject, timer } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { Select } from './select';
+import { Select, SelectItem } from './select';
 
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { SharedModule } from '@openng/optimus-ui/api';
@@ -38,6 +38,7 @@ import { SharedModule } from '@openng/optimus-ui/api';
             (onFocus)="onFocusEvent($event)"
             (onBlur)="onBlurEvent($event)"
             (onClick)="onClickEvent($event)"
+            (onLazyLoad)="onLazyLoadEvent($event)"
         >
         </p-select>
     `
@@ -69,6 +70,7 @@ class TestBasicSelectComponent {
     focusEvent: any;
     blurEvent: any;
     clickEvent: any;
+    lazyLoadEvent: any;
 
     onSelectionChange(event: any) {
         this.changeEvent = event;
@@ -100,6 +102,10 @@ class TestBasicSelectComponent {
 
     onClickEvent(event: any) {
         this.clickEvent = event;
+    }
+
+    onLazyLoadEvent(event: any) {
+        this.lazyLoadEvent = event;
     }
 }
 
@@ -1044,17 +1050,10 @@ describe('Select', () => {
             selectInstance.writeModelValue('opt1');
             fixture.detectChanges();
 
-            selectInstance.clear();
+            selectInstance.clear(new Event('clear'));
 
             expect(selectInstance.modelValue()).toBe(null);
-
-            // Clear event emit edildiğini kontrol et
-            if (component.clearEvent) {
-                expect(component.clearEvent).toBeDefined();
-            } else {
-                // Event emit edilmemişse, en azından value clear olmuş olmalı
-                expect(selectInstance.modelValue()).toBe(null);
-            }
+            expect(component.clearEvent).toBeDefined();
         });
 
         it('should focus programmatically', () => {
@@ -1114,11 +1113,10 @@ describe('Select', () => {
 
             expect(selectInstance.overlayVisible).toBe(true);
 
-            if (component.showEvent) {
-                expect(component.showEvent).toBeDefined();
-            } else {
-                expect(selectInstance.overlayVisible).toBe(true);
-            }
+            // Trigger the real overlay animation-lifecycle callback that emits onShow
+            selectInstance.onOverlayBeforeEnter({} as any);
+
+            expect(component.showEvent).toBeDefined();
         });
 
         it('should handle hide event', async () => {
@@ -1155,13 +1153,35 @@ describe('Select', () => {
             // Overlay should now be hidden
             expect(selectInstance.overlayVisible).toBe(false);
 
-            // Component event handler check
-            if (component.hideEvent) {
-                expect(component.hideEvent).toBeDefined();
-            } else {
-                // Fallback: just verify hide was called (component exists)
-                expect(selectInstance).toBeTruthy();
-            }
+            // Trigger the real overlay animation-lifecycle callback that emits onHide
+            selectInstance.onOverlayAfterLeave({} as any);
+
+            expect(component.hideEvent).toBeDefined();
+        });
+
+        it('should handle lazy load event via virtual scroller', async () => {
+            // Enable virtual scroll so the internal p-scroller (which owns the real
+            // "(onLazyLoad)" wiring: (onLazyLoad)="onLazyLoad.emit($event)") renders.
+            selectInstance.virtualScroll = true;
+            selectInstance.virtualScrollItemSize = 38;
+            selectInstance.lazy = true;
+            fixture.detectChanges();
+
+            selectInstance.show();
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            await fixture.whenStable();
+            fixture.detectChanges();
+
+            const scrollerElement = fixture.debugElement.query(By.css('p-scroller'));
+            expect(scrollerElement).toBeTruthy();
+
+            // Emit through the real child scroller output; Angular's template
+            // event binding on p-select then forwards it to Select.onLazyLoad.
+            const lazyLoadEvent = { first: 0, last: 3 };
+            scrollerElement.componentInstance.onLazyLoad.emit(lazyLoadEvent);
+
+            expect(component.lazyLoadEvent).toBeDefined();
+            expect(component.lazyLoadEvent).toEqual(lazyLoadEvent);
         });
     });
 
@@ -4496,5 +4516,65 @@ describe('Select Signal Query API', () => {
         expect(instance.templates().some((t: any) => t.getType() === 'item')).toBe(true);
         expect(instance.focusInputViewChild()).toBeDefined();
         expect(instance.editableInputViewChild()).toBeUndefined();
+    });
+});
+
+@Component({
+    standalone: true,
+    imports: [SelectItem],
+    template: ` <p-selectItem [option]="option" [label]="label" [selected]="selected" [disabled]="disabled" [index]="index" (onClick)="onItemClick($event)" (onMouseEnter)="onItemMouseEnter($event)"></p-selectItem> `
+})
+class TestSelectItemHostComponent {
+    option = { name: 'Option 1', code: 'opt1' };
+    label = 'Option 1';
+    selected = false;
+    disabled = false;
+    index = 0;
+
+    clickEvent: any;
+    mouseEnterEvent: any;
+
+    onItemClick(event: any) {
+        this.clickEvent = event;
+    }
+
+    onItemMouseEnter(event: any) {
+        this.mouseEnterEvent = event;
+    }
+}
+
+describe('SelectItem', () => {
+    let component: TestSelectItemHostComponent;
+    let fixture: ComponentFixture<TestSelectItemHostComponent>;
+    let itemElement: DebugElement;
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [TestSelectItemHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(TestSelectItemHostComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+        itemElement = fixture.debugElement.query(By.css('li'));
+    });
+
+    it('should create the SelectItem', () => {
+        expect(itemElement).toBeTruthy();
+    });
+
+    it('should emit onClick when the option is clicked', () => {
+        itemElement.nativeElement.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        fixture.detectChanges();
+
+        expect(component.clickEvent).toBeDefined();
+    });
+
+    it('should emit onMouseEnter when the option is hovered', () => {
+        itemElement.nativeElement.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+        fixture.detectChanges();
+
+        expect(component.mouseEnterEvent).toBeDefined();
     });
 });

@@ -6,7 +6,7 @@ import { By } from '@angular/platform-browser';
 import { SharedModule, TreeNode } from '@openng/optimus-ui/api';
 import { provideOptimus } from '@openng/optimus-ui/config';
 import { of } from 'rxjs';
-import { TreeTable, TreeTableModule, TTScrollableView } from './treetable';
+import { TreeTable, TreeTableModule, TreeTableToggler, TTEditableColumn, TTScrollableView } from './treetable';
 
 describe('TreeTable', () => {
     let component: TestBasicTreeTableComponent;
@@ -419,18 +419,8 @@ describe('TreeTable', () => {
             expect(treetable.selectionChange.emit).toHaveBeenCalled();
         });
 
-        it('should handle context menu selection', async () => {
-            vi.spyOn(treetable.contextMenuSelectionChange, 'emit').mockImplementation(() => {});
-            vi.spyOn(treetable.onContextMenuSelect, 'emit').mockImplementation(() => {});
-
-            // Simply test that the events can be emitted directly
-            treetable.onContextMenuSelect.emit({
-                originalEvent: new MouseEvent('contextmenu'),
-                node: basicTreeData[0]
-            });
-
-            expect(treetable.onContextMenuSelect.emit).toHaveBeenCalled();
-        });
+        // NOTE: contextMenuSelectionChange / onContextMenuSelect are exercised via the real
+        // `handleRowRightClick()` method in the "Output Events" describe block below.
     });
 
     describe('Node Expansion/Collapse', () => {
@@ -441,35 +431,8 @@ describe('TreeTable', () => {
             fixture.detectChanges();
         });
 
-        it('should emit node expand event', async () => {
-            vi.spyOn(treetable.onNodeExpand, 'emit').mockImplementation(() => {});
-
-            // Simulate node expansion by directly calling the emit
-            treetable.onNodeExpand.emit({
-                originalEvent: new MouseEvent('click'),
-                node: basicTreeData[0]
-            });
-
-            expect(treetable.onNodeExpand.emit).toHaveBeenCalledWith({
-                originalEvent: expect.any(MouseEvent),
-                node: basicTreeData[0]
-            });
-        });
-
-        it('should emit node collapse event', async () => {
-            vi.spyOn(treetable.onNodeCollapse, 'emit').mockImplementation(() => {});
-
-            // Simulate node collapse by directly calling the emit
-            treetable.onNodeCollapse.emit({
-                originalEvent: new MouseEvent('click'),
-                node: basicTreeData[0]
-            });
-
-            expect(treetable.onNodeCollapse.emit).toHaveBeenCalledWith({
-                originalEvent: expect.any(MouseEvent),
-                node: basicTreeData[0]
-            });
-        });
+        // NOTE: onNodeExpand / onNodeCollapse are exercised via the real toggler
+        // (`TreeTableToggler.onClick()`) in the "Output Events" describe block below.
 
         it('should handle node expansion state', async () => {
             const nodeData = [...basicTreeData];
@@ -2932,6 +2895,350 @@ describe('TreeTable', () => {
 
                 expect(dynamicTreetable.loading).toBe(false);
                 expect(dynamicTreetable.value).toEqual(newData);
+            });
+        });
+    });
+
+    // All tests below drive the component through its real public methods (never `.emit()`
+    // directly), mirroring the established pattern used for selectionChange/onFilter/onPage/
+    // onSort/onLazyLoad above.
+    describe('Output Events', () => {
+        describe('contextMenuSelectionChange & onContextMenuSelect (via handleRowRightClick)', () => {
+            beforeEach(async () => {
+                component.value = basicTreeData;
+                treetable.contextMenu = { show: vi.fn() };
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+                fixture.detectChanges();
+            });
+
+            it('should emit contextMenuSelectionChange and onContextMenuSelect when a row is right-clicked', () => {
+                vi.spyOn(treetable.contextMenuSelectionChange, 'emit').mockImplementation(() => {});
+                vi.spyOn(treetable.onContextMenuSelect, 'emit').mockImplementation(() => {});
+
+                const node = basicTreeData[0];
+                const originalEvent = new MouseEvent('contextmenu');
+                const mockEvent = {
+                    originalEvent,
+                    rowNode: { node }
+                };
+
+                treetable.handleRowRightClick(mockEvent);
+
+                expect(treetable.contextMenu.show).toHaveBeenCalledWith(originalEvent);
+                expect(treetable.contextMenuSelectionChange.emit).toHaveBeenCalledWith(node);
+                expect(treetable.onContextMenuSelect.emit).toHaveBeenCalledWith({
+                    originalEvent,
+                    node
+                });
+            });
+        });
+
+        describe('onNodeExpand & onNodeCollapse (via the real TreeTableToggler)', () => {
+            let templatesFixture: ComponentFixture<TestTemplatesTreeTableComponent>;
+            let templatesComponent: TestTemplatesTreeTableComponent;
+            let templatesTreetable: TreeTable;
+
+            beforeEach(async () => {
+                templatesFixture = TestBed.createComponent(TestTemplatesTreeTableComponent);
+                templatesComponent = templatesFixture.componentInstance;
+                // Use an isolated deep clone so toggling `expanded` here never leaks into
+                // the shared `basicTreeData` used by other tests in this file.
+                templatesComponent.value = structuredClone(basicTreeData);
+                templatesTreetable = templatesFixture.debugElement.query(By.directive(TreeTable)).componentInstance;
+                templatesFixture.changeDetectorRef.markForCheck();
+                await templatesFixture.whenStable();
+                templatesFixture.detectChanges();
+            });
+
+            function firstToggler(): TreeTableToggler {
+                const togglers = templatesFixture.debugElement.queryAll(By.directive(TreeTableToggler));
+                return togglers[0].componentInstance as TreeTableToggler;
+            }
+
+            it('should emit onNodeExpand from the real toggler onClick()', () => {
+                const toggler = firstToggler();
+                expect(toggler.rowNode.node.expanded).toBeFalsy();
+
+                vi.spyOn(templatesTreetable.onNodeExpand, 'emit').mockImplementation(() => {});
+
+                toggler.onClick(new MouseEvent('click'));
+
+                expect(toggler.rowNode.node.expanded).toBe(true);
+                expect(templatesTreetable.onNodeExpand.emit).toHaveBeenCalledWith({
+                    originalEvent: expect.any(MouseEvent),
+                    node: toggler.rowNode.node
+                });
+            });
+
+            it('should emit onNodeCollapse from the real toggler onClick()', () => {
+                const toggler = firstToggler();
+
+                // Expand first via the real method so the toggler is in the "expanded" state.
+                toggler.onClick(new MouseEvent('click'));
+                expect(toggler.rowNode.node.expanded).toBe(true);
+
+                vi.spyOn(templatesTreetable.onNodeCollapse, 'emit').mockImplementation(() => {});
+
+                toggler.onClick(new MouseEvent('click'));
+
+                expect(toggler.rowNode.node.expanded).toBe(false);
+                expect(templatesTreetable.onNodeCollapse.emit).toHaveBeenCalledWith({
+                    originalEvent: expect.any(MouseEvent),
+                    node: toggler.rowNode.node
+                });
+            });
+        });
+
+        describe('sortFunction (via sortNodes()/sortMultipleNodes())', () => {
+            beforeEach(async () => {
+                component.value = basicTreeData;
+                component.customSort = true;
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+                fixture.detectChanges();
+            });
+
+            it('should emit sortFunction from the real sortNodes() when customSort is enabled', () => {
+                treetable.sortField = 'name';
+                treetable.sortOrder = 1;
+
+                vi.spyOn(treetable.sortFunction, 'emit').mockImplementation(() => {});
+
+                treetable.sortNodes(treetable.value as any);
+
+                expect(treetable.sortFunction.emit).toHaveBeenCalledWith({
+                    data: treetable.value,
+                    mode: treetable.sortMode,
+                    field: 'name',
+                    order: 1
+                });
+            });
+
+            it('should emit sortFunction from the real sortMultipleNodes() when customSort is enabled', () => {
+                treetable.sortMode = 'multiple';
+                treetable.multiSortMeta = [{ field: 'name', order: 1 }];
+
+                vi.spyOn(treetable.sortFunction, 'emit').mockImplementation(() => {});
+
+                treetable.sortMultipleNodes(treetable.value as any);
+
+                expect(treetable.sortFunction.emit).toHaveBeenCalledWith({
+                    data: treetable.value,
+                    mode: 'multiple',
+                    multiSortMeta: treetable.multiSortMeta
+                });
+            });
+        });
+
+        describe('onColResize (via onColumnResizeEnd)', () => {
+            beforeEach(async () => {
+                component.value = basicTreeData;
+                component.resizableColumns = true;
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+                fixture.detectChanges();
+            });
+
+            it('should emit onColResize from the real onColumnResizeEnd()', () => {
+                treetable.lastResizerHelperX = 0;
+
+                // Minimal plain-object stand-ins for the DOM elements onColumnResizeEnd reads
+                // from (offsetWidth/style/nextElementSibling) — jsdom has no real layout engine
+                // so onColResize's own inputs are exercised directly rather than a real resize.
+                const nextColumn: any = { offsetWidth: 50, offsetParent: {}, style: { minWidth: '' } };
+                const column: any = { offsetWidth: 100, style: { minWidth: '' }, nextElementSibling: nextColumn };
+
+                vi.spyOn(treetable.onColResize, 'emit').mockImplementation(() => {});
+
+                treetable.onColumnResizeEnd(new MouseEvent('mouseup') as any, column);
+
+                expect(treetable.onColResize.emit).toHaveBeenCalledWith({
+                    element: column,
+                    delta: 0
+                });
+            });
+        });
+
+        describe('onColReorder (via onColumnDrop)', () => {
+            beforeEach(async () => {
+                component.value = basicTreeData;
+                component.reorderableColumns = true;
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+                fixture.detectChanges();
+            });
+
+            it('should emit onColReorder from the real onColumnDrop()', () => {
+                const col1: any = { attributes: { ttreorderablecolumn: {} }, nodeType: 1 };
+                const col2: any = { attributes: { ttreorderablecolumn: {} }, nodeType: 1 };
+                const parentNode = { childNodes: [col1, col2] };
+                col1.parentNode = parentNode;
+                col2.parentNode = parentNode;
+
+                treetable.draggedColumn = col1;
+                treetable.dropPosition = 1;
+
+                vi.spyOn(treetable.onColReorder, 'emit').mockImplementation(() => {});
+
+                treetable.onColumnDrop({ preventDefault: vi.fn() } as any, col2);
+
+                expect(treetable.onColReorder.emit).toHaveBeenCalledWith({
+                    dragIndex: 0,
+                    dropIndex: 1,
+                    columns: treetable.columns
+                });
+            });
+        });
+
+        describe('onNodeSelect & onNodeUnselect (via handleRowClick)', () => {
+            beforeEach(async () => {
+                component.value = basicTreeData;
+                component.selectionMode = 'single';
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+                fixture.detectChanges();
+            });
+
+            function clickEvent(node: any) {
+                return {
+                    originalEvent: {
+                        target: { nodeName: 'TD', closest: vi.fn(() => null) },
+                        button: 0
+                    } as any,
+                    rowNode: { node },
+                    rowIndex: 0
+                };
+            }
+
+            it('should emit onNodeSelect when selecting a row', () => {
+                const node = basicTreeData[0];
+
+                vi.spyOn(treetable.onNodeSelect, 'emit').mockImplementation(() => {});
+
+                treetable.handleRowClick(clickEvent(node));
+
+                expect(treetable.onNodeSelect.emit).toHaveBeenCalledWith({
+                    originalEvent: expect.anything(),
+                    node,
+                    type: 'row',
+                    index: 0
+                });
+            });
+
+            it('should emit onNodeUnselect when clicking an already-selected row', () => {
+                const node = basicTreeData[0];
+
+                // Select first via the real method.
+                treetable.handleRowClick(clickEvent(node));
+
+                vi.spyOn(treetable.onNodeUnselect, 'emit').mockImplementation(() => {});
+
+                // Clicking the same row again unselects it.
+                treetable.handleRowClick(clickEvent(node));
+
+                expect(treetable.onNodeUnselect.emit).toHaveBeenCalledWith({
+                    originalEvent: expect.anything(),
+                    node,
+                    type: 'row'
+                });
+            });
+        });
+
+        describe('onHeaderCheckboxToggle (via toggleNodesWithCheckbox)', () => {
+            beforeEach(async () => {
+                component.value = basicTreeData;
+                component.selectionMode = 'checkbox';
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+                fixture.detectChanges();
+            });
+
+            it('should emit onHeaderCheckboxToggle from the real toggleNodesWithCheckbox()', () => {
+                vi.spyOn(treetable.onHeaderCheckboxToggle, 'emit').mockImplementation(() => {});
+
+                const event = new Event('change');
+                treetable.toggleNodesWithCheckbox(event, true);
+
+                expect(treetable.onHeaderCheckboxToggle.emit).toHaveBeenCalledWith({
+                    originalEvent: event,
+                    checked: true
+                });
+            });
+        });
+
+        describe('selectionKeysChange (via the selectionKeys setter)', () => {
+            beforeEach(async () => {
+                component.value = basicTreeData;
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+                fixture.detectChanges();
+            });
+
+            it('should emit selectionKeysChange when the selectionKeys input is assigned', () => {
+                vi.spyOn(treetable.selectionKeysChange, 'emit').mockImplementation(() => {});
+
+                const keys = { '0-0': { checked: true, partialChecked: false } };
+                treetable.selectionKeys = keys;
+
+                expect(treetable.selectionKeysChange.emit).toHaveBeenCalledWith(keys);
+            });
+        });
+
+        describe('onEditInit, onEditComplete & onEditCancel (via the real TTEditableColumn)', () => {
+            let templatesFixture: ComponentFixture<TestTemplatesTreeTableComponent>;
+            let templatesComponent: TestTemplatesTreeTableComponent;
+            let templatesTreetable: TreeTable;
+            let editableColumn: TTEditableColumn;
+
+            beforeEach(async () => {
+                templatesFixture = TestBed.createComponent(TestTemplatesTreeTableComponent);
+                templatesComponent = templatesFixture.componentInstance;
+                templatesComponent.value = structuredClone(basicTreeData);
+                templatesFixture.changeDetectorRef.markForCheck();
+                await templatesFixture.whenStable();
+                templatesFixture.detectChanges();
+
+                templatesTreetable = templatesFixture.debugElement.query(By.directive(TreeTable)).componentInstance;
+                editableColumn = templatesFixture.debugElement.query(By.directive(TTEditableColumn)).injector.get(TTEditableColumn);
+            });
+
+            it('should emit onEditInit from the real openCell()', () => {
+                vi.spyOn(templatesTreetable.onEditInit, 'emit').mockImplementation(() => {});
+
+                editableColumn.openCell();
+
+                expect(templatesTreetable.editingCell).toBe(editableColumn.el.nativeElement);
+                expect(templatesTreetable.onEditInit.emit).toHaveBeenCalledWith({
+                    field: editableColumn.field,
+                    data: editableColumn.data
+                });
+            });
+
+            it('should emit onEditComplete from the real onKeyDown() on Enter', () => {
+                editableColumn.openCell();
+
+                vi.spyOn(templatesTreetable.onEditComplete, 'emit').mockImplementation(() => {});
+
+                editableColumn.onKeyDown({ keyCode: 13, shiftKey: false, preventDefault: vi.fn() } as any);
+
+                expect(templatesTreetable.onEditComplete.emit).toHaveBeenCalledWith({
+                    field: editableColumn.field,
+                    data: editableColumn.data
+                });
+            });
+
+            it('should emit onEditCancel from the real onKeyDown() on Escape', () => {
+                editableColumn.openCell();
+
+                vi.spyOn(templatesTreetable.onEditCancel, 'emit').mockImplementation(() => {});
+
+                editableColumn.onKeyDown({ keyCode: 27, preventDefault: vi.fn() } as any);
+
+                expect(templatesTreetable.onEditCancel.emit).toHaveBeenCalledWith({
+                    field: editableColumn.field,
+                    data: editableColumn.data
+                });
             });
         });
     });

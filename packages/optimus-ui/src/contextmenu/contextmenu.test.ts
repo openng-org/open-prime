@@ -4,7 +4,7 @@ import { By } from '@angular/platform-browser';
 
 import { RouterTestingModule } from '@angular/router/testing';
 import { MenuItem, SharedModule } from '@openng/optimus-ui/api';
-import { ContextMenu } from './contextmenu';
+import { ContextMenu, ContextMenuSub } from './contextmenu';
 
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 @Component({
@@ -1647,5 +1647,77 @@ describe('ContextMenu Signal Query API', () => {
         const instance = fixture.debugElement.query(By.directive(ContextMenu)).componentInstance;
 
         expect(() => instance.rootmenu()?.sublistViewChild()).not.toThrow();
+    });
+});
+
+describe('ContextMenuSub', () => {
+    let fixture: ComponentFixture<ContextMenuSub>;
+    let instance: ContextMenuSub;
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [ContextMenuSub],
+            providers: [provideZonelessChangeDetection(), { provide: ContextMenu, useValue: {} }]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(ContextMenuSub);
+        instance = fixture.componentInstance;
+        instance.visible = true;
+        fixture.changeDetectorRef.markForCheck();
+        await fixture.whenStable();
+    });
+
+    it('should create', () => {
+        expect(instance).toBeTruthy();
+    });
+
+    it('should emit itemMouseEnter when onItemMouseEnter is called', () => {
+        vi.spyOn(instance.itemMouseEnter, 'emit');
+        const event = new MouseEvent('mouseenter');
+        const processedItem = { item: { label: 'Item' } };
+
+        instance.onItemMouseEnter({ event, processedItem });
+
+        expect(instance.itemMouseEnter.emit).toHaveBeenCalledWith({ originalEvent: event, processedItem });
+    });
+
+    it('should emit itemClick when onItemClick is called', () => {
+        vi.spyOn(instance.itemClick, 'emit');
+        const event = new MouseEvent('click');
+        const processedItem = { item: { label: 'Item' } };
+
+        instance.onItemClick(event, processedItem);
+
+        expect(instance.itemClick.emit).toHaveBeenCalledWith({ originalEvent: event, processedItem, isFocus: true });
+    });
+
+    it('should emit menuKeydown when the root list receives a keydown event', () => {
+        vi.spyOn(instance.menuKeydown, 'emit');
+        const listEl: HTMLElement = fixture.debugElement.query(By.css('ul')).nativeElement;
+        const keyEvent = new KeyboardEvent('keydown', { code: 'ArrowDown' });
+
+        listEl.dispatchEvent(keyEvent);
+
+        expect(instance.menuKeydown.emit).toHaveBeenCalledWith(keyEvent);
+    });
+
+    it('should emit menuFocus when the root list receives a focus event', () => {
+        vi.spyOn(instance.menuFocus, 'emit');
+        const listEl: HTMLElement = fixture.debugElement.query(By.css('ul')).nativeElement;
+        const focusEvent = new FocusEvent('focus');
+
+        listEl.dispatchEvent(focusEvent);
+
+        expect(instance.menuFocus.emit).toHaveBeenCalledWith(focusEvent);
+    });
+
+    it('should emit menuBlur when the root list receives a blur event', () => {
+        vi.spyOn(instance.menuBlur, 'emit');
+        const listEl: HTMLElement = fixture.debugElement.query(By.css('ul')).nativeElement;
+        const blurEvent = new FocusEvent('blur');
+
+        listEl.dispatchEvent(blurEvent);
+
+        expect(instance.menuBlur.emit).toHaveBeenCalledWith(blurEvent);
     });
 });
