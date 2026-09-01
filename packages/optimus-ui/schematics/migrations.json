@@ -1,4 +1,10 @@
 {
     "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
-    "schematics": {}
+    "schematics": {
+        "remove-dead-outputs": {
+            "version": "3.0.0",
+            "factory": "./migrations/remove-dead-outputs/migration",
+            "description": "Remove usages of outputs removed in this version that had already stopped firing: Overlay's onAnimationStart/onAnimationDone (and OverlayOptions config callbacks), and MenubarSub's menuFocus/menuBlur/menuKeydown."
+        }
+    }
 }

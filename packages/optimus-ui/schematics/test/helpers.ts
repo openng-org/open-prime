@@ -5,9 +5,16 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const COLLECTION_PATH = path.resolve(__dirname, '../dist/collection.json');
+export const MIGRATIONS_PATH = path.resolve(__dirname, '../dist/migrations.json');
 
 export function createRunner(): SchematicTestRunner {
     return new SchematicTestRunner('optimus-ui', COLLECTION_PATH);
+}
+
+// `ng update` migrations live in a separate collection (migrations.json) from the `ng generate`
+// schematics (collection.json) — a runner needs to be pointed at whichever one it's testing.
+export function createMigrationRunner(): SchematicTestRunner {
+    return new SchematicTestRunner('optimus-ui-migrations', MIGRATIONS_PATH);
 }
 
 export const DEFAULT_PKG = {
