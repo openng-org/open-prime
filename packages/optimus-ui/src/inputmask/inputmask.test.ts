@@ -422,7 +422,7 @@ describe('InputMask', () => {
             const keyEvent = new KeyboardEvent('keypress', { keyCode: 49 }); // '1' fills the single slot
             component.onKeyPress(keyEvent);
 
-            expect(component.onComplete.emit).toHaveBeenCalledWith(undefined);
+            expect(component.onComplete.emit).toHaveBeenCalledWith();
         });
 
         it('should handle clear event when showClear is enabled', async () => {

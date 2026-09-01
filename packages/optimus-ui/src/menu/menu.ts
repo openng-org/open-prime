@@ -417,7 +417,7 @@ export class Menu extends BaseComponent<MenuPassThrough> {
      * @param {Event} event - focus event.
      * @group Emits
      */
-    readonly onFocus = output<Event | undefined>();
+    readonly onFocus = output<Event>();
 
     listViewChild = viewChild<ElementRef>('list');
 
@@ -789,7 +789,7 @@ export class Menu extends BaseComponent<MenuPassThrough> {
 
         if (!this.focused) {
             this.focused = true;
-            this.onFocus.emit(undefined);
+            this.onFocus.emit(originalEvent);
         }
 
         if (item.disabled) {

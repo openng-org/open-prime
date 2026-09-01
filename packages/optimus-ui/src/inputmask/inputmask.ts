@@ -873,7 +873,7 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
      * Callback to invoke when the mask is completed.
      * @group Emits
      */
-    readonly onComplete = output<any>();
+    readonly onComplete = output<void>();
     /**
      * Callback to invoke when the component receives focus.
      * @param {Event} event - Browser event.
@@ -902,7 +902,7 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
      * Callback to invoke when input field is cleared.
      * @group Emits
      */
-    readonly onClear = output<any>();
+    readonly onClear = output<void>();
     /**
      * Custom clear icon template.
      * @group Templates
@@ -1127,7 +1127,7 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
                 this.caret(pos.begin, pos.begin);
                 this.updateModel(e);
                 if (this.isCompleted()) {
-                    this.onComplete.emit(undefined);
+                    this.onComplete.emit();
                 }
             }, 0);
         } else {
@@ -1138,7 +1138,7 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
                 this.caret(pos.begin, pos.begin);
                 this.updateModel(e);
                 if (this.isCompleted()) {
-                    this.onComplete.emit(undefined);
+                    this.onComplete.emit();
                 }
             }, 0);
         }
@@ -1267,7 +1267,7 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
         this.updateModel(e);
 
         if (completed) {
-            this.onComplete.emit(undefined);
+            this.onComplete.emit();
         }
     }
 
@@ -1392,7 +1392,7 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
             this.caret(pos);
             this.updateModel(event);
             if (this.isCompleted()) {
-                this.onComplete.emit(undefined);
+                this.onComplete.emit();
             }
         }, 0);
     }
@@ -1431,7 +1431,7 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
         (this.inputViewChild() as ElementRef).nativeElement.value = '';
         this.value = null;
         this.onModelChange(this.value);
-        this.onClear.emit(undefined);
+        this.onClear.emit();
     }
 
     /**
