@@ -82,49 +82,49 @@ export interface MotionHooks {
      * @param event - The motion event object.
      * @returns
      */
-    onBeforeEnter?: (event?: MotionEvent) => void;
+    onBeforeEnter?: (event: MotionEvent) => void;
     /**
      * Called when the enter motion starts.
      * @param event - The motion event object.
      * @returns
      */
-    onEnter?: (event?: MotionEvent) => void;
+    onEnter?: (event: MotionEvent) => void;
     /**
      * Called after the enter motion ends.
      * @param event - The motion event object.
      * @returns
      */
-    onAfterEnter?: (event?: MotionEvent) => void;
+    onAfterEnter?: (event: MotionEvent) => void;
     /**
      * Called if the enter motion is cancelled.
      * @param event - The motion event object.
      * @returns
      */
-    onEnterCancelled?: (event?: MotionEvent) => void;
+    onEnterCancelled?: (event: MotionEvent) => void;
     /**
      * Called before the leave motion starts.
      * @param event - The motion event object.
      * @returns
      */
-    onBeforeLeave?: (event?: MotionEvent) => void;
+    onBeforeLeave?: (event: MotionEvent) => void;
     /**
      * Called when the leave motion starts.
      * @param event - The motion event object.
      * @returns
      */
-    onLeave?: (event?: MotionEvent) => void;
+    onLeave?: (event: MotionEvent) => void;
     /**
      * Called after the leave motion ends.
      * @param event - The motion event object.
      * @returns
      */
-    onAfterLeave?: (event?: MotionEvent) => void;
+    onAfterLeave?: (event: MotionEvent) => void;
     /**
      * Called if the leave motion is cancelled.
      * @param event - The motion event object.
      * @returns
      */
-    onLeaveCancelled?: (event?: MotionEvent) => void;
+    onLeaveCancelled?: (event: MotionEvent) => void;
 }
 
 /**

@@ -5,6 +5,16 @@
             "version": "3.0.0",
             "factory": "./migrations/remove-dead-outputs/migration",
             "description": "Remove usages of outputs removed in this version that had already stopped firing: Overlay's onAnimationStart/onAnimationDone (and OverlayOptions config callbacks), and MenubarSub's menuFocus/menuBlur/menuKeydown."
+        },
+        "styleclass-to-class": {
+            "version": "3.0.0",
+            "factory": "./migrations/styleclass-to-class/migration",
+            "description": "Rewrite styleClass/[styleClass] to class/[class] on selectors whose styleClass input was removed in this version in favor of the native class attribute, starting with p-toast."
+        },
+        "remove-dead-inputs": {
+            "version": "3.0.0",
+            "factory": "./migrations/remove-dead-inputs/migration",
+            "description": "Remove usages of inputs removed in this version that had already stopped doing anything: p-toast/p-toastItem's showTransformOptions, hideTransformOptions, showTransitionOptions and hideTransitionOptions."
         }
     }
 }

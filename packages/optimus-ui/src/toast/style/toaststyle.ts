@@ -5,7 +5,7 @@ import { BaseStyle } from '@openng/optimus-ui/base';
 // Position
 const inlineStyles = {
     root: ({ instance }) => {
-        const { _position } = instance;
+        const _position = instance.position();
 
         return {
             position: 'fixed',
@@ -18,21 +18,21 @@ const inlineStyles = {
 };
 
 const classes = {
-    root: ({ instance }) => ['p-toast p-component', `p-toast-${instance._position}`],
+    root: ({ instance }) => ['p-toast p-component', `p-toast-${instance.position()}`],
 
     message: ({ instance }) => ({
         'p-toast-message': true,
-        'p-toast-message-info': instance.message.severity === 'info' || instance.message.severity === undefined,
-        'p-toast-message-warn': instance.message.severity === 'warn',
-        'p-toast-message-error': instance.message.severity === 'error',
-        'p-toast-message-success': instance.message.severity === 'success',
-        'p-toast-message-secondary': instance.message.severity === 'secondary',
-        'p-toast-message-contrast': instance.message.severity === 'contrast'
+        'p-toast-message-info': instance.message()?.severity === 'info' || instance.message()?.severity === undefined,
+        'p-toast-message-warn': instance.message()?.severity === 'warn',
+        'p-toast-message-error': instance.message()?.severity === 'error',
+        'p-toast-message-success': instance.message()?.severity === 'success',
+        'p-toast-message-secondary': instance.message()?.severity === 'secondary',
+        'p-toast-message-contrast': instance.message()?.severity === 'contrast'
     }),
     messageContent: 'p-toast-message-content',
     messageIcon: ({ instance }) => ({
         'p-toast-message-icon': true,
-        [`pi ${instance.message.icon}`]: !!instance.message.icon
+        [`pi ${instance.message()?.icon}`]: !!instance.message()?.icon
     }),
     messageText: 'p-toast-message-text',
     summary: 'p-toast-summary',
@@ -40,7 +40,7 @@ const classes = {
     closeButton: 'p-toast-close-button',
     closeIcon: ({ instance }) => ({
         'p-toast-close-icon': true,
-        [`pi ${instance.message.closeIcon}`]: !!instance.message.closeIcon
+        [`pi ${instance.message()?.closeIcon}`]: !!instance.message()?.closeIcon
     })
 };
 

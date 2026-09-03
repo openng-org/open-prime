@@ -120,60 +120,60 @@ export class MotionDirective extends BaseComponent {
 
     /**
      * Callback fired before the enter transition/animation starts.
-     * @param {MotionEvent} [event] - The event object containing details about the motion.
+     * @param {MotionEvent} event - The event object containing details about the motion.
      * @param {Element} event.element - The element being transitioned/animated.
      * @group Emits
      */
-    onBeforeEnter = output<MotionEvent | undefined>({ alias: 'pMotionOnBeforeEnter' });
+    onBeforeEnter = output<MotionEvent>({ alias: 'pMotionOnBeforeEnter' });
     /**
      * Callback fired when the enter transition/animation starts.
-     * @param {MotionEvent} [event] - The event object containing details about the motion.
+     * @param {MotionEvent} event - The event object containing details about the motion.
      * @param {Element} event.element - The element being transitioned/animated.
      * @group Emits
      */
-    onEnter = output<MotionEvent | undefined>({ alias: 'pMotionOnEnter' });
+    onEnter = output<MotionEvent>({ alias: 'pMotionOnEnter' });
     /**
      * Callback fired after the enter transition/animation ends.
-     * @param {MotionEvent} [event] - The event object containing details about the motion.
+     * @param {MotionEvent} event - The event object containing details about the motion.
      * @param {Element} event.element - The element being transitioned/animated.
      * @group Emits
      */
-    onAfterEnter = output<MotionEvent | undefined>({ alias: 'pMotionOnAfterEnter' });
+    onAfterEnter = output<MotionEvent>({ alias: 'pMotionOnAfterEnter' });
     /**
      * Callback fired when the enter transition/animation is cancelled.
-     * @param {MotionEvent} [event] - The event object containing details about the motion.
+     * @param {MotionEvent} event - The event object containing details about the motion.
      * @param {Element} event.element - The element being transitioned/animated.
      * @group Emits
      */
-    onEnterCancelled = output<MotionEvent | undefined>({ alias: 'pMotionOnEnterCancelled' });
+    onEnterCancelled = output<MotionEvent>({ alias: 'pMotionOnEnterCancelled' });
     /**
      * Callback fired before the leave transition/animation starts.
-     * @param {MotionEvent} [event] - The event object containing details about the motion.
+     * @param {MotionEvent} event - The event object containing details about the motion.
      * @param {Element} event.element - The element being transitioned/animated.
      * @group Emits
      */
-    onBeforeLeave = output<MotionEvent | undefined>({ alias: 'pMotionOnBeforeLeave' });
+    onBeforeLeave = output<MotionEvent>({ alias: 'pMotionOnBeforeLeave' });
     /**
      * Callback fired when the leave transition/animation starts.
-     * @param {MotionEvent} [event] - The event object containing details about the motion.
+     * @param {MotionEvent} event - The event object containing details about the motion.
      * @param {Element} event.element - The element being transitioned/animated.
      * @group Emits
      */
-    onLeave = output<MotionEvent | undefined>({ alias: 'pMotionOnLeave' });
+    onLeave = output<MotionEvent>({ alias: 'pMotionOnLeave' });
     /**
      * Callback fired after the leave transition/animation ends.
-     * @param {MotionEvent} [event] - The event object containing details about the motion.
+     * @param {MotionEvent} event - The event object containing details about the motion.
      * @param {Element} event.element - The element being transitioned/animated.
      * @group Emits
      */
-    onAfterLeave = output<MotionEvent | undefined>({ alias: 'pMotionOnAfterLeave' });
+    onAfterLeave = output<MotionEvent>({ alias: 'pMotionOnAfterLeave' });
     /**
      * Callback fired when the leave transition/animation is cancelled.
-     * @param {MotionEvent} [event] - The event object containing details about the motion.
+     * @param {MotionEvent} event - The event object containing details about the motion.
      * @param {Element} event.element - The element being transitioned/animated.
      * @group Emits
      */
-    onLeaveCancelled = output<MotionEvent | undefined>({ alias: 'pMotionOnLeaveCancelled' });
+    onLeaveCancelled = output<MotionEvent>({ alias: 'pMotionOnLeaveCancelled' });
 
     /******************** Computed ********************/
 
@@ -215,14 +215,14 @@ export class MotionDirective extends BaseComponent {
     private cancelled = false;
     private destroyed = false;
 
-    private readonly handleBeforeEnter = (event?: MotionEvent) => !this.destroyed && this.onBeforeEnter.emit(event);
-    private readonly handleEnter = (event?: MotionEvent) => !this.destroyed && this.onEnter.emit(event);
-    private readonly handleAfterEnter = (event?: MotionEvent) => !this.destroyed && this.onAfterEnter.emit(event);
-    private readonly handleEnterCancelled = (event?: MotionEvent) => !this.destroyed && this.onEnterCancelled.emit(event);
-    private readonly handleBeforeLeave = (event?: MotionEvent) => !this.destroyed && this.onBeforeLeave.emit(event);
-    private readonly handleLeave = (event?: MotionEvent) => !this.destroyed && this.onLeave.emit(event);
-    private readonly handleAfterLeave = (event?: MotionEvent) => !this.destroyed && this.onAfterLeave.emit(event);
-    private readonly handleLeaveCancelled = (event?: MotionEvent) => !this.destroyed && this.onLeaveCancelled.emit(event);
+    private readonly handleBeforeEnter = (event: MotionEvent) => !this.destroyed && this.onBeforeEnter.emit(event);
+    private readonly handleEnter = (event: MotionEvent) => !this.destroyed && this.onEnter.emit(event);
+    private readonly handleAfterEnter = (event: MotionEvent) => !this.destroyed && this.onAfterEnter.emit(event);
+    private readonly handleEnterCancelled = (event: MotionEvent) => !this.destroyed && this.onEnterCancelled.emit(event);
+    private readonly handleBeforeLeave = (event: MotionEvent) => !this.destroyed && this.onBeforeLeave.emit(event);
+    private readonly handleLeave = (event: MotionEvent) => !this.destroyed && this.onLeave.emit(event);
+    private readonly handleAfterLeave = (event: MotionEvent) => !this.destroyed && this.onAfterLeave.emit(event);
+    private readonly handleLeaveCancelled = (event: MotionEvent) => !this.destroyed && this.onLeaveCancelled.emit(event);
 
     constructor() {
         super();
