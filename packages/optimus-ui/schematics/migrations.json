@@ -9,12 +9,12 @@
         "styleclass-to-class": {
             "version": "3.0.0",
             "factory": "./migrations/styleclass-to-class/migration",
-            "description": "Rewrite styleClass/[styleClass] to class/[class] on selectors whose styleClass input was removed in this version in favor of the native class attribute, starting with p-toast."
+            "description": "Rewrite styleClass/[styleClass] to class/[class] on selectors whose styleClass input was removed in this version in favor of the native class attribute: p-toast and p-message."
         },
         "remove-dead-inputs": {
             "version": "3.0.0",
             "factory": "./migrations/remove-dead-inputs/migration",
-            "description": "Remove usages of inputs removed in this version that had already stopped doing anything: p-toast/p-toastItem's showTransformOptions, hideTransformOptions, showTransitionOptions and hideTransitionOptions."
+            "description": "Remove usages of inputs removed in this version that had already stopped doing anything: p-toast/p-toastItem's showTransformOptions, hideTransformOptions, showTransitionOptions and hideTransitionOptions; and p-message's showTransitionOptions and hideTransitionOptions."
         }
     }
 }

@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, InjectionToken, input, Input, NgModule, signal, TemplateRef, ViewEncapsulation, contentChild, contentChildren, output } from '@angular/core';
+import { afterEveryRender, booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, InjectionToken, input, NgModule, signal, TemplateRef, ViewEncapsulation, contentChild, contentChildren, output } from '@angular/core';
 import { MotionOptions } from '@openng/optimus-ui-motion';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
 import { Bind } from '@openng/optimus-ui/bind';
-import { TimesIcon } from '@openng/optimus-ui/icons';
 import { MotionModule } from '@openng/optimus-ui/motion';
 import { Ripple } from '@openng/optimus-ui/ripple';
 import { MessageContainerTemplateContext, MessagePassThrough, MessageSeverity } from '@openng/optimus-ui/types/message';
@@ -18,47 +17,46 @@ const MESSAGE_INSTANCE = new InjectionToken<Message>('MESSAGE_INSTANCE');
  */
 @Component({
     selector: 'p-message',
-    standalone: true,
-    imports: [CommonModule, TimesIcon, Ripple, SharedModule, Bind, MotionModule],
+    imports: [CommonModule, Ripple, SharedModule, Bind, MotionModule],
     template: `
-        <div [pBind]="ptm('contentWrapper')" [class]="cx('contentWrapper')" [attr.data-p]="dataP">
-            <div [pBind]="ptm('content')" [class]="cx('content')" [attr.data-p]="dataP">
-                @if (iconTemplate() || _iconTemplate) {
-                    <ng-container *ngTemplateOutlet="iconTemplate() || _iconTemplate"></ng-container>
+        <div [pBind]="ptm('contentWrapper')" [class]="cx('contentWrapper')" [attr.data-p]="dataP()">
+            <div [pBind]="ptm('content')" [class]="cx('content')" [attr.data-p]="dataP()">
+                @if (iconTemplate() || _iconTemplate()) {
+                    <ng-container *ngTemplateOutlet="iconTemplate() || _iconTemplate()"></ng-container>
                 }
-                @if (icon) {
-                    <i [pBind]="ptm('icon')" [class]="cn(cx('icon'), icon)" [attr.data-p]="dataP"></i>
+                @if (icon()) {
+                    <i [pBind]="ptm('icon')" [class]="cn(cx('icon'), icon())" [attr.data-p]="dataP()"></i>
                 }
 
-                @if (containerTemplate() || _containerTemplate) {
-                    <ng-container *ngTemplateOutlet="containerTemplate() || _containerTemplate; context: { closeCallback: closeCallback }"></ng-container>
+                @if (containerTemplate() || _containerTemplate()) {
+                    <ng-container *ngTemplateOutlet="containerTemplate() || _containerTemplate(); context: { closeCallback: closeCallback }"></ng-container>
                 } @else {
-                    @if (!escape) {
+                    @if (!escape()) {
                         <div>
-                            @if (!escape) {
-                                <span [pBind]="ptm('text')" [ngClass]="cx('text')" [innerHTML]="text" [attr.data-p]="dataP"></span>
+                            @if (!escape()) {
+                                <span [pBind]="ptm('text')" [ngClass]="cx('text')" [innerHTML]="text()" [attr.data-p]="dataP()"></span>
                             }
                         </div>
                     } @else {
-                        @if (escape && text) {
-                            <span [pBind]="ptm('text')" [ngClass]="cx('text')" [attr.data-p]="dataP">{{ text }}</span>
+                        @if (escape() && text()) {
+                            <span [pBind]="ptm('text')" [ngClass]="cx('text')" [attr.data-p]="dataP()">{{ text() }}</span>
                         }
                     }
 
-                    <span [pBind]="ptm('text')" [ngClass]="cx('text')" [attr.data-p]="dataP">
+                    <span [pBind]="ptm('text')" [ngClass]="cx('text')" [attr.data-p]="dataP()">
                         <ng-content></ng-content>
                     </span>
                 }
-                @if (closable) {
-                    <button [pBind]="ptm('closeButton')" pRipple type="button" [class]="cx('closeButton')" (click)="close($event)" [attr.aria-label]="closeAriaLabel" [attr.data-p]="dataP">
-                        @if (closeIcon) {
-                            <i [pBind]="ptm('closeIcon')" [class]="cn(cx('closeIcon'), closeIcon)" [ngClass]="closeIcon" [attr.data-p]="dataP"></i>
+                @if (closable()) {
+                    <button [pBind]="ptm('closeButton')" pRipple type="button" [class]="cx('closeButton')" (click)="close($event)" [attr.aria-label]="closeAriaLabel()" [attr.data-p]="dataP()">
+                        @if (closeIcon()) {
+                            <i [pBind]="ptm('closeIcon')" [class]="cn(cx('closeIcon'), closeIcon())" [ngClass]="closeIcon()" [attr.data-p]="dataP()"></i>
                         }
-                        @if (closeIconTemplate() || _closeIconTemplate) {
-                            <ng-container *ngTemplateOutlet="closeIconTemplate() || _closeIconTemplate"></ng-container>
+                        @if (closeIconTemplate() || _closeIconTemplate()) {
+                            <ng-container *ngTemplateOutlet="closeIconTemplate() || _closeIconTemplate()"></ng-container>
                         }
-                        @if (!closeIconTemplate() && !_closeIconTemplate && !closeIcon) {
-                            <svg [pBind]="ptm('closeIcon')" data-p-icon="times" [class]="cx('closeIcon')" [attr.data-p]="dataP" />
+                        @if (!closeIconTemplate() && !_closeIconTemplate() && !closeIcon()) {
+                            <svg [pBind]="ptm('closeIcon')" data-p-icon="times" [class]="cx('closeIcon')" [attr.data-p]="dataP()" />
                         }
                     </button>
                 }
@@ -70,10 +68,10 @@ const MESSAGE_INSTANCE = new InjectionToken<Message>('MESSAGE_INSTANCE');
     providers: [MessageStyle, { provide: MESSAGE_INSTANCE, useExisting: Message }, { provide: PARENT_INSTANCE, useExisting: Message }],
     hostDirectives: [Bind],
     host: {
-        '[attr.data-p]': 'dataP',
+        '[attr.data-p]': 'dataP()',
         role: 'alert',
         'aria-live': 'polite',
-        '[class]': 'cn(cx("root"), styleClass)',
+        '[class]': 'cx("root")',
         '[animate.enter]': '"p-message-enter-active"',
         '[animate.leave]': '"p-message-leave-active"',
         '[class.p-message-leave-active]': '!visible()'
@@ -88,8 +86,12 @@ export class Message extends BaseComponent<MessagePassThrough> {
 
     $pcMessage: Message | undefined = inject(MESSAGE_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
+    constructor() {
+        super();
+
+        afterEveryRender(() => {
+            this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
+        });
     }
 
     /**
@@ -97,76 +99,57 @@ export class Message extends BaseComponent<MessagePassThrough> {
      * @defaultValue 'info'
      * @group Props
      */
-    @Input() severity: MessageSeverity | undefined | null = 'info';
+    severity = input<MessageSeverity | undefined | null>('info');
     /**
      * Text content.
      * @deprecated since v20.0.0. Use content projection instead '<p-message>Content</p-message>'.
      * @group Props
      */
-    @Input() text: string | undefined;
+    text = input<string | undefined>();
     /**
      * Whether displaying messages would be escaped or not.
      * @deprecated since v20.0.0. Use content projection instead '<p-message>Content</p-message>'.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) escape: boolean = true;
+    escape = input(true, { transform: booleanAttribute });
     /**
      * Inline style of the component.
      * @group Props
      */
-    @Input() style: { [klass: string]: any } | null | undefined;
-    /**
-     * Style class of the component.
-     * @group Props
-     */
-    @Input() styleClass: string | undefined;
+    style = input<{ [klass: string]: any } | null | undefined>();
     /**
      * Whether the message can be closed manually using the close icon.
      * @group Props
      * @defaultValue false
      */
-    @Input({ transform: booleanAttribute }) closable: boolean = false;
+    closable = input(false, { transform: booleanAttribute });
     /**
      * Icon to display in the message.
      * @group Props
      * @defaultValue undefined
      */
-    @Input() icon: string | undefined;
+    icon = input<string | undefined>();
     /**
      * Icon to display in the message close button.
      * @group Props
      * @defaultValue undefined
      */
-    @Input() closeIcon: string | undefined;
+    closeIcon = input<string | undefined>();
     /**
      * Delay in milliseconds to close the message automatically.
      * @defaultValue undefined
      */
-    @Input() life: number | undefined;
-    /**
-     * Transition options of the show animation.
-     * @defaultValue '300ms ease-out'
-     * @group Props
-     * @deprecated since v21.0.0, use `motionOptions` instead.
-     */
-    @Input() showTransitionOptions: string = '300ms ease-out';
-    /**
-     * Transition options of the hide animation.
-     * @defaultValue '200ms cubic-bezier(0.86, 0, 0.07, 1)'
-     * @group Props
-     * @deprecated since v21.0.0, use `motionOptions` instead.
-     */
-    @Input() hideTransitionOptions: string = '200ms cubic-bezier(0.86, 0, 0.07, 1)';
+    life = input<number | undefined>();
     /**
      * Defines the size of the component.
      * @group Props
      */
-    @Input() size: 'large' | 'small' | undefined;
+    size = input<'large' | 'small' | undefined>();
     /**
      * Specifies the input variant of the component.
      * @group Props
      */
-    @Input() variant: 'outlined' | 'text' | 'simple' | undefined;
+    variant = input<'outlined' | 'text' | 'simple' | undefined>();
     /**
      * The motion options.
      * @group Props
@@ -188,7 +171,7 @@ export class Message extends BaseComponent<MessagePassThrough> {
         originalEvent: Event;
     }>();
 
-    get closeAriaLabel() {
+    closeAriaLabel() {
         return this.config.translation.aria ? this.config.translation.aria.close : undefined;
     }
 
@@ -216,40 +199,37 @@ export class Message extends BaseComponent<MessagePassThrough> {
 
     readonly templates = contentChildren(PrimeTemplate);
 
-    _containerTemplate: TemplateRef<MessageContainerTemplateContext> | undefined;
+    _containerTemplate = computed<TemplateRef<MessageContainerTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                ?.filter((item) => item.getType() === 'container')
+                .at(-1)?.template
+    );
 
-    _iconTemplate: TemplateRef<void> | undefined;
+    _iconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                ?.filter((item) => item.getType() === 'icon')
+                .at(-1)?.template
+    );
 
-    _closeIconTemplate: TemplateRef<void> | undefined;
+    _closeIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                ?.filter((item) => item.getType() === 'closeicon')
+                .at(-1)?.template
+    );
 
     closeCallback = (event: Event) => {
         this.close(event);
     };
 
     onInit() {
-        if (this.life) {
+        if (this.life()) {
             setTimeout(() => {
                 this.visible.set(false);
-            }, this.life);
+            }, this.life());
         }
-    }
-
-    onAfterContentInit() {
-        this.templates()?.forEach((item) => {
-            switch (item.getType()) {
-                case 'container':
-                    this._containerTemplate = item.template;
-                    break;
-
-                case 'icon':
-                    this._iconTemplate = item.template;
-                    break;
-
-                case 'closeicon':
-                    this._closeIconTemplate = item.template;
-                    break;
-            }
-        });
     }
 
     /**
@@ -262,14 +242,14 @@ export class Message extends BaseComponent<MessagePassThrough> {
         this.onClose.emit({ originalEvent: event });
     }
 
-    get dataP() {
-        return this.cn({
-            outlined: this.variant === 'outlined',
-            simple: this.variant === 'simple',
-            [this.severity as string]: this.severity,
-            [this.size as string]: this.size
-        });
-    }
+    dataP = computed(() =>
+        this.cn({
+            outlined: this.variant() === 'outlined',
+            simple: this.variant() === 'simple',
+            [this.severity() as string]: this.severity(),
+            [this.size() as string]: this.size()
+        })
+    );
 }
 
 @NgModule({

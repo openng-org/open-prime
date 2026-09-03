@@ -8,19 +8,23 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * `hideTransformOptions`/`showTransitionOptions`/`hideTransitionOptions` on Toast/ToastItem had
  * already stopped doing anything once the show/hide animation moved to the shared Motion
  * directive, which does not take transform/transition options through the toast API.
+ * `showTransitionOptions`/`hideTransitionOptions` on Message were dead for the same reason: the
+ * show/hide animation is driven by `motionOptions`, which has no transition-options equivalent.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
-    { selector: 'p-toastItem', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] }
+    { selector: 'p-toastItem', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
+    { selector: 'p-message', names: ['showTransitionOptions', 'hideTransitionOptions'] }
 ];
 
 /**
  * Removes usages of inputs that stopped doing anything before being deleted from
  * @openng/optimus-ui in this version: Toast/ToastItem's showTransformOptions, hideTransformOptions,
  * showTransitionOptions and hideTransitionOptions, dead since the show/hide animation moved to the
- * shared Motion directive (which has no equivalent transform/transition-options input).
+ * shared Motion directive (which has no equivalent transform/transition-options input); and
+ * Message's showTransitionOptions/hideTransitionOptions, dead for the same reason.
  *
- * `name="..."`/`[name]="..."` template bindings on `p-toast`/`p-toastItem` are removed
+ * `name="..."`/`[name]="..."` template bindings on `p-toast`/`p-toastItem`/`p-message` are removed
  * automatically — safe to delete outright, since the values they passed were already unused.
  * Programmatic reads/writes of the same property name elsewhere (e.g. on a `@ViewChild`-queried
  * instance) are reported for manual review instead of being rewritten automatically.

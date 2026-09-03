@@ -23,6 +23,17 @@ describe('remove-dead-inputs', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-toastItem [message]="msg"></p-toastItem>\n`);
     });
 
+    it('removes showTransitionOptions/hideTransitionOptions from p-message', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-message showTransitionOptions="300ms" [hideTransitionOptions]="hideTf" [severity]="'info'"></p-message>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        const html = result.readContent('/src/app/app.html');
+        expect(html).not.toContain('TransitionOptions');
+        expect(html).toBe(`<p-message [severity]="'info'"></p-message>\n`);
+    });
+
     it('does not remove a similarly-named attribute on an unrelated selector', async () => {
         const runner = createMigrationRunner();
         const content = `<p-other showTransformOptions="x"></p-other>\n`;

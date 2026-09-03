@@ -177,6 +177,24 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/dist/app/tpl.html')).toBe(content);
     });
 
+    it('rewrites a static styleClass to class on p-message', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-message severity="error" styleClass="my-message"></p-message>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-message severity="error" class="my-message"></p-message>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-message', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-message [styleClass]="myClass"></p-message>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-message [class]="myClass"></p-message>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];
