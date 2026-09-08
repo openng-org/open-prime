@@ -73,6 +73,7 @@ reports
 # build:routes, build:sitemap). Committing these caused stale/conflicting
 # diffs on PRs; they are produced fresh on every build/deploy instead.
 apps/docs/doc/apidoc
+apps/docs/api-generator/typedoc.json
 apps/docs/router/routes.txt
 apps/docs/public/sitemap.xml
 apps/docs/public/llms
