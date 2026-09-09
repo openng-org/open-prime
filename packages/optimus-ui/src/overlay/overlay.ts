@@ -651,7 +651,11 @@ export class Overlay extends BaseComponent {
             this.scrollHandler = new ConnectedOverlayScrollHandler(this.targetEl, (event: any) => {
                 const valid = this.listener ? this.listener(event, { type: 'scroll', mode: this.overlayMode, valid: true }) : true;
 
-                valid && this.hide(event, true);
+                if (valid) {
+                    this.zone.run(() => {
+                        this.hide(event, true);
+                    });
+                }
             });
         }
 
@@ -694,7 +698,11 @@ export class Overlay extends BaseComponent {
             this.documentResizeListener = this.renderer.listen(this.document.defaultView, 'resize', (event) => {
                 const valid = this.listener ? this.listener(event, { type: 'resize', mode: this.overlayMode, valid: !isTouchDevice() }) : !isTouchDevice();
 
-                valid && this.hide(event, true);
+                if (valid) {
+                    this.zone.run(() => {
+                        this.hide(event, true);
+                    });
+                }
             });
         }
     }
