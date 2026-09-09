@@ -111,7 +111,7 @@ import { Tag } from '@openng/optimus-ui/tag';
                                     {{ customer.balance | currency: 'USD' : 'symbol' }}
                                 </td>
                                 <td style="width: 14%; min-width: 10rem">
-                                    <p-tag [value]="customer.status" [severity]="getSeverity(customer.status)" styleClass="text-sm font-bold"></p-tag>
+                                    <p-tag [value]="customer.status" [severity]="getSeverity(customer.status)" class="text-sm font-bold"></p-tag>
                                 </td>
                                 <td style="width: 14%; min-width: 6rem">
                                     <p-progressbar [value]="customer.activity" [showValue]="false" [style]="{ height: '6px' }"></p-progressbar>

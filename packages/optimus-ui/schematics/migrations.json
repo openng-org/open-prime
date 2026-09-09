@@ -9,7 +9,7 @@
         "styleclass-to-class": {
             "version": "3.0.0",
             "factory": "./migrations/styleclass-to-class/migration",
-            "description": "Rewrite styleClass/[styleClass] to class/[class] on selectors whose styleClass input was removed in this version in favor of the native class attribute: p-toast and p-message."
+            "description": "Rewrite styleClass/[styleClass] to class/[class] on selectors whose styleClass input was removed in this version in favor of the native class attribute: p-toast, p-message and p-tag."
         },
         "remove-dead-inputs": {
             "version": "3.0.0",

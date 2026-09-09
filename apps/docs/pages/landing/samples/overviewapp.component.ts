@@ -137,7 +137,7 @@ import { TooltipModule } from '@openng/optimus-ui/tooltip';
                                         <div class="text-muted-color">{{ item.date }}</div>
                                     </td>
                                     <td class="w-1/6">
-                                        <p-tag [severity]="item.process.type" [value]="item.process.value" styleClass="font-medium"></p-tag>
+                                        <p-tag [severity]="item.process.type" [value]="item.process.value" class="font-medium"></p-tag>
                                     </td>
                                     <td class="w-1/6">
                                         <div class="text-muted-color text-right">{{ item.amount }}</div>

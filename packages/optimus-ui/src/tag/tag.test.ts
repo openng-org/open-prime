@@ -7,14 +7,13 @@ import { Tag } from './tag';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
-    template: ` <p-tag [value]="value" [icon]="icon" [severity]="severity" [rounded]="rounded" [styleClass]="styleClass"> </p-tag> `
+    template: ` <p-tag [value]="value" [icon]="icon" [severity]="severity" [rounded]="rounded"> </p-tag> `
 })
 class TestBasicTagComponent {
     value: string | undefined = 'Test Tag';
     icon: string | undefined;
     severity: string | undefined;
     rounded: boolean | undefined;
-    styleClass: string | undefined;
 }
 
 @Component({
@@ -41,25 +40,29 @@ class TestIconTemplateTagComponent {}
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
     template: `
-        <p-tag value="PTemplate Tag">
+        <p-tag [value]="value">
             <ng-template pTemplate="icon">
                 <span class="p-template-icon">⭐</span>
             </ng-template>
         </p-tag>
     `
 })
-class TestPTemplateTagComponent {}
+class TestPTemplateTagComponent {
+    value = 'PTemplate Tag';
+}
 
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
     template: `
-        <p-tag>
+        <p-tag [value]="value">
             <span class="content-projection">Custom Content</span>
         </p-tag>
     `
 })
-class TestContentProjectionTagComponent {}
+class TestContentProjectionTagComponent {
+    value: string | undefined;
+}
 
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -71,13 +74,12 @@ class TestSeverityTagComponent {}
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
-    template: ` <p-tag [value]="value" [severity]="severity" [style]="style" [styleClass]="styleClass"> </p-tag> `
+    template: ` <p-tag [value]="value" [severity]="severity" [style]="style"> </p-tag> `
 })
 class TestStyleTagComponent {
     value = 'Styled Tag';
     severity = 'info';
     style: { [key: string]: any } | undefined = { border: '2px solid blue', padding: '8px' };
-    styleClass = 'custom-tag-class';
 }
 
 @Component({
@@ -95,6 +97,14 @@ class TestStyleTagComponent {
     `
 })
 class TestMultipleIconTemplatesComponent {}
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: true,
+    imports: [Tag],
+    template: `<p-tag value="Class Tag" class="custom-tag-class"></p-tag>`
+})
+class TestTagClassComponent {}
 
 describe('Tag', () => {
     let component: TestBasicTagComponent;
@@ -128,16 +138,14 @@ describe('Tag', () => {
             freshComponent.icon = undefined as any;
             freshComponent.severity = undefined as any;
             freshComponent.rounded = undefined as any;
-            freshComponent.styleClass = undefined as any;
             freshFixture.detectChanges();
 
             const freshTag = freshFixture.debugElement.query(By.directive(Tag)).componentInstance;
 
-            expect(freshTag.value).toBeUndefined();
-            expect(freshTag.icon).toBeUndefined();
-            expect(freshTag.severity).toBeUndefined();
-            expect(freshTag.rounded).toBeFalsy(); // booleanAttribute transforms undefined to false
-            expect(freshTag.styleClass).toBeUndefined();
+            expect(freshTag.value()).toBeUndefined();
+            expect(freshTag.icon()).toBeUndefined();
+            expect(freshTag.severity()).toBeUndefined();
+            expect(freshTag.rounded()).toBeFalsy(); // booleanAttribute transforms undefined to false
         });
 
         it('should accept custom values', async () => {
@@ -145,16 +153,14 @@ describe('Tag', () => {
             component.icon = 'pi pi-star';
             component.severity = 'success';
             component.rounded = true;
-            component.styleClass = 'custom-class';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tagInstance.value).toBe('Custom Tag');
-            expect(tagInstance.icon).toBe('pi pi-star');
-            expect(tagInstance.severity).toBe('success');
-            expect(tagInstance.rounded).toBe(true);
-            expect(tagInstance.styleClass).toBe('custom-class');
+            expect(tagInstance.value()).toBe('Custom Tag');
+            expect(tagInstance.icon()).toBe('pi pi-star');
+            expect(tagInstance.severity()).toBe('success');
+            expect(tagInstance.rounded()).toBe(true);
         });
 
         it('should have required dependencies injected', () => {
@@ -164,7 +170,7 @@ describe('Tag', () => {
 
         it('should initialize templates properties', () => {
             expect(tagInstance.templates()).toBeDefined();
-            expect(tagInstance._iconTemplate).toBeUndefined();
+            expect(tagInstance._iconTemplate()).toBeUndefined();
         });
     });
 
@@ -174,7 +180,7 @@ describe('Tag', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(tagInstance.value).toBe('Updated Value');
+            expect(tagInstance.value()).toBe('Updated Value');
         });
 
         it('should update icon input', async () => {
@@ -182,7 +188,7 @@ describe('Tag', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(tagInstance.icon).toBe('pi pi-tag');
+            expect(tagInstance.icon()).toBe('pi pi-tag');
         });
 
         it('should update severity input', async () => {
@@ -190,7 +196,7 @@ describe('Tag', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(tagInstance.severity).toBe('danger');
+            expect(tagInstance.severity()).toBe('danger');
         });
 
         it('should update rounded input with booleanAttribute transform', async () => {
@@ -198,21 +204,13 @@ describe('Tag', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(tagInstance.rounded).toBe(true);
+            expect(tagInstance.rounded()).toBe(true);
 
             component.rounded = false;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(tagInstance.rounded).toBe(false);
-        });
-
-        it('should update styleClass input', async () => {
-            component.styleClass = 'test-class';
-            fixture.changeDetectorRef.markForCheck();
-            await fixture.whenStable();
-            fixture.detectChanges();
-            expect(tagInstance.styleClass).toBe('test-class');
+            expect(tagInstance.rounded()).toBe(false);
         });
 
         it('should handle all severity types', async () => {
@@ -223,7 +221,7 @@ describe('Tag', () => {
                 fixture.changeDetectorRef.markForCheck();
                 await fixture.whenStable();
                 fixture.detectChanges();
-                expect(tagInstance.severity).toBe(severity as any);
+                expect(tagInstance.severity()).toBe(severity as any);
             }
         });
 
@@ -232,13 +230,13 @@ describe('Tag', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(tagInstance.severity).toBeUndefined();
+            expect(tagInstance.severity()).toBeUndefined();
 
             component.severity = null as any;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(tagInstance.severity).toBeNull();
+            expect(tagInstance.severity()).toBeNull();
         });
 
         it('should handle string severity values', async () => {
@@ -246,7 +244,7 @@ describe('Tag', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(tagInstance.severity).toBe('custom-severity' as any);
+            expect(tagInstance.severity()).toBe('custom-severity' as any);
         });
     });
 
@@ -314,7 +312,7 @@ describe('Tag', () => {
             } else {
                 // Icon may not render in test environment, just verify component has icon property
                 const tagInstance = iconFixture.debugElement.query(By.directive(Tag)).componentInstance;
-                expect(tagInstance.icon).toBe('pi pi-check');
+                expect(tagInstance.icon()).toBe('pi pi-check');
             }
         });
 
@@ -345,12 +343,12 @@ describe('Tag', () => {
                 expect(iconSpan.nativeElement.classList.contains('pi-star')).toBe(false);
             } else {
                 // Icon may not render in test environment, just verify property updates
-                expect(tagInstance.icon).toBe('pi pi-star');
+                expect(tagInstance.icon()).toBe('pi pi-star');
                 component.icon = 'pi pi-heart';
                 fixture.changeDetectorRef.markForCheck();
                 await fixture.whenStable();
                 fixture.detectChanges();
-                expect(tagInstance.icon).toBe('pi pi-heart');
+                expect(tagInstance.icon()).toBe('pi pi-heart');
             }
         });
 
@@ -367,7 +365,7 @@ describe('Tag', () => {
                 expect(iconSpan.nativeElement.classList.contains('custom-icon-class')).toBe(true);
             } else {
                 // Icon may not render in test environment, just verify icon property is set
-                expect(tagInstance.icon).toBe('pi pi-check custom-icon-class');
+                expect(tagInstance.icon()).toBe('pi pi-check custom-icon-class');
             }
         });
     });
@@ -382,7 +380,7 @@ describe('Tag', () => {
             const iconTemplateTag = iconTemplateFixture.debugElement.query(By.directive(Tag)).componentInstance;
 
             expect(() => iconTemplateTag.ngAfterContentInit()).not.toThrow();
-            expect(iconTemplateTag.iconTemplate).toBeDefined();
+            expect(iconTemplateTag.iconTemplate()).toBeDefined();
 
             // Check if icon section exists, may be rendered differently in test environment
             const iconContainer = iconTemplateFixture.debugElement.query(By.css('span:nth-child(2)'));
@@ -390,7 +388,7 @@ describe('Tag', () => {
                 expect(iconContainer).toBeTruthy();
             } else {
                 // Template processing might not work fully in test environment
-                expect(iconTemplateTag.iconTemplate).toBeDefined();
+                expect(iconTemplateTag.iconTemplate()).toBeDefined();
             }
         });
 
@@ -403,7 +401,7 @@ describe('Tag', () => {
             const pTemplateTag = pTemplateFixture.debugElement.query(By.directive(Tag)).componentInstance;
 
             expect(() => pTemplateTag.ngAfterContentInit()).not.toThrow();
-            expect(pTemplateTag.templates).toBeDefined();
+            expect(pTemplateTag.templates()).toBeDefined();
 
             // Check if icon section exists, may be rendered differently in test environment
             const iconContainer = pTemplateFixture.debugElement.query(By.css('span:nth-child(2)'));
@@ -411,7 +409,7 @@ describe('Tag', () => {
                 expect(iconContainer).toBeTruthy();
             } else {
                 // Template processing might not work fully in test environment
-                expect(pTemplateTag.templates).toBeDefined();
+                expect(pTemplateTag.templates()).toBeDefined();
             }
         });
 
@@ -428,7 +426,7 @@ describe('Tag', () => {
             } else {
                 // If template processing doesn't work in test environment, just verify component exists
                 const tagComponent = iconTemplateFixture.debugElement.query(By.directive(Tag)).componentInstance;
-                expect(tagComponent.iconTemplate).toBeDefined();
+                expect(tagComponent.iconTemplate()).toBeDefined();
             }
         });
 
@@ -445,7 +443,7 @@ describe('Tag', () => {
             } else {
                 // If template processing doesn't work in test environment, just verify component exists
                 const tagComponent = pTemplateFixture.debugElement.query(By.directive(Tag)).componentInstance;
-                expect(tagComponent.templates).toBeDefined();
+                expect(tagComponent.templates()).toBeDefined();
             }
         });
 
@@ -458,12 +456,12 @@ describe('Tag', () => {
             const multipleTag = multipleFixture.debugElement.query(By.directive(Tag)).componentInstance;
 
             // Both templates should be processed
-            expect(multipleTag.iconTemplate).toBeDefined();
+            expect(multipleTag.iconTemplate()).toBeDefined();
             expect(() => multipleTag.ngAfterContentInit()).not.toThrow();
 
             // Component should exist and have templates
             expect(multipleTag).toBeTruthy();
-            expect(multipleTag.templates).toBeDefined();
+            expect(multipleTag.templates()).toBeDefined();
         });
 
         it('should not show icon span when template is used', () => {
@@ -476,7 +474,7 @@ describe('Tag', () => {
 
             // But template icon container should be present or component should have template
             const tagComponent = iconTemplateFixture.debugElement.query(By.directive(Tag)).componentInstance;
-            expect(tagComponent.iconTemplate).toBeDefined();
+            expect(tagComponent.iconTemplate()).toBeDefined();
         });
 
         it('should pass correct template context', async () => {
@@ -488,7 +486,7 @@ describe('Tag', () => {
             const iconTemplateTag = iconTemplateFixture.debugElement.query(By.directive(Tag)).componentInstance;
 
             // Verify template is processed correctly
-            expect(iconTemplateTag.iconTemplate).toBeDefined();
+            expect(iconTemplateTag.iconTemplate()).toBeDefined();
 
             // Template processing might work differently in test environment
             expect(iconTemplateTag).toBeTruthy();
@@ -503,16 +501,18 @@ describe('Tag', () => {
             const pTemplateTag = pTemplateFixture.debugElement.query(By.directive(Tag)).componentInstance;
 
             // Change component properties
-            pTemplateTag.value = 'Updated Template Tag';
+            pTemplateFixture.componentInstance.value = 'Updated Template Tag';
+            pTemplateFixture.changeDetectorRef.markForCheck();
+            await pTemplateFixture.whenStable();
             pTemplateFixture.detectChanges();
             await new Promise((resolve) => setTimeout(resolve, 100));
             await pTemplateFixture.whenStable();
 
             // Template should still be processed correctly
-            expect(pTemplateTag.templates).toBeDefined();
+            expect(pTemplateTag.templates()).toBeDefined();
 
             // Verify the value property was updated
-            expect(pTemplateTag.value).toBe('Updated Template Tag');
+            expect(pTemplateTag.value()).toBe('Updated Template Tag');
         });
     });
 
@@ -544,7 +544,7 @@ describe('Tag', () => {
             const complexTag = complexFixture.debugElement.query(By.directive(Tag)).componentInstance;
 
             // Add value to see both content projection and label
-            complexTag.value = 'With Content';
+            complexFixture.componentInstance.value = 'With Content';
             complexFixture.changeDetectorRef.markForCheck();
             await complexFixture.whenStable();
             complexFixture.detectChanges();
@@ -557,19 +557,17 @@ describe('Tag', () => {
                 expect(labelSpan).toBeTruthy();
                 expect(labelSpan.nativeElement.textContent.trim()).toBe('With Content');
             } else {
-                expect(complexTag.value).toBe('With Content');
+                expect(complexTag.value()).toBe('With Content');
             }
         });
     });
 
     describe('CSS Classes and Styling', () => {
-        it('should apply styleClass to root element', async () => {
-            component.styleClass = 'custom-tag-class';
-            fixture.changeDetectorRef.markForCheck();
-            await fixture.whenStable();
-            fixture.detectChanges();
+        it('should apply custom class via native class binding', () => {
+            const classFixture = TestBed.createComponent(TestTagClassComponent);
+            classFixture.detectChanges();
 
-            const rootElement = fixture.debugElement.query(By.directive(Tag));
+            const rootElement = classFixture.debugElement.query(By.directive(Tag));
             expect(rootElement.nativeElement.classList.contains('custom-tag-class')).toBe(true);
         });
 
@@ -593,17 +591,6 @@ describe('Tag', () => {
             expect(styleComponent.style!).toBeTruthy();
             expect(Object.keys(styleComponent.style!)).toContain('border');
             expect(Object.keys(styleComponent.style!)).toContain('padding');
-        });
-
-        it('should combine multiple CSS classes correctly', async () => {
-            component.styleClass = 'class1 class2';
-            fixture.changeDetectorRef.markForCheck();
-            await fixture.whenStable();
-            fixture.detectChanges();
-
-            const rootElement = fixture.debugElement.query(By.directive(Tag));
-            expect(rootElement.nativeElement.classList.contains('class1')).toBe(true);
-            expect(rootElement.nativeElement.classList.contains('class2')).toBe(true);
         });
 
         it('should apply severity-based CSS classes', () => {
@@ -641,7 +628,7 @@ describe('Tag', () => {
                 expect(iconSpan).toBeTruthy();
             } else {
                 // Icon may not render if template processing is different in test environment
-                expect(tagInstance.icon).toBe('pi pi-tag');
+                expect(tagInstance.icon()).toBe('pi pi-tag');
             }
         });
     });
@@ -653,7 +640,7 @@ describe('Tag', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tagInstance.severity).toBe('success');
+            expect(tagInstance.severity()).toBe('success');
         });
 
         it('should handle secondary severity', async () => {
@@ -662,7 +649,7 @@ describe('Tag', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tagInstance.severity).toBe('secondary');
+            expect(tagInstance.severity()).toBe('secondary');
         });
 
         it('should handle info severity', async () => {
@@ -671,7 +658,7 @@ describe('Tag', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tagInstance.severity).toBe('info');
+            expect(tagInstance.severity()).toBe('info');
         });
 
         it('should handle warn severity', async () => {
@@ -680,7 +667,7 @@ describe('Tag', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tagInstance.severity).toBe('warn');
+            expect(tagInstance.severity()).toBe('warn');
         });
 
         it('should handle danger severity', async () => {
@@ -689,7 +676,7 @@ describe('Tag', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tagInstance.severity).toBe('danger');
+            expect(tagInstance.severity()).toBe('danger');
         });
 
         it('should handle contrast severity', async () => {
@@ -698,7 +685,7 @@ describe('Tag', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tagInstance.severity).toBe('contrast');
+            expect(tagInstance.severity()).toBe('contrast');
         });
 
         it('should handle custom string severity', async () => {
@@ -707,14 +694,14 @@ describe('Tag', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tagInstance.severity).toBe('my-custom-severity' as any);
+            expect(tagInstance.severity()).toBe('my-custom-severity' as any);
         });
 
         it('should work without severity', () => {
             component.severity = undefined as any;
             fixture.detectChanges();
 
-            expect(tagInstance.severity).toBeUndefined();
+            expect(tagInstance.severity()).toBeUndefined();
             expect(() => fixture.detectChanges()).not.toThrow();
         });
     });
@@ -726,7 +713,7 @@ describe('Tag', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tagInstance.rounded).toBe(true);
+            expect(tagInstance.rounded()).toBe(true);
         });
 
         it('should handle rounded false', async () => {
@@ -735,14 +722,14 @@ describe('Tag', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tagInstance.rounded).toBe(false);
+            expect(tagInstance.rounded()).toBe(false);
         });
 
         it('should handle rounded undefined', () => {
             component.rounded = undefined as any;
             fixture.detectChanges();
 
-            expect(tagInstance.rounded).toBeFalsy(); // booleanAttribute transforms undefined to false
+            expect(tagInstance.rounded()).toBeFalsy(); // booleanAttribute transforms undefined to false
         });
 
         it('should use booleanAttribute transform', async () => {
@@ -751,26 +738,26 @@ describe('Tag', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(tagInstance.rounded).toBe(true);
+            expect(tagInstance.rounded()).toBe(true);
 
             component.rounded = false;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(tagInstance.rounded).toBe(false);
+            expect(tagInstance.rounded()).toBe(false);
 
             // booleanAttribute converts non-boolean values
             component.rounded = null as any;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(tagInstance.rounded).toBe(false);
+            expect(tagInstance.rounded()).toBe(false);
 
             component.rounded = undefined as any;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(tagInstance.rounded).toBe(false);
+            expect(tagInstance.rounded()).toBe(false);
         });
     });
 
@@ -801,12 +788,12 @@ describe('Tag', () => {
             const pTemplateTag = pTemplateFixture.debugElement.query(By.directive(Tag)).componentInstance;
 
             expect(pTemplateTag).toBeTruthy();
-            expect(pTemplateTag.templates !== undefined || pTemplateTag._iconTemplate !== undefined).toBe(true);
+            expect(pTemplateTag.templates() !== undefined || pTemplateTag._iconTemplate() !== undefined).toBe(true);
         });
 
         it('should handle missing templates gracefully', () => {
             expect(() => tagInstance.ngAfterContentInit()).not.toThrow();
-            expect(tagInstance._iconTemplate).toBeUndefined();
+            expect(tagInstance._iconTemplate()).toBeUndefined();
         });
 
         it('should handle templates without icon type', async () => {
@@ -818,7 +805,7 @@ describe('Tag', () => {
             const basicTag = basicFixture.debugElement.query(By.directive(Tag)).componentInstance;
 
             expect(() => basicTag.ngAfterContentInit()).not.toThrow();
-            expect(basicTag._iconTemplate).toBeUndefined();
+            expect(basicTag._iconTemplate()).toBeUndefined();
         });
     });
 
@@ -828,33 +815,29 @@ describe('Tag', () => {
             component.icon = undefined as any;
             component.severity = undefined as any;
             component.rounded = undefined as any;
-            component.styleClass = undefined as any;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
 
             expect(() => fixture.detectChanges()).not.toThrow();
-            expect(tagInstance.value).toBeUndefined();
-            expect(tagInstance.icon).toBeUndefined();
-            expect(tagInstance.severity).toBeUndefined();
-            expect(tagInstance.rounded).toBeFalsy(); // booleanAttribute transforms undefined to false
-            expect(tagInstance.styleClass).toBeUndefined();
+            expect(tagInstance.value()).toBeUndefined();
+            expect(tagInstance.icon()).toBeUndefined();
+            expect(tagInstance.severity()).toBeUndefined();
+            expect(tagInstance.rounded()).toBeFalsy(); // booleanAttribute transforms undefined to false
         });
 
         it('should handle empty string values', async () => {
             component.value = '';
             component.icon = '';
             component.severity = '';
-            component.styleClass = '';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
 
             expect(() => fixture.detectChanges()).not.toThrow();
-            expect(tagInstance.value).toBe('' as any);
-            expect(tagInstance.icon).toBe('' as any);
-            expect(tagInstance.severity).toBe('' as any);
-            expect(tagInstance.styleClass).toBe('' as any);
+            expect(tagInstance.value()).toBe('' as any);
+            expect(tagInstance.icon()).toBe('' as any);
+            expect(tagInstance.severity()).toBe('' as any);
         });
 
         it('should handle special characters in value', async () => {
@@ -866,7 +849,7 @@ describe('Tag', () => {
                 await fixture.whenStable();
                 fixture.detectChanges();
 
-                expect(tagInstance.value).toBe(value);
+                expect(tagInstance.value()).toBe(value);
                 expect(() => fixture.detectChanges()).not.toThrow();
             }
         });
@@ -878,12 +861,12 @@ describe('Tag', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tagInstance.value).toBe(longValue);
+            expect(tagInstance.value()).toBe(longValue);
             const labelSpan = fixture.debugElement.query(By.css('span:last-child'));
             if (labelSpan) {
                 expect(labelSpan.nativeElement.textContent.trim()).toBe(longValue);
             } else {
-                expect(tagInstance.value).toBe(longValue);
+                expect(tagInstance.value()).toBe(longValue);
             }
         });
 
@@ -899,9 +882,9 @@ describe('Tag', () => {
                 await fixture.whenStable();
                 fixture.detectChanges();
 
-                expect(tagInstance.value).toBe(values[index]);
-                expect(tagInstance.severity).toBe(severities[index] as any);
-                expect(tagInstance.rounded).toBe(index % 2 === 0);
+                expect(tagInstance.value()).toBe(values[index]);
+                expect(tagInstance.severity()).toBe(severities[index] as any);
+                expect(tagInstance.rounded()).toBe(index % 2 === 0);
             }
         });
 
@@ -934,10 +917,10 @@ describe('Tag', () => {
             const instance1 = fixture1.debugElement.query(By.directive(Tag)).componentInstance;
             const instance2 = fixture2.debugElement.query(By.directive(Tag)).componentInstance;
 
-            expect(instance1.value).toBe('Tag 1');
-            expect(instance1.severity).toBe('success');
-            expect(instance2.value).toBe('Tag 2');
-            expect(instance2.severity).toBe('danger');
+            expect(instance1.value()).toBe('Tag 1');
+            expect(instance1.severity()).toBe('success');
+            expect(instance2.value()).toBe('Tag 2');
+            expect(instance2.severity()).toBe('danger');
             expect(instance1).not.toBe(instance2);
         });
     });
@@ -949,10 +932,10 @@ describe('Tag', () => {
 
             const severityTag = severityFixture.debugElement.query(By.directive(Tag)).componentInstance;
 
-            expect(severityTag.value).toBe('Success Tag');
-            expect(severityTag.severity).toBe('success');
-            expect(severityTag.icon).toBe('pi pi-check');
-            expect(severityTag.rounded).toBe(true);
+            expect(severityTag.value()).toBe('Success Tag');
+            expect(severityTag.severity()).toBe('success');
+            expect(severityTag.icon()).toBe('pi pi-check');
+            expect(severityTag.rounded()).toBe(true);
         });
 
         it('should work with styled component', () => {
@@ -961,9 +944,8 @@ describe('Tag', () => {
 
             const styleTag = styleFixture.debugElement.query(By.directive(Tag)).componentInstance;
 
-            expect(styleTag.value).toBe('Styled Tag');
-            expect(styleTag.severity).toBe('info');
-            expect(styleTag.styleClass).toBe('custom-tag-class');
+            expect(styleTag.value()).toBe('Styled Tag');
+            expect(styleTag.severity()).toBe('info');
         });
 
         it('should maintain state across property changes', async () => {
@@ -973,8 +955,8 @@ describe('Tag', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tagInstance.value).toBe('Initial');
-            expect(tagInstance.severity).toBe('info');
+            expect(tagInstance.value()).toBe('Initial');
+            expect(tagInstance.severity()).toBe('info');
 
             component.value = 'Updated';
             component.severity = 'success';
@@ -983,9 +965,9 @@ describe('Tag', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tagInstance.value).toBe('Updated');
-            expect(tagInstance.severity).toBe('success');
-            expect(tagInstance.rounded).toBe(true);
+            expect(tagInstance.value()).toBe('Updated');
+            expect(tagInstance.severity()).toBe('success');
+            expect(tagInstance.rounded()).toBe(true);
         });
 
         it('should render correctly without any input properties set', () => {
@@ -996,17 +978,16 @@ describe('Tag', () => {
             minimalComponent.icon = undefined as any;
             minimalComponent.severity = undefined as any;
             minimalComponent.rounded = undefined as any;
-            minimalComponent.styleClass = undefined as any;
 
             minimalFixture.detectChanges();
 
             const minimalTag = minimalFixture.debugElement.query(By.directive(Tag)).componentInstance;
 
             expect(minimalTag).toBeTruthy();
-            expect(minimalTag.value).toBeUndefined();
-            expect(minimalTag.icon).toBeUndefined();
-            expect(minimalTag.severity).toBeUndefined();
-            expect(minimalTag.rounded).toBeFalsy(); // booleanAttribute transforms undefined to false
+            expect(minimalTag.value()).toBeUndefined();
+            expect(minimalTag.icon()).toBeUndefined();
+            expect(minimalTag.severity()).toBeUndefined();
+            expect(minimalTag.rounded()).toBeFalsy(); // booleanAttribute transforms undefined to false
         });
 
         it('should work with all features combined', async () => {
@@ -1014,22 +995,17 @@ describe('Tag', () => {
             component.icon = 'pi pi-check-circle';
             component.severity = 'success';
             component.rounded = true;
-            component.styleClass = 'complete-tag';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tagInstance.value).toBe('Complete Tag');
-            expect(tagInstance.icon).toBe('pi pi-check-circle');
-            expect(tagInstance.severity).toBe('success');
-            expect(tagInstance.rounded).toBe(true);
-            expect(tagInstance.styleClass).toBe('complete-tag');
+            expect(tagInstance.value()).toBe('Complete Tag');
+            expect(tagInstance.icon()).toBe('pi pi-check-circle');
+            expect(tagInstance.severity()).toBe('success');
+            expect(tagInstance.rounded()).toBe(true);
 
             // Verify properties are set correctly on the component
             expect(tagInstance).toBeTruthy();
-
-            const rootElement = fixture.debugElement.query(By.directive(Tag));
-            expect(rootElement.nativeElement.classList.contains('complete-tag')).toBe(true);
         });
     });
 
@@ -1239,7 +1215,7 @@ describe('Tag', () => {
 
                 fixture.componentRef.setInput('pt', {
                     host: ({ instance }: any) => ({
-                        class: instance?.value ? 'HAS_VALUE' : 'NO_VALUE'
+                        class: instance?.value() ? 'HAS_VALUE' : 'NO_VALUE'
                     })
                 });
                 fixture.detectChanges();
@@ -1253,7 +1229,7 @@ describe('Tag', () => {
 
                 fixture.componentRef.setInput('pt', {
                     root: ({ instance }: any) => ({
-                        class: instance?.severity === 'success' ? 'SUCCESS_CLASS' : 'OTHER_CLASS'
+                        class: instance?.severity() === 'success' ? 'SUCCESS_CLASS' : 'OTHER_CLASS'
                     })
                 });
                 fixture.detectChanges();
@@ -1267,7 +1243,7 @@ describe('Tag', () => {
 
                 fixture.componentRef.setInput('pt', {
                     label: ({ instance }: any) => ({
-                        class: instance?.rounded ? 'ROUNDED_CLASS' : 'NOT_ROUNDED_CLASS'
+                        class: instance?.rounded() ? 'ROUNDED_CLASS' : 'NOT_ROUNDED_CLASS'
                     })
                 });
                 fixture.detectChanges();

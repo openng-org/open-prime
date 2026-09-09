@@ -118,7 +118,7 @@ import { TooltipModule } from '@openng/optimus-ui/tooltip';
                             <div class="leading-6 text-muted-color">{{ data.lead }}</div>
                         </td>
                         <td>
-                            <p-tag [severity]="data.status === 'Active' ? 'success' : data.status === 'Inactive' ? 'danger' : 'info'" [value]="data.status" styleClass="font-medium" />
+                            <p-tag [severity]="data.status === 'Active' ? 'success' : data.status === 'Inactive' ? 'danger' : 'info'" [value]="data.status" class="font-medium" />
                         </td>
                         <td>
                             <div class="flex justify-end w-full">
