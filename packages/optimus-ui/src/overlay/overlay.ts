@@ -671,7 +671,12 @@ export class Overlay extends BaseComponent {
                 const isOutsideClicked = !isTargetClicked && !this.isOverlayContentClicked;
                 const valid = this.listener ? this.listener(event, { type: 'outside', mode: this.overlayMode, valid: event.which !== 3 && isOutsideClicked }) : isOutsideClicked;
 
-                valid && this.hide(event);
+                if (valid) {
+                    this.zone.run(() => {
+                        this.hide(event);
+                    });
+                }
+
                 this.isOverlayClicked = this.isOverlayContentClicked = false;
             });
         }
