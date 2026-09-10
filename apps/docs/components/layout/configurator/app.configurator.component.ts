@@ -20,6 +20,8 @@ const presets = {
     Nora
 };
 
+type ColorType = 'primary' | 'surface';
+
 export type ColorPalette = Record<string, string>;
 
 export interface PrimaryColor {
@@ -111,6 +113,14 @@ export class AppConfiguratorComponent {
     platformId = inject(PLATFORM_ID);
 
     presets = Object.keys(presets);
+
+    constructor() {
+        const state = this.configService.appState();
+        this.applyTheme('primary', state.primary);
+        this.applyTheme('surface', state.surface);
+        this.onPresetChange(state.preset);
+        this.toggleRTL(state.RTL);
+    }
 
     onRTLChange(value: boolean) {
         this.configService.appState.update((state) => ({ ...state, RTL: value }));
@@ -271,9 +281,7 @@ export class AppConfiguratorComponent {
         }
     ];
 
-    selectedPrimaryColor = computed(() => {
-        return this.configService.appState().primary;
-    });
+    selectedPrimaryColor = computed(() => this.configService.appState().primary);
 
     selectedSurfaceColor = computed(() => this.configService.appState().surface);
 
@@ -458,7 +466,7 @@ export class AppConfiguratorComponent {
         }
     }
 
-    updateColors(event: any, type: string, color: any) {
+    updateColors(event: any, type: ColorType, color: any) {
         if (type === 'primary') {
             this.configService.appState.update((state) => ({ ...state, primary: color.name }));
         } else if (type === 'surface') {
@@ -468,7 +476,7 @@ export class AppConfiguratorComponent {
         event.stopPropagation();
     }
 
-    applyTheme(type: string, color: any) {
+    private applyTheme(type: ColorType, color: any) {
         if (type === 'primary') {
             updatePreset(this.getPresetExt());
         } else if (type === 'surface') {
@@ -476,9 +484,9 @@ export class AppConfiguratorComponent {
         }
     }
 
-    onPresetChange(event: any) {
-        this.configService.appState.update((state) => ({ ...state, preset: event }));
-        const preset = presets[event];
+    onPresetChange(presetName: string) {
+        this.configService.appState.update((state) => ({ ...state, preset: presetName }));
+        const preset = presets[presetName];
         const surfacePalette = this.surfaces.find((s) => s.name === this.selectedSurfaceColor())?.palette;
         if (this.configService.appState().preset === 'Material') {
             document.body.classList.add('material');

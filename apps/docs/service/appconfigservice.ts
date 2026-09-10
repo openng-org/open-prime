@@ -1,18 +1,14 @@
 import { AppState } from '@/domain/appstate';
 import { DOCUMENT } from '@angular/common';
 import { computed, effect, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
+
+const LOCAL_STORAGE_KEY = 'optimus-ui-app-state';
+
 @Injectable({
     providedIn: 'root'
 })
 export class AppConfigService {
-    appState = signal<AppState>({
-        preset: 'Aura',
-        primary: 'noir',
-        surface: null,
-        darkTheme: false,
-        menuActive: false,
-        RTL: false
-    });
+    appState = signal<AppState>(this.getStateFromLocalStorage());
 
     newsActive = signal(false);
 
@@ -30,12 +26,12 @@ export class AppConfigService {
 
     constructor() {
         effect(() => {
-            const isDarkMode = this.darkMode();
-            const currentPrimaryPalette = this.primaryPalette();
-            const currentSurfacePalette = this.surfacePalette();
-
-            this.toggleDarkMode(isDarkMode);
+            this.toggleDarkMode(this.darkMode());
             this.onTransitionEnd();
+        });
+
+        effect(() => {
+            this.saveStateToLocalStorage(this.appState());
         });
     }
 
@@ -52,6 +48,26 @@ export class AppConfigService {
         setTimeout(() => {
             this.transitionComplete.set(false);
         });
+    }
+
+    private saveStateToLocalStorage(state: AppState): void {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+    }
+
+    private getStateFromLocalStorage(): AppState {
+        const savedState = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (savedState) {
+            return JSON.parse(savedState) as AppState;
+        }
+
+        return {
+            preset: 'Aura',
+            primary: 'noir',
+            surface: null,
+            darkTheme: false,
+            menuActive: false,
+            RTL: false
+        };
     }
 
     hideMenu() {
