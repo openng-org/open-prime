@@ -35,7 +35,7 @@ catalogs:
     "@angular/ssr": ^22.1.6
     "@angular-eslint/eslint-plugin": ^22.1.0
     "@angular-eslint/eslint-plugin-template": ^22.1.0
-    "@angular-eslint/schematics": ^22.1.0
+    "@angular-eslint/schematics": ^22.5.0
     "@angular-eslint/template-parser": ^22.1.0
     "ng-packagr": ^22.1.1
     "typescript": ^6.0.0
