@@ -60,7 +60,7 @@
         "test:unit:coverage": "ng run optimus-ui:test-vitest --watch=false --coverage"
     },
     "devDependencies": {
-        "@angular-devkit/schematics": "^22.1.6",
+        "@angular-devkit/schematics": "^22.1.7",
         "@angular/build": "catalog:angular22",
         "@schematics/angular": "^22.1.6",
         "@types/node": "^26.2.0",
