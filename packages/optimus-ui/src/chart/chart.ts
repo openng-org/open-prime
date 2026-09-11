@@ -5,7 +5,7 @@ import { SharedModule } from '@openng/optimus-ui/api';
 import { BaseComponent } from '@openng/optimus-ui/basecomponent';
 import { ChartStyle } from './style/chartstyle';
 import { Bind, BindModule } from '@openng/optimus-ui/bind';
-import type { ChartPassThrough } from '@openng/optimus-ui/types/chart';
+import type { ChartDataSelectEvent, ChartPassThrough } from '@openng/optimus-ui/types/chart';
 
 const CHART_INSTANCE = new InjectionToken<UIChart>('CHART_INSTANCE');
 
@@ -109,7 +109,7 @@ export class UIChart extends BaseComponent<ChartPassThrough> {
      * Callback to execute when an element on chart is clicked.
      * @group Emits
      */
-    @Output() onDataSelect: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onDataSelect: EventEmitter<ChartDataSelectEvent> = new EventEmitter<ChartDataSelectEvent>();
 
     isBrowser: boolean = false;
 
@@ -135,7 +135,7 @@ export class UIChart extends BaseComponent<ChartPassThrough> {
         this.initialized = true;
     }
 
-    onCanvasClick(event: Event) {
+    onCanvasClick(event: MouseEvent) {
         if (this.chart) {
             const element = this.chart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, false);
             const dataset = this.chart.getElementsAtEventForMode(event, 'dataset', { intersect: true }, false);

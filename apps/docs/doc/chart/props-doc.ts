@@ -59,7 +59,7 @@ import { Component } from '@angular/core';
                     </tr>
                     <tr>
                         <td>onDataSelect</td>
-                        <td>function</td>
+                        <td>(event: ChartDataSelectEvent) =&gt; void</td>
                         <td>null</td>
                         <td>Callback to execute when an element on chart is clicked.</td>
                     </tr>

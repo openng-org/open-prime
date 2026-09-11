@@ -1,4 +1,26 @@
 import type { PassThrough, PassThroughOption } from '@openng/optimus-ui/api';
+import type { ActiveElement, ChartDataset, ChartTypeRegistry } from 'chart.js';
+
+/**
+ * Data selection event emitted when a chart element is clicked.
+ *
+ * @template T Chart.js chart type.
+ * @group Events
+ */
+export interface ChartDataSelectEvent<T extends keyof ChartTypeRegistry = keyof ChartTypeRegistry> {
+    /**
+     * Browser click event.
+     */
+    originalEvent: MouseEvent;
+    /**
+     * Selected chart element.
+     */
+    element: ActiveElement;
+    /**
+     * Selected dataset.
+     */
+    dataset: ChartDataset<T>;
+}
 
 /**
  * Custom pass-through(pt) options.
