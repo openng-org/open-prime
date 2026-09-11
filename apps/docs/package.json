@@ -32,7 +32,7 @@
         "@angular/cdk": "catalog:angular22",
         "@stackblitz/sdk": "1.11.1",
         "@types/express": "^5.0.6",
-        "@types/node": "^26.2.0",
+        "@types/node": "^26.5.0",
         "chart.js": "4.5.1",
         "express": "^5.2.1",
         "@openng/icons": "catalog:",
