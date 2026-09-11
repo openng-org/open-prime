@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
 import {
     AfterViewChecked,
     booleanAttribute,
@@ -68,7 +68,7 @@ const CONTEXTMENUSUB_INSTANCE = new InjectionToken<ContextMenuSub>('CONTEXTMENUS
     changeDetection: ChangeDetectionStrategy.Eager,
     selector: 'p-contextMenuSub, p-contextmenu-sub',
     standalone: true,
-    imports: [CommonModule, RouterModule, Ripple, TooltipModule, AngleRightIcon, BadgeModule, SharedModule, BindModule, MotionModule],
+    imports: [RouterModule, Ripple, TooltipModule, AngleRightIcon, BadgeModule, SharedModule, BindModule, MotionModule, NgFor, NgIf, NgStyle, NgTemplateOutlet],
     template: `
         @if (render()) {
             <ul
@@ -442,7 +442,7 @@ export class ContextMenuSub extends BaseComponent<ContextMenuPassThrough> implem
 @Component({
     selector: 'p-contextMenu, p-contextmenu, p-context-menu',
     standalone: true,
-    imports: [CommonModule, ContextMenuSub, RouterModule, TooltipModule, BadgeModule, SharedModule, BindModule, MotionModule],
+    imports: [ContextMenuSub, RouterModule, TooltipModule, BadgeModule, SharedModule, BindModule, MotionModule, NgStyle],
     template: `
         @if (render()) {
             <div

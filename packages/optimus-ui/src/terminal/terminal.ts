@@ -1,6 +1,6 @@
+import { NgFor, NgIf } from '@angular/common';
 import { AfterViewChecked, AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, HostListener, inject, InjectionToken, Input, NgModule, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { find } from '@openng/optimus-ui-utils';
 import { SharedModule } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
 import { Bind } from '@openng/optimus-ui/bind';
@@ -18,7 +18,7 @@ const TERMINAL_INSTANCE = new InjectionToken<Terminal>('TERMINAL_INSTANCE');
 @Component({
     selector: 'p-terminal',
     standalone: true,
-    imports: [FormsModule, SharedModule, Bind],
+    imports: [FormsModule, SharedModule, Bind, NgFor, NgIf],
     template: `
         @if (welcomeMessage) {
             <div [class]="cx('welcomeMessage')" [pBind]="ptm('welcomeMessage')">{{ welcomeMessage }}</div>

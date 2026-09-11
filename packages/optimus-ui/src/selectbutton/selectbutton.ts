@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import {
     AfterContentInit,
     AfterViewChecked,
@@ -44,7 +44,7 @@ export const SELECTBUTTON_VALUE_ACCESSOR: any = {
 @Component({
     selector: 'p-selectButton, p-selectbutton, p-select-button',
     standalone: true,
-    imports: [ToggleButton, FormsModule, CommonModule, SharedModule, BindModule],
+    imports: [ToggleButton, FormsModule, SharedModule, BindModule, NgTemplateOutlet],
     template: `
         @for (option of options; track getOptionLabel(option); let i = $index) {
             <p-togglebutton

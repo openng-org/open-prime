@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -19,7 +19,7 @@ import {
     TemplateRef,
     ViewEncapsulation
 } from '@angular/core';
-import { hasClass, isAttributeEquals } from '@openng/optimus-ui-utils';
+import { isAttributeEquals } from '@openng/optimus-ui-utils';
 import { PrimeTemplate, SharedModule, TreeNode } from '@openng/optimus-ui/api';
 import { BaseComponent, PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
 import { Bind, BindModule } from '@openng/optimus-ui/bind';
@@ -34,7 +34,7 @@ const ORGANIZATIONCHART_INSTANCE = new InjectionToken<OrganizationChart>('ORGANI
 @Component({
     selector: '[pOrganizationChartNode]',
     standalone: true,
-    imports: [CommonModule, ChevronDownIcon, ChevronUpIcon, SharedModule, BindModule],
+    imports: [ChevronDownIcon, ChevronUpIcon, SharedModule, BindModule, NgFor, NgIf, NgStyle, NgTemplateOutlet],
     template: `
         @if (node) {
             <tbody [pBind]="ptm('body')">
@@ -196,7 +196,7 @@ export class OrganizationChartNode extends BaseComponent {
 @Component({
     selector: 'p-organizationChart, p-organization-chart, p-organizationchart',
     standalone: true,
-    imports: [CommonModule, OrganizationChartNode, SharedModule, BindModule],
+    imports: [OrganizationChartNode, SharedModule, BindModule, NgIf],
     template: `
         @if (root) {
             <table [class]="cx('table')" [collapsible]="collapsible" pOrganizationChartNode [pt]="pt" [unstyled]="unstyled()" [node]="root" [pBind]="ptm('table')"></table>

@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, NgIf, NgFor, NgStyle, NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -41,7 +41,7 @@ const SPEED_DIAL_INSTANCE = new InjectionToken<SpeedDial>('SPEED_DIAL_INSTANCE')
 @Component({
     selector: 'p-speeddial, p-speedDial, p-speed-dial',
     standalone: true,
-    imports: [CommonModule, ButtonModule, Ripple, TooltipModule, RouterModule, PlusIcon, SharedModule, Bind],
+    imports: [ButtonModule, Ripple, TooltipModule, RouterModule, PlusIcon, SharedModule, Bind, NgFor, NgIf, NgStyle, NgTemplateOutlet],
     template: `
         <div #container [pBind]="ptm('root')" [class]="cn(cx('root'), className)" [style]="style" [ngStyle]="sx('root')">
             @if (!buttonTemplate && !_buttonTemplate) {

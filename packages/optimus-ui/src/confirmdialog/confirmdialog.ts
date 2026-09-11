@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { NgIf, NgClass, NgTemplateOutlet } from '@angular/common';
 import {
     AfterContentInit,
     booleanAttribute,
@@ -43,7 +43,7 @@ const CONFIRMDIALOG_INSTANCE = new InjectionToken<ConfirmDialog>('CONFIRMDIALOG_
 @Component({
     selector: 'p-confirmDialog, p-confirmdialog, p-confirm-dialog',
     standalone: true,
-    imports: [CommonModule, Button, Dialog, SharedModule, Bind],
+    imports: [Button, Dialog, SharedModule, Bind, NgClass, NgIf, NgTemplateOutlet],
     template: `
         <p-dialog
             [pt]="pt"

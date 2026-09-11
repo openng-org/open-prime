@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { NgIf, NgTemplateOutlet, SlicePipe } from '@angular/common';
 import { booleanAttribute, ChangeDetectionStrategy, Component, ContentChild, ElementRef, EventEmitter, inject, InjectionToken, Input, NgModule, numberAttribute, Output, SimpleChanges, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { resolveFieldData } from '@openng/optimus-ui-utils';
 import { BlockableUI, FilterService, Footer, Header, SharedModule, TranslationKeys } from '@openng/optimus-ui/api';
@@ -32,7 +32,7 @@ const DATAVIEW_INSTANCE = new InjectionToken<DataView>('DATAVIEW_INSTANCE');
 @Component({
     selector: 'p-dataView, p-dataview, p-data-view',
     standalone: true,
-    imports: [CommonModule, PaginatorModule, SpinnerIcon, SharedModule, Bind],
+    imports: [PaginatorModule, SpinnerIcon, SharedModule, Bind, NgIf, NgTemplateOutlet, SlicePipe],
     template: `
         @if (loading) {
             <div [pBind]="ptm('loading')" [class]="cx('loading')">

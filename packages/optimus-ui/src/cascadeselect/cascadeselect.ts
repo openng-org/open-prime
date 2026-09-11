@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -61,7 +61,7 @@ export const CASCADESELECT_VALUE_ACCESSOR: any = {
 @Component({
     selector: 'ul[pCascadeSelectSub]',
     standalone: true,
-    imports: [CommonModule, Ripple, AngleRightIcon, SharedModule, Bind],
+    imports: [Ripple, AngleRightIcon, SharedModule, Bind, NgFor, NgIf, NgTemplateOutlet],
     template: `
         @for (processedOption of options; track processedOption; let i = $index) {
             <li
@@ -267,7 +267,7 @@ export class CascadeSelectSub extends BaseComponent {
 @Component({
     selector: 'p-cascadeSelect, p-cascadeselect, p-cascade-select',
     standalone: true,
-    imports: [CommonModule, Overlay, AutoFocus, CascadeSelectSub, ChevronDownIcon, TimesIcon, SharedModule, Bind],
+    imports: [Overlay, AutoFocus, CascadeSelectSub, ChevronDownIcon, TimesIcon, SharedModule, Bind, NgIf, NgStyle, NgTemplateOutlet],
     template: `
         <div class="p-hidden-accessible" [pBind]="ptm('hiddenInputWrapper')">
             <input

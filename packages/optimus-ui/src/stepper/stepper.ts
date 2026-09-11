@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
@@ -23,6 +22,7 @@ import {
     ViewEncapsulation
 } from '@angular/core';
 
+import { NgTemplateOutlet } from '@angular/common';
 import { MotionOptions } from '@openng/optimus-ui-motion';
 import { find, findIndexInList, uuid } from '@openng/optimus-ui-utils';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
@@ -196,7 +196,7 @@ export class StepItem extends BaseComponent<StepItemPassThrough> {
 @Component({
     selector: 'p-step',
     standalone: true,
-    imports: [CommonModule, StepperSeparator, SharedModule, BindModule],
+    imports: [StepperSeparator, SharedModule, BindModule, NgTemplateOutlet],
     template: `
         @if (!content && !_contentTemplate) {
             <button
@@ -320,7 +320,7 @@ export class Step extends BaseComponent<StepPassThrough> {
 @Component({
     selector: 'p-step-panel',
     standalone: true,
-    imports: [CommonModule, StepperSeparator, SharedModule, BindModule, MotionModule],
+    imports: [StepperSeparator, SharedModule, BindModule, MotionModule, NgTemplateOutlet],
     template: `
         <p-motion [visible]="active()" name="p-collapsible" [disabled]="!isVertical()" [options]="computedMotionOptions()">
             <div [class]="cx('contentWrapper')" [pBind]="ptm('contentWrapper')">

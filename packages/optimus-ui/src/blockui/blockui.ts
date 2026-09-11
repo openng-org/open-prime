@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, NgTemplateOutlet } from '@angular/common';
 import { booleanAttribute, ChangeDetectionStrategy, Component, ContentChild, ContentChildren, ElementRef, inject, InjectionToken, Input, NgModule, numberAttribute, QueryList, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { blockBodyScroll, unblockBodyScroll } from '@openng/optimus-ui-utils';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
@@ -17,7 +17,7 @@ const BLOCKUI_INSTANCE = new InjectionToken<BlockUI>('BLOCKUI_INSTANCE');
 @Component({
     selector: 'p-blockUI, p-blockui, p-block-ui',
     standalone: true,
-    imports: [CommonModule, SharedModule],
+    imports: [SharedModule, NgTemplateOutlet],
     template: `
         <ng-content></ng-content>
         <ng-container *ngTemplateOutlet="contentTemplate || _contentTemplate"></ng-container>

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { NgIf, NgComponentOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ComponentRef, inject, InjectionToken, NgModule, Type, ViewChild, ViewEncapsulation } from '@angular/core';
 import { uuid } from '@openng/optimus-ui-utils';
 import { SharedModule, TranslationKeys } from '@openng/optimus-ui/api';
@@ -16,7 +16,7 @@ const DYNAMIC_DIALOG_INSTANCE = new InjectionToken<DynamicDialog>('DYNAMIC_DIALO
 @Component({
     selector: 'p-dynamicDialog, p-dynamicdialog, p-dynamic-dialog',
     standalone: true,
-    imports: [CommonModule, SharedModule, DynamicDialogContent, Dialog, BindModule],
+    imports: [SharedModule, DynamicDialogContent, Dialog, BindModule, NgComponentOutlet, NgIf],
     template: `
         <p-dialog
             [(visible)]="visible"

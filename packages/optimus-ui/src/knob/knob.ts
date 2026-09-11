@@ -1,11 +1,11 @@
+import { NgIf } from '@angular/common';
 import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, forwardRef, inject, InjectionToken, Input, NgModule, numberAttribute, Output, signal, ViewEncapsulation } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { $dt } from '@openng/optimus-ui-styled';
 import { SharedModule } from '@openng/optimus-ui/api';
 import { PARENT_INSTANCE } from '@openng/optimus-ui/basecomponent';
 import { BaseEditableHolder } from '@openng/optimus-ui/baseeditableholder';
-import { Bind } from '@openng/optimus-ui/bind';
-import { BindModule } from '@openng/optimus-ui/bind';
+import { Bind, BindModule } from '@openng/optimus-ui/bind';
 import { VoidListener } from '@openng/optimus-ui/ts-helpers';
 import { KnobPassThrough } from '@openng/optimus-ui/types/knob';
 import { KnobStyle } from './style/knobstyle';
@@ -24,7 +24,7 @@ export const KNOB_VALUE_ACCESSOR: any = {
 @Component({
     selector: 'p-knob',
     standalone: true,
-    imports: [SharedModule, BindModule],
+    imports: [SharedModule, BindModule, NgIf],
     template: `
         <svg
             viewBox="0 0 100 100"

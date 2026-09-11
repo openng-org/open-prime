@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { NgIf, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ContentChild, ContentChildren, inject, InjectionToken, Input, NgModule, QueryList, signal, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { equals } from '@openng/optimus-ui-utils';
 import { BlockableUI, Footer, Header, PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
@@ -16,7 +16,7 @@ const CARD_INSTANCE = new InjectionToken<Card>('CARD_INSTANCE');
 @Component({
     selector: 'p-card',
     standalone: true,
-    imports: [CommonModule, SharedModule, BindModule],
+    imports: [SharedModule, BindModule, NgIf, NgTemplateOutlet],
     template: `
         @if (headerFacet || headerTemplate || _headerTemplate) {
             <div [pBind]="ptm('header')" [class]="cx('header')">

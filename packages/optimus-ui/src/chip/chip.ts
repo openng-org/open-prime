@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { NgIf, NgClass, NgTemplateOutlet } from '@angular/common';
 import {
     AfterContentInit,
     booleanAttribute,
@@ -33,7 +33,7 @@ const CHIP_INSTANCE = new InjectionToken<Chip>('CHIP_INSTANCE');
 @Component({
     selector: 'p-chip',
     standalone: true,
-    imports: [CommonModule, TimesCircleIcon, SharedModule, Bind],
+    imports: [TimesCircleIcon, SharedModule, Bind, NgClass, NgIf, NgTemplateOutlet],
     template: `
         <ng-content></ng-content>
         @if (image) {

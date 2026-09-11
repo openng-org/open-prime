@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { NgIf, NgClass, NgTemplateOutlet } from '@angular/common';
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, ContentChild, ContentChildren, EventEmitter, inject, InjectionToken, input, Input, NgModule, Output, QueryList, signal, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { MotionOptions } from '@openng/optimus-ui-motion';
 import { PrimeTemplate, SharedModule } from '@openng/optimus-ui/api';
@@ -19,7 +19,7 @@ const MESSAGE_INSTANCE = new InjectionToken<Message>('MESSAGE_INSTANCE');
 @Component({
     selector: 'p-message',
     standalone: true,
-    imports: [CommonModule, TimesIcon, Ripple, SharedModule, Bind, MotionModule],
+    imports: [TimesIcon, Ripple, SharedModule, Bind, MotionModule, NgClass, NgIf, NgTemplateOutlet],
     template: `
         <div [pBind]="ptm('contentWrapper')" [class]="cx('contentWrapper')" [attr.data-p]="dataP">
             <div [pBind]="ptm('content')" [class]="cx('content')" [attr.data-p]="dataP">

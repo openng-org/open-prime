@@ -1,5 +1,5 @@
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -58,7 +58,6 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
     selector: 'p-pickList, p-picklist, p-pick-list',
     standalone: true,
     imports: [
-        CommonModule,
         ButtonModule,
         Ripple,
         DragDropModule,
@@ -73,7 +72,10 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
         Listbox,
         FormsModule,
         SharedModule,
-        BindModule
+        BindModule,
+        NgIf,
+        NgStyle,
+        NgTemplateOutlet
     ],
     template: `
         <div [ngStyle]="style" [class]="cn(cx('root'), styleClass)" cdkDropListGroup [pBind]="ptm('root')">

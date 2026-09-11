@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, NgIf, NgFor, NgStyle, NgTemplateOutlet } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
@@ -46,7 +46,7 @@ const SCROLLER_INSTANCE = new InjectionToken<Scroller>('SCROLLER_INSTANCE');
  */
 @Component({
     selector: 'p-scroller, p-virtualscroller, p-virtual-scroller, p-virtualScroller',
-    imports: [CommonModule, SpinnerIcon, SharedModule, Bind],
+    imports: [SpinnerIcon, SharedModule, Bind, NgFor, NgIf, NgStyle, NgTemplateOutlet],
     standalone: true,
     template: `
         @if (!_disabled) {

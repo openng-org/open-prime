@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { NgIf, NgClass, NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -49,7 +49,7 @@ export const CHECKBOX_VALUE_ACCESSOR: any = {
 @Component({
     selector: 'p-checkbox, p-checkBox, p-check-box',
     standalone: true,
-    imports: [CommonModule, SharedModule, CheckIcon, MinusIcon, BindModule],
+    imports: [SharedModule, CheckIcon, MinusIcon, BindModule, NgClass, NgIf, NgTemplateOutlet],
     template: `
         <input
             #input

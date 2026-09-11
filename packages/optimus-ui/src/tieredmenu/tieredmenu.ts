@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -49,7 +49,7 @@ const TIEREDMENUSUB_INSTANCE = new InjectionToken<TieredMenuSub>('TIEREDMENUSUB_
     changeDetection: ChangeDetectionStrategy.Eager,
     selector: 'p-tieredMenuSub, p-tieredmenusub',
     standalone: true,
-    imports: [CommonModule, RouterModule, Ripple, TooltipModule, AngleRightIcon, SharedModule, BindModule, MotionModule],
+    imports: [RouterModule, Ripple, TooltipModule, AngleRightIcon, SharedModule, BindModule, MotionModule, NgFor, NgIf, NgStyle, NgTemplateOutlet],
     template: `
         @if (render()) {
             <ul
@@ -437,7 +437,7 @@ export class TieredMenuSub extends BaseComponent<TieredMenuPassThrough> {
 @Component({
     selector: 'p-tieredMenu, p-tieredmenu, p-tiered-menu',
     standalone: true,
-    imports: [CommonModule, TieredMenuSub, RouterModule, TooltipModule, SharedModule, BindModule, MotionModule],
+    imports: [TieredMenuSub, RouterModule, TooltipModule, SharedModule, BindModule, MotionModule, NgStyle],
     template: `
         @if (render() || !popup) {
             <div

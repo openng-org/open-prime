@@ -1,4 +1,4 @@
-import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -61,7 +61,7 @@ export class MenubarService {
     changeDetection: ChangeDetectionStrategy.Eager,
     selector: 'p-menubarSub, p-menubarsub, [pMenubarSub]',
     standalone: true,
-    imports: [CommonModule, RouterModule, Ripple, TooltipModule, AngleDownIcon, AngleRightIcon, BadgeModule, SharedModule, BindModule],
+    imports: [RouterModule, Ripple, TooltipModule, AngleDownIcon, AngleRightIcon, BadgeModule, SharedModule, BindModule, NgFor, NgIf, NgStyle, NgTemplateOutlet],
     template: `
         @for (processedItem of items; track processedItem; let index = $index) {
             @if (isItemVisible(processedItem) && getItemProp(processedItem, 'separator')) {
@@ -378,7 +378,7 @@ export class MenubarSub extends BaseComponent<MenubarPassThrough> {
 @Component({
     selector: 'p-menubar',
     standalone: true,
-    imports: [CommonModule, RouterModule, MenubarSub, TooltipModule, BarsIcon, BadgeModule, SharedModule, BindModule],
+    imports: [RouterModule, MenubarSub, TooltipModule, BarsIcon, BadgeModule, SharedModule, BindModule, NgIf, NgTemplateOutlet],
     template: `
         @if (startTemplate || _startTemplate) {
             <div [class]="cx('start')" [pBind]="ptm('start')">

@@ -25,7 +25,7 @@
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     OTHER DEALINGS IN THE SOFTWARE.
 */
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -692,7 +692,7 @@ export const INPUTMASK_VALUE_ACCESSOR: any = {
 @Component({
     selector: 'p-inputmask, p-inputMask, p-input-mask',
     standalone: true,
-    imports: [CommonModule, InputText, AutoFocus, TimesIcon, SharedModule, BindModule],
+    imports: [InputText, AutoFocus, TimesIcon, SharedModule, BindModule, NgIf, NgStyle, NgTemplateOutlet],
     template: `
         <input
             #input

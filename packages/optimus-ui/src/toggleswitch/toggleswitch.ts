@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -44,7 +44,7 @@ export const TOGGLESWITCH_VALUE_ACCESSOR: any = {
 @Component({
     selector: 'p-toggleswitch, p-toggleSwitch, p-toggle-switch',
     standalone: true,
-    imports: [CommonModule, AutoFocus, SharedModule, BindModule],
+    imports: [AutoFocus, SharedModule, BindModule, NgTemplateOutlet],
     template: `
         <input
             #input

@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, ContentChild, ContentChildren, inject, InjectionToken, input, Input, NgModule, numberAttribute, QueryList, signal, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { MotionEvent, MotionOptions } from '@openng/optimus-ui-motion';
 import { getWindowScrollTop } from '@openng/optimus-ui-utils';
@@ -21,7 +21,7 @@ const SCROLLTOP_INSTANCE = new InjectionToken<ScrollTop>('SCROLLTOP_INSTANCE');
 @Component({
     selector: 'p-scrollTop, p-scrolltop, p-scroll-top',
     standalone: true,
-    imports: [CommonModule, ChevronUpIcon, Button, SharedModule, MotionDirective],
+    imports: [ChevronUpIcon, Button, SharedModule, MotionDirective, NgIf, NgStyle, NgTemplateOutlet],
     template: `
         @if (render()) {
             <p-button

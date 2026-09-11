@@ -1,4 +1,4 @@
-import { CommonModule, DOCUMENT } from '@angular/common';
+import { DOCUMENT, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -50,7 +50,7 @@ const CONFIRMPOPUP_INSTANCE = new InjectionToken<ConfirmPopup>('CONFIRMPOPUP_INS
 @Component({
     selector: 'p-confirmpopup',
     standalone: true,
-    imports: [CommonModule, SharedModule, ButtonModule, FocusTrap, Bind, MotionModule],
+    imports: [SharedModule, ButtonModule, FocusTrap, Bind, MotionModule, NgIf, NgStyle, NgTemplateOutlet],
     providers: [ConfirmPopupStyle, { provide: CONFIRMPOPUP_INSTANCE, useExisting: ConfirmPopup }, { provide: PARENT_INSTANCE, useExisting: ConfirmPopup }],
     hostDirectives: [Bind],
     template: `

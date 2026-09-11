@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -38,7 +38,7 @@ const FIELDSET_INSTANCE = new InjectionToken<Fieldset>('FIELDSET_INSTANCE');
 @Component({
     selector: 'p-fieldset',
     standalone: true,
-    imports: [CommonModule, MinusIcon, PlusIcon, SharedModule, BindModule, MotionModule],
+    imports: [MinusIcon, PlusIcon, SharedModule, BindModule, MotionModule, NgIf, NgStyle, NgTemplateOutlet],
     template: `
         <fieldset [attr.id]="id" [ngStyle]="style" [class]="cn(cx('root'), styleClass)" [pBind]="ptm('root')" [attr.data-p]="dataP">
             <legend [class]="cx('legend')" [pBind]="ptm('legend')" [attr.data-p]="dataP">

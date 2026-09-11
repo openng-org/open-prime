@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { NgIf, NgClass, NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -44,7 +44,7 @@ const DRAWER_INSTANCE = new InjectionToken<Drawer>('DRAWER_INSTANCE');
 @Component({
     selector: 'p-drawer',
     standalone: true,
-    imports: [CommonModule, Button, TimesIcon, SharedModule, Bind, FocusTrapModule, MotionModule],
+    imports: [Button, TimesIcon, SharedModule, Bind, FocusTrapModule, MotionModule, NgClass, NgIf, NgTemplateOutlet],
     providers: [DrawerStyle, { provide: DRAWER_INSTANCE, useExisting: Drawer }, { provide: PARENT_INSTANCE, useExisting: Drawer }],
     hostDirectives: [Bind],
     template: `

@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, NgIf, NgTemplateOutlet } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
@@ -42,7 +42,7 @@ const OVERLAY_INSTANCE = new InjectionToken<Overlay>('OVERLAY_INSTANCE');
 @Component({
     selector: 'p-overlay',
     standalone: true,
-    imports: [CommonModule, SharedModule, Bind, MotionModule],
+    imports: [SharedModule, Bind, MotionModule, NgIf, NgTemplateOutlet],
     hostDirectives: [Bind],
     template: `
         @if (inline()) {

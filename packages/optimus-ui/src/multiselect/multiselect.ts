@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { NgIf, NgFor, NgClass, NgStyle, NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -81,7 +81,7 @@ export const MULTISELECT_VALUE_ACCESSOR: any = {
     changeDetection: ChangeDetectionStrategy.Eager,
     selector: 'li[pMultiSelectItem]',
     standalone: true,
-    imports: [CommonModule, Checkbox, FormsModule, SharedModule],
+    imports: [Checkbox, FormsModule, SharedModule, NgIf, NgTemplateOutlet],
     template: `
         <p-checkbox [ngModel]="selected" [ngModelOptions]="{ standalone: true }" [binary]="true" [tabindex]="-1" [variant]="variant" [ariaLabel]="label" [pt]="getPTOptions('pcOptionCheckbox')" [unstyled]="unstyled()">
             @if (itemCheckboxIconTemplate) {
@@ -187,7 +187,30 @@ export class MultiSelectItem extends BaseComponent {
 @Component({
     selector: 'p-multiSelect, p-multiselect, p-multi-select',
     standalone: true,
-    imports: [CommonModule, MultiSelectItem, Overlay, SharedModule, Tooltip, Scroller, AutoFocus, CheckIcon, SearchIcon, TimesIcon, ChevronDownIcon, IconField, InputIcon, InputText, Chip, Checkbox, FormsModule, BindModule],
+    imports: [
+        MultiSelectItem,
+        Overlay,
+        SharedModule,
+        Tooltip,
+        Scroller,
+        AutoFocus,
+        CheckIcon,
+        SearchIcon,
+        TimesIcon,
+        ChevronDownIcon,
+        IconField,
+        InputIcon,
+        InputText,
+        Chip,
+        Checkbox,
+        FormsModule,
+        BindModule,
+        NgClass,
+        NgFor,
+        NgIf,
+        NgStyle,
+        NgTemplateOutlet
+    ],
     hostDirectives: [Bind],
     template: `
         <div class="p-hidden-accessible" [attr.data-p-hidden-accessible]="true" [pBind]="ptm('hiddenInputContainer')">

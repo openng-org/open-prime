@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, NgFor, NgIf, NgClass, NgStyle, NgTemplateOutlet } from '@angular/common';
 import { HttpClient, HttpEvent, HttpEventType, HttpHeaders } from '@angular/common/http';
 import {
     booleanAttribute,
@@ -80,7 +80,7 @@ const FILEUPLOAD_INSTANCE = new InjectionToken<FileUpload>('FILEUPLOAD_INSTANCE'
     }`,
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [FileUploadStyle],
-    imports: [CommonModule, Badge, Button, TimesIcon, Bind]
+    imports: [Badge, Button, TimesIcon, Bind, NgTemplateOutlet]
 })
 export class FileContent extends BaseComponent {
     _componentStyle = inject(FileUploadStyle);
@@ -125,7 +125,7 @@ export class FileContent extends BaseComponent {
 @Component({
     selector: 'p-fileupload, p-fileUpload',
     standalone: true,
-    imports: [CommonModule, Button, ProgressBar, Message, PlusIcon, UploadIcon, TimesIcon, SharedModule, FileContent, Bind],
+    imports: [Button, ProgressBar, Message, PlusIcon, UploadIcon, TimesIcon, SharedModule, FileContent, Bind, NgFor, NgClass, NgIf, NgStyle, NgTemplateOutlet],
     template: `
         <div [class]="cn(cx('root'), styleClass)" [ngStyle]="style" *ngIf="mode === 'advanced'" [pBind]="ptm('root')">
             <input [attr.aria-label]="browseFilesLabel" #advancedfileinput type="file" (change)="onFileSelect($event)" [multiple]="multiple" [accept]="accept" [disabled]="disabled || isChooseDisabled()" [attr.title]="''" [pBind]="ptm('input')" />

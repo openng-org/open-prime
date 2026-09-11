@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import { AfterViewChecked, booleanAttribute, ChangeDetectionStrategy, Component, computed, ElementRef, EventEmitter, forwardRef, inject, InjectionToken, input, Input, NgModule, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MotionOptions } from '@openng/optimus-ui-motion';
@@ -30,7 +31,7 @@ const COLORPICKER_INSTANCE = new InjectionToken<ColorPicker>('COLORPICKER_INSTAN
 @Component({
     selector: 'p-colorPicker, p-colorpicker, p-color-picker',
     standalone: true,
-    imports: [AutoFocusModule, SharedModule, Bind, MotionModule, OverlayModule],
+    imports: [AutoFocusModule, SharedModule, Bind, MotionModule, OverlayModule, NgIf],
     hostDirectives: [Bind],
     template: `
         @if (!inline) {

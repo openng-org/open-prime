@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -576,7 +576,7 @@ export class ButtonDirective extends BaseComponent {
 @Component({
     selector: 'p-button',
     standalone: true,
-    imports: [CommonModule, Ripple, AutoFocus, SpinnerIcon, BadgeModule, SharedModule, Bind],
+    imports: [Ripple, AutoFocus, SpinnerIcon, BadgeModule, SharedModule, Bind, NgIf, NgStyle, NgTemplateOutlet],
     template: `
         <button
             [attr.type]="type || buttonProps?.type"
