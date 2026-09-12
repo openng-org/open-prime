@@ -64,7 +64,7 @@
         "@angular/build": "catalog:angular22",
         "@schematics/angular": "^22.1.6",
         "@types/node": "^26.2.0",
-        "@vitest/browser-playwright": "^4.1.11",
+        "@vitest/browser-playwright": "^5.0.0",
         "@vitest/coverage-v8": "^4.1.11",
         "tslib": "^2.8.1",
         "typescript": "catalog:angular22",
