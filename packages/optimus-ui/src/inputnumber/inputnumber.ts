@@ -659,7 +659,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
         return new RegExp(`${this.escapeRegExp(this.suffixChar || '')}`, 'g');
     }
 
-    formatValue(value: any) {
+    formatValue(value: any): string {
         if (value != null) {
             if (value === '-') {
                 // Minus sign
@@ -742,7 +742,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
         this.updateInput(newValue, null, 'spin', null);
         this.updateModel(event, newValue);
 
-        this.handleOnInput(event, currentValue, newValue);
+        this.handleOnInput(event, currentValue, newValue, null);
     }
 
     clear() {
@@ -1173,7 +1173,11 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     }
 
     insertText(value: string, text: string, start: number, end: number) {
-        let textSplit = text === '.' ? text : text.split('.');
+        if (value === '' && text === this._decimalChar) {
+            return '0' + this._decimalChar;
+        }
+
+        let textSplit = text === this._decimalChar ? text : text.split(this._decimalChar);
 
         if (textSplit.length === 2) {
             const decimalCharIndex = value.slice(start, end).search(this._decimal);
@@ -1290,15 +1294,19 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
             newValue = !newValue && !this.allowEmpty ? 0 : newValue;
             this.updateInput(newValue, insertedValueStr, operation, valueStr);
 
-            this.handleOnInput(event, currentValue, newValue);
+            this.handleOnInput(event, currentValue, newValue, valueStr);
         }
     }
 
-    handleOnInput(event: Event, currentValue: string, newValue: any) {
+    handleOnInput(event: Event, currentValue: string, newValue: any, valueStr: Nullable<string>) {
         if (this.isValueChanged(currentValue, newValue)) {
-            (this.input as ElementRef).nativeElement.value = this.formatValue(newValue);
+            if (valueStr && valueStr.includes(this._decimalChar) && (valueStr.endsWith('0') || valueStr.endsWith(this._decimalChar))) {
+                // keep the trailing zeroes if the user is typing a decimal number
+            } else {
+                (this.input as ElementRef).nativeElement.value = this.formatValue(newValue);
+                this.updateModel(event, newValue);
+            }
             this.input?.nativeElement.setAttribute('aria-valuenow', newValue);
-            this.updateModel(event, newValue);
             this.onInput.emit({ originalEvent: event, value: newValue, formattedValue: currentValue });
         }
     }
@@ -1342,14 +1350,14 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
         let currentLength = inputValue.length;
 
         if (newValue !== valueStr) {
-            newValue = this.concatValues(newValue, valueStr as string);
+            newValue = this.copyTrailingZeroes(newValue, valueStr as string);
         }
 
         if (currentLength === 0) {
             this.input.nativeElement.value = newValue;
             this.input.nativeElement.setSelectionRange(0, 0);
             const index = this.initCursor();
-            const selectionEnd = index + insertedValueStr.length;
+            const selectionEnd = index + newValue.length;
             this.input.nativeElement.setSelectionRange(selectionEnd, selectionEnd);
         } else {
             let selectionStart: any = this.input.nativeElement.selectionStart;
@@ -1413,18 +1421,18 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
         this.input.nativeElement.setAttribute('aria-valuenow', value);
     }
 
-    concatValues(val1: string, val2: string) {
-        if (val1 && val2) {
-            let decimalCharIndex = val2.search(this._decimal);
+    copyTrailingZeroes(trimmed: string, original: string) {
+        if (trimmed && original) {
+            let decimalCharIndex = original.search(this._decimal);
             this._decimal.lastIndex = 0;
 
             if (this.suffixChar) {
-                return decimalCharIndex !== -1 ? val1.replace(this.suffixChar, '').split(this._decimal)[0] + val2.replace(this.suffixChar, '').slice(decimalCharIndex) + this.suffixChar : val1;
+                return decimalCharIndex !== -1 ? trimmed.replace(this.suffixChar, '').split(this._decimal)[0] + original.replace(this.suffixChar, '').slice(decimalCharIndex) + this.suffixChar : trimmed;
             } else {
-                return decimalCharIndex !== -1 ? val1.split(this._decimal)[0] + val2.slice(decimalCharIndex) : val1;
+                return decimalCharIndex !== -1 ? trimmed.split(this._decimal)[0] + original.slice(decimalCharIndex) : trimmed;
             }
         }
-        return val1;
+        return trimmed;
     }
 
     getDecimalLength(value: string) {
