@@ -10,7 +10,7 @@
         "start:ssr": "ng serve --configuration=development-ssr",
         "e2e": "ng e2e",
         "lint": "ng lint",
-        "build": "ng build",
+        "build": "pnpm --filter @openng/optimus-ui-themes build && npm run build:apidoc && npm run build:democode && npm run build:llm-docs && npm run build:routes && npm run build:sitemap && ng build",
         "build:apidoc": "node scripts/build-apidoc.mjs",
         "build:routes": "node scripts/build-routes.mjs",
         "build:sitemap": "node scripts/build-sitemap.mjs",

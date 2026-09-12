@@ -22,7 +22,7 @@
         "build:packages": "pnpm run build:optimus-ui && pnpm run build:lib && pnpm run build:themes && pnpm run build:docs:content && pnpm run build:docs",
         "build:optimus-ui": "pnpm --filter './packages/optimus-ui-*' build",
         "build:lib": "pnpm --filter @openng/optimus-ui build",
-        "build:themes": "pnpm --filter themes build",
+        "build:themes": "pnpm --filter @openng/optimus-ui-themes build",
         "build:docs": "pnpm --filter docs build",
         "build:docs:content": "pnpm --filter docs build:docs",
         "dev": "pnpm --filter docs start",
