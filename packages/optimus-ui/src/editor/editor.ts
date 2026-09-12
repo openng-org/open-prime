@@ -330,7 +330,7 @@ export class Editor extends BaseEditableHolder<EditorPassThrough> {
             if (source === 'user') {
                 let html = isQuill2 ? this.quill.getSemanticHTML() : findSingle(editorElement, '.ql-editor')?.innerHTML;
                 let text = this.quill.getText().trim();
-                if (html === '<p><br></p>') {
+                if (html === '<p></p>') {
                     html = null;
                 }
 
