@@ -26,7 +26,7 @@
     },
     "devDependencies": {
         "@angular/ssr": "catalog:angular22",
-        "@docsearch/css": "^5.0.3",
+        "@docsearch/css": "^5.0.5",
         "@docsearch/js": "^3.3.4",
         "@openng/optimus-ui-themes": "workspace:*",
         "@angular/cdk": "catalog:angular22",
