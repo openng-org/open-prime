@@ -63,7 +63,7 @@
         "@angular-devkit/schematics": "^22.1.6",
         "@angular/build": "catalog:angular22",
         "@schematics/angular": "^22.1.6",
-        "@types/node": "^26.2.0",
+        "@types/node": "^26.5.0",
         "@vitest/browser-playwright": "^4.1.11",
         "@vitest/coverage-v8": "^4.1.11",
         "tslib": "^2.8.1",
