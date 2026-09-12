@@ -566,20 +566,34 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
 
         this.create();
 
-        const nativeElement = this.el.nativeElement;
-        const pDialogWrapper = nativeElement.closest('p-dialog');
+        const nativeElement = this.el.nativeElement as HTMLElement;
+        const container = this.container;
+        const dialogSelector = '.p-dialog, [data-pc-name="dialog"]';
+        const dialogAnimations: Animation[] = [];
 
-        if (pDialogWrapper) {
-            setTimeout(() => {
-                this.container && (this.container.style.display = 'inline-block');
-                this.container && this.align();
-            }, 100);
-        } else {
-            this.container.style.display = 'inline-block';
-            this.align();
+        // Inspect dialog surfaces, not descendants: button hover/focus transitions
+        // must not delay a settled dialog's tooltip. This also works with appendTo="body".
+        for (let dialog = nativeElement.closest(dialogSelector); dialog; dialog = dialog.parentElement?.closest(dialogSelector) ?? null) {
+            dialogAnimations.push(...(dialog.getAnimations?.() || []).filter((animation) => (animation.playState === 'running' || animation.playState === 'paused') && Number.isFinite(animation.effect?.getComputedTiming().endTime)));
         }
 
-        fadeIn(this.container, 250);
+        const reveal = () => {
+            // A hide, destroy or subsequent show invalidates this pending reveal.
+            if (!this.active || this.container !== container || !nativeElement.isConnected) {
+                return;
+            }
+
+            container.style.display = 'inline-block';
+            this.align();
+            fadeIn(container, 250);
+        };
+
+        if (dialogAnimations.length) {
+            // Include paused initial frames and settle cancellation without a rejection.
+            Promise.allSettled(dialogAnimations.map((animation) => animation.finished)).then(reveal);
+        } else {
+            reveal();
+        }
 
         if (this.getOption('tooltipZIndex') === 'auto') ZIndexUtils.set('tooltip', this.container, this.config.zIndex.tooltip);
         else this.container.style.zIndex = this.getOption('tooltipZIndex');
