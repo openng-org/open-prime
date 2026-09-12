@@ -74,7 +74,7 @@
         "lefthook": "^2.1.10",
         "ng-packagr": "catalog:angular22",
         "prettier": "^3.9.6",
-        "tsdown": "^0.22.9",
+        "tsdown": "^0.23.0",
         "typescript": "catalog:angular22"
     },
     "publishConfig": {
