@@ -46,7 +46,7 @@
     "dependencies": {
         "@openng/optimus-ui-tailwindcss": "workspace:*",
         "autoprefixer": "^10.5.4",
-        "postcss": "^8.5.26",
+        "postcss": "^8.5.28",
         "tailwindcss": "^3.4.10"
     }
 }

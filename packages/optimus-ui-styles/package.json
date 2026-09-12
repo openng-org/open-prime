@@ -57,6 +57,6 @@
     },
     "devDependencies": {
         "known-css-properties": "^0.37.0",
-        "postcss": "^8.5.26"
+        "postcss": "^8.5.28"
     }
 }
